@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <ConstraintSet android:id="@+id/shrunk_constraints"></ConstraintSet>
+    <ConstraintSet android:id="@+id/fullscreen_constraints"></ConstraintSet>
+
+</MotionScene>

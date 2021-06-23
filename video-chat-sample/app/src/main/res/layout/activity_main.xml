@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:fitsSystemWindows="true"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/black"
+    app:layoutDescription="@xml/activity_main_scene"
+    tools:context=".MainActivity">
+
+    <com.google.android.exoplayer2.ui.StyledPlayerView
+        android:id="@+id/player_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/black"
+
+        app:layout_constraintBottom_toTopOf="@+id/horizontal_guide"
+        app:layout_constraintEnd_toStartOf="@+id/vertical_guide"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:show_buffering="when_playing"
+        app:show_shuffle_button="false"
+        app:use_controller="false" />
+
+    <com.google.android.exoplayer2.ui.StyledPlayerControlView
+        android:id="@+id/player_control_view"
+        android:layout_width="0dp"
+        android:layout_height="100dp"
+        app:layout_constraintStart_toStartOf="@+id/player_view"
+        app:layout_constraintEnd_toStartOf="@+id/chatEnableButton"
+        app:layout_constraintBottom_toBottomOf="@+id/player_view" />
+
+    <ImageButton
+        android:id="@+id/chatEnableButton"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:background="@android:color/transparent"
+        android:clickable="true"
+        android:src="@drawable/ic_fluent_chat_28_filled"
+        android:tint="@color/white"
+        app:layout_constraintStart_toEndOf="@+id/player_control_view"
+        app:layout_constraintBottom_toBottomOf="@id/player_view"
+        app:layout_constraintEnd_toEndOf="@id/player_view" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/horizontal_guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="0dp"
+        tools:layout_editor_absoluteY="300dp" />
+
+    <androidx.constraintlayout.widget.Guideline
+        android:id="@+id/vertical_guide"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="0dp"
+        tools:layout_editor_absoluteX="300dp" />
+
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/bottom_chat_view"
+        android:name="com.example.video_chat_sample.ChatFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/vertical_guide"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/horizontal_guide" />
+
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/end_chat_view"
+        android:name="com.example.video_chat_sample.ChatFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toTopOf="@+id/horizontal_guide"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/vertical_guide"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.motion.widget.MotionLayout>
