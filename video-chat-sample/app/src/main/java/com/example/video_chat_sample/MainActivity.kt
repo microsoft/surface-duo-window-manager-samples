@@ -9,7 +9,6 @@ import android.view.View
 import android.view.WindowInsets
 import android.widget.ImageButton
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.constraintlayout.widget.ReactiveGuide
 import androidx.core.util.Consumer
 import androidx.window.DisplayFeature
 import androidx.window.FoldingFeature
@@ -46,16 +45,19 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        //Initialize Window Manager
         windowManager = WindowManager(this)
         setContentView(R.layout.activity_main)
 
-        rootView = findViewById<MotionLayout>(R.id.root)
-        chatEnableButton = findViewById<ImageButton>(R.id.chatEnableButton)
-        endChatView = findViewById<ReactiveGuide>(R.id.end_chat_view)
-        bottomChatView = findViewById<ReactiveGuide>(R.id.bottom_chat_view)
+        rootView = findViewById(R.id.root)
+        chatEnableButton = findViewById(R.id.chatEnableButton)
+        endChatView = findViewById(R.id.end_chat_view)
+        bottomChatView = findViewById(R.id.bottom_chat_view)
 
         playerControlView = findViewById(R.id.player_control_view)
-        playerView = findViewById(R.id.player_view);
+        playerView = findViewById(R.id.player_view)
+
+        //Initialize Exoplayer
         player = SimpleExoPlayer.Builder(this).build()
         playerView.player = player
         playerControlView.player = player
@@ -65,33 +67,67 @@ class MainActivity : AppCompatActivity() {
     override fun onStart() {
         super.onStart()
 
+        //Start MotionLayout in full screen state
         rootView.setState(R.id.fullscreen_constraints, -1, -1)
 
+        //Register callback with window manager
         windowManager.registerLayoutChangeCallback(mainThreadExecutor, stateContainer)
 
-        var videoUrl = "https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4"
-        var mediaItem = MediaItem.fromUri(videoUrl)
+        //Start exoplayer
+        val mediaItem = MediaItem.fromUri("https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4")
         player.setMediaItem(mediaItem)
         player.prepare()
 
-        chatEnableButton.setOnClickListener { view ->
+        //Callback for chat toggle button
+        chatEnableButton.setOnClickListener {
             chatToggle = !chatToggle
             changeLayout()
         }
 
+        //Callback for keyboard opening
         rootView.viewTreeObserver.addOnGlobalLayoutListener {
-            var tempKeyboardToggle = false
-            if (Util.SDK_INT >= 30) {
-                tempKeyboardToggle =
-                    rootView.rootWindowInsets.isVisible(WindowInsets.Type.ime()) //TEST
+            val tempKeyboardToggle = if (Util.SDK_INT >= 30) {
+                rootView.rootWindowInsets.isVisible(WindowInsets.Type.ime())
             } else {
-                tempKeyboardToggle = rootView.rootWindowInsets.systemWindowInsetBottom > 200 //TEST
+                rootView.rootWindowInsets.systemWindowInsetBottom > 200
             }
+
             if (tempKeyboardToggle != keyboardToggle) {
                 keyboardToggle = tempKeyboardToggle
                 changeLayout()
             }
         }
+    }
+
+    //Callback for layout changing
+    inner class StateContainer : Consumer<WindowLayoutInfo> {
+        override fun accept(newLayoutInfo: WindowLayoutInfo) {
+            spanToggle = false
+
+            for (displayFeature : DisplayFeature in newLayoutInfo.displayFeatures) {
+                if (displayFeature is FoldingFeature){
+                    spanToggle = true
+                    spanOrientation = displayFeature.orientation
+                    if (spanOrientation == FoldingFeature.ORIENTATION_HORIZONTAL) {
+                        guidePosition = rootView.height - rootView.paddingBottom - displayFeature.bounds.top
+                        chatPadding = displayFeature.bounds.height()
+                    }
+                    else {
+                        guidePosition = rootView.width - rootView.paddingEnd - displayFeature.bounds.left
+                        chatPadding = displayFeature.bounds.width()
+                    }
+                }
+            }
+            changeLayout()
+        }
+    }
+
+    companion object {
+        const val STATE_CHAT = "chatToggle"
+        const val STATE_SPAN = "spanToggle"
+        const val STATE_PLAY_WHEN_READY = "playerPlayWhenReady"
+        const val STATE_CURRENT_POSITION = "playerPlaybackPosition"
+        const val STATE_CURRENT_WINDOW_INDEX = "playerCurrentWindowIndex"
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -122,19 +158,21 @@ class MainActivity : AppCompatActivity() {
         super.onSaveInstanceState(outState)
     }
 
-    fun setFullscreen() {
+    //function to animate into "fullscreen" constraint set
+    private fun setFullscreen() {
         bottomChatView.setPadding(0,0,0,0)
         endChatView.setPadding(0,0,0,0)
         rootView.transitionToState(R.id.fullscreen_constraints, 500)
     }
 
-    fun setGuides(vertical_position : Int, vertical_padding : Int, horizontal_position: Int, horizontal_padding: Int) {
+    //function to animate into "chat enabled" constraint set, modifying guide position at the same time
+    private fun setGuides(vertical_position : Int, vertical_padding : Int, horizontal_position: Int, horizontal_padding: Int) {
         bottomChatView.setPadding(0,vertical_padding,0,0)
         endChatView.setPadding(horizontal_padding,0,0,0)
 
-        var constraintSet = rootView.getConstraintSet(R.id.shrunk_constraints)
-        constraintSet.setGuidelineEnd(R.id.horizontal_guide, vertical_position)
-        constraintSet.setGuidelineEnd(R.id.vertical_guide, horizontal_position)
+        val constraintSet = rootView.getConstraintSet(R.id.shrunk_constraints)
+        constraintSet.setGuidelineEnd(R.id.vertical_guide, vertical_position)
+        constraintSet.setGuidelineEnd(R.id.horizontal_guide, horizontal_position)
 
         if (rootView.currentState == R.id.shrunk_constraints) {
             rootView.updateStateAnimate(R.id.shrunk_constraints, constraintSet, 500)
@@ -144,6 +182,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    //logic tree that decides layout
     fun changeLayout() {
         if (spanToggle) { //if app is spanned across a fold
             if (spanOrientation == FoldingFeature.ORIENTATION_HORIZONTAL) { //if fold is horizontal
@@ -163,51 +202,20 @@ class MainActivity : AppCompatActivity() {
                 setFullscreen()
             }
         }
-        else {
-            if (chatToggle) { //if chat is enabled
-                if (this.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) { //if the phone is landscape
-                    setGuides( 0, 0, rootView.width/3, 0)
-                }
-                else if (!keyboardToggle) {
-                    setGuides( rootView.height/2, 0, 0, 0)
-                }
-                else { //if the keyboard is enabled
-                    setFullscreen()
-                }
+        else if (chatToggle) { //if chat is enabled
+            if (this.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) { //if the phone is landscape
+                setGuides( 0, 0, rootView.width/3, 0)
             }
-            else {
+            else if (!keyboardToggle) {
+                setGuides( rootView.height/2, 0, 0, 0)
+            }
+            else { //if the keyboard is enabled
                 setFullscreen()
             }
         }
-    }
-
-    companion object {
-        val STATE_CHAT = "chatToggle"
-        val STATE_SPAN = "spanToggle"
-        val STATE_PLAY_WHEN_READY = "playerPlayWhenReady"
-        val STATE_CURRENT_POSITION = "playerPlaybackPosition"
-        val STATE_CURRENT_WINDOW_INDEX = "playerCurrentWindowIndex"
-    }
-
-    inner class StateContainer : Consumer<WindowLayoutInfo> {
-        override fun accept(newLayoutInfo: WindowLayoutInfo) {
-            spanToggle = false
-
-            for (displayFeature : DisplayFeature in newLayoutInfo.displayFeatures) {
-                if (displayFeature is FoldingFeature){
-                    spanToggle = true
-                    spanOrientation = displayFeature.orientation
-                    if (spanOrientation == FoldingFeature.ORIENTATION_HORIZONTAL) {
-                        guidePosition = rootView.height - rootView.paddingBottom - displayFeature.bounds.top
-                        chatPadding = displayFeature.bounds.height()
-                    }
-                    else {
-                        guidePosition = rootView.width - rootView.paddingEnd - displayFeature.bounds.left
-                        chatPadding = displayFeature.bounds.width()
-                    }
-                }
-            }
-            changeLayout()
+        else {
+            setFullscreen()
         }
     }
+
 }
