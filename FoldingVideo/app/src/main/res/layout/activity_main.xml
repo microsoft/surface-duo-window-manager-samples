@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layoutDescription="@xml/activity_main_scene"
+    tools:context=".MainActivity">
+
+
+    <com.google.android.exoplayer2.ui.StyledPlayerView
+        android:id="@+id/player_view"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/black"
+        app:show_buffering="when_playing"
+        app:show_shuffle_button="true"
+
+        app:layout_constraintBottom_toTopOf="@id/horiz_fold"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toLeftOf="@id/vert_fold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constrainedWidth="true"/>
+
+    <!-- horizontal fold -->
+    <androidx.constraintlayout.widget.ReactiveGuide
+        android:id="@+id/horiz_fold"
+        app:reactiveGuide_valueId="@id/horiz_fold"
+        app:reactiveGuide_animateChange="true"
+        app:reactiveGuide_applyToAllConstraintSets="true"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="0dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+
+    <View
+        android:id="@+id/horiz_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/horiz_fold" />
+
+
+    <com.google.android.exoplayer2.ui.StyledPlayerControlView
+        android:id="@+id/horiz_player_control_view"
+        android:layout_width="wrap_content"
+        android:layout_height="@id/horiz_background"
+        app:show_timeout="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/horiz_background"
+        app:layout_constraintStart_toStartOf="@id/horiz_background"
+        app:layout_constraintTop_toTopOf="@id/horiz_background" />
+
+    <!-- vertical fold -->
+
+    <androidx.constraintlayout.widget.ReactiveGuide
+        android:id="@+id/vert_fold"
+        app:reactiveGuide_valueId="@id/vert_fold"
+        app:reactiveGuide_animateChange="true"
+        app:reactiveGuide_applyToAllConstraintSets="true"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="0dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+
+    <View
+        android:id="@+id/vert_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="@color/black"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/vert_fold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+    <com.google.android.exoplayer2.ui.StyledPlayerControlView
+        android:id="@+id/vert_player_control_view"
+        android:layout_width="@+id/vert_background"
+        android:layout_height="match_parent"
+        app:show_timeout="0"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="@id/vert_background"
+        app:layout_constraintStart_toStartOf="@id/vert_background"
+        app:layout_constraintTop_toTopOf="@id/vert_background" />
+
+    <!-- button to split controls -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:src="@drawable/exo_ic_settings"/>
+
+
+
+</androidx.constraintlayout.motion.widget.MotionLayout>

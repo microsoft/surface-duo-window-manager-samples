@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@+id/start"
+        motion:duration="400">
+        <KeyFrameSet>
+        </KeyFrameSet>
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint
+            android:layout_height="wrap_content"
+            motion:layout_constraintTop_toTopOf="parent"
+            motion:layout_constraintBottom_toTopOf="@+id/horiz_fold"
+            motion:layout_constraintRight_toLeftOf="@+id/vert_fold"
+            motion:layout_constraintLeft_toLeftOf="parent"
+            android:id="@+id/player_view" />
+    </ConstraintSet>
+</MotionScene>
