@@ -16,7 +16,7 @@ This sample app shows how video-playing apps can be adapted to dual-screen and f
 ## Examples
 
 In dual-portrait mode, we have the option to split the controls with a FloatingActionButton.
-![The FloatingActionButton separates the video controls](screenshots/split_dual_portrait.png)
+![The FloatingActionButton separates the video controls](screenshots/split_dual_portrait.PNG)
 
 In dual-landscape mode, we always split the controls and leave the video on the top screen.
-![The controls stay on the bottom screen](screenshots/split_dual_landscape.png)
+![The controls stay on the bottom screen](screenshots/split_dual_landscape.PNG)
