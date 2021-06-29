@@ -13,7 +13,7 @@ When the app is spanned across a folding feature, like a hinge or a fold, the ap
 ![Sample when spanned across a fold](screenshots/spanned_layouts.png)
 
 > [!NOTE]
-> If the video experience would not improve, the video will not move across the folding feature!
+> The video panel should only move across the folding feature if the viewing experience is better!
 
 ## MotionLayout and Guideline
 
