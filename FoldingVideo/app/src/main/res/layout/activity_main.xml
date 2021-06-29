@@ -9,6 +9,7 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/black"
     app:layoutDescription="@xml/activity_main_scene"
     tools:context=".MainActivity">
 
