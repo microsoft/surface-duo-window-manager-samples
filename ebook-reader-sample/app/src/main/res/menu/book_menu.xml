@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/action_font_down"
+        android:icon="@drawable/ic_fluent_font_decrease_24_regular"
+        android:title="Decrease font size"
+        app:iconTint="?attr/colorOnPrimary"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_font_up"
+        android:icon="@drawable/ic_fluent_font_increase_24_regular"
+        android:title="Increase font size"
+        app:iconTint="?attr/colorOnPrimary"
+        app:showAsAction="ifRoom" />
+    <item
+        android:id="@+id/action_chapter_group"
+        android:icon="@drawable/ic_fluent_reading_list_24_regular"
+        android:title="Select chapter"
+        app:iconTint="?attr/colorOnPrimary"
+        app:showAsAction="ifRoom">
+        <menu />
+    </item>
+
+</menu>

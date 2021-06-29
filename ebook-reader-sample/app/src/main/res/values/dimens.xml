@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="page_padding">40dp</dimen>
+    <dimen name="caption_height">40dp</dimen>
+    <dimen name="text_size">16sp</dimen>
+</resources>
