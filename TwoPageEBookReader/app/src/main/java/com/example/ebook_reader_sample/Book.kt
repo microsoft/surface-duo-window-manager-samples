@@ -13,13 +13,14 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import kotlin.math.max
 import kotlin.math.min
 
 class Book(private val filePath: String, private val activityContext: Context) {
     private val assetManager: AssetManager = activityContext.assets
     private var chapterStarts: ArrayList<Int> = ArrayList()
     private var chapterLengths: ArrayList<Int> = ArrayList()
-    var numChapters = 0
+    val numChapters
         get() = chapterStarts.size
     var chapterStartString = activityContext.resources.getString(R.string.chapter_start)
     var chapterEndString = activityContext.resources.getString(R.string.chapter_end)
@@ -54,7 +55,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
     }
 
     private lateinit var paragraphStrings: ArrayList<String>
-    var chapterTitle = ""
+    val chapterTitle
         get() = "(Section ${currentChapter}) ${paragraphStrings[0]}"
 
     var currentChapter = 0
@@ -71,7 +72,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
                 }
 
                 var paragraphBuffer = StringBuffer()
-                var lineBuffer = ""
+                var lineBuffer: String
                 for (line in 0 until chapterLengths[field]) {
                     lineBuffer = bufferedReader.readLine()
                     if (lineBuffer.isEmpty()) {
@@ -101,7 +102,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
             ArrayList()
         }
     }
-    var numPages = 0
+    val numPages
         get() = pageStrings.size
 
     var currentPage: Int
@@ -121,6 +122,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
             }
         }
 
+    val pagePadding = activityContext.resources.getDimension(R.dimen.page_padding).toInt()
     var pageRects = ArrayList<Rect>()
         set(input) {
             field = input
@@ -133,8 +135,8 @@ class Book(private val filePath: String, private val activityContext: Context) {
             buildPages()
         }
 
-    val pagePadding = activityContext.resources.getDimension(R.dimen.page_padding).toInt()
-
+    //buildPages() uses the available rects of the current layout to organize the chapter's strings into pages
+    //TODO buildPages() supports multiple pages by cycling through pageRects instead of using only one Rect of constraints
     fun buildPages() {
         if (pageRects.isEmpty()) { return }
 
@@ -159,14 +161,14 @@ class Book(private val filePath: String, private val activityContext: Context) {
             if (textView.measuredHeight > availableHeight) {
                 var splitIndex = paragraphString.lastIndexOf(". ")
                 while (splitIndex != -1) {
-                    textView.text = Html.fromHtml(paragraphString.substring(0,splitIndex + 2))
+                    textView.text = Html.fromHtml(paragraphString.substring(0,min(paragraphString.length,splitIndex + 2)))
                     textView.measure(widthSpec,heightSpec)
                     if (textView.measuredHeight < availableHeight) {
-                        textStrings.add(paragraphString.substring(0,splitIndex + 2))
-                        break;
+                        textStrings.add(paragraphString.substring(0,min(paragraphString.length,splitIndex + 2)))
+                        break
                     }
 
-                    splitIndex = paragraphString.lastIndexOf(". ", splitIndex - 1)
+                    splitIndex = paragraphString.lastIndexOf(". ", max(0, splitIndex - 1))
                 }
 
                 if (splitIndex == -1) {
@@ -192,8 +194,8 @@ class Book(private val filePath: String, private val activityContext: Context) {
     }
 
     private fun textStringHelper(inString: String): String {
-        var step1 = inString.replace("\\s+".toRegex(), " ")
-        var step2 = step1.replace("_(?<italics>((?!_).)+)_".toRegex(),"<i>\${italics}</i>")
+        val step1 = inString.replace("\\s+".toRegex(), " ")
+        val step2 = step1.replace("_(?<italics>((?!_).)+)_".toRegex(),"<i>\${italics}</i>")
 
         return "\t$step2"
     }

@@ -23,6 +23,7 @@ class BookPagerAdapter(inBook: Book, inLayoutStateContainer: BookActivity.Layout
                 view.findViewById<TextView>(R.id.caption_view).text = book.chapterTitle
                 PageViewHolder(view, book.fontSize)
             }
+            //TODO Setting view holder to two-page layout
             BookActivity.LayoutMode.SPLIT_HORIZONTAL -> {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.book_page_layout_split_horizontal, parent, false)
                 view.findViewWithTag<View>("page_container_0").layoutParams = LinearLayout.LayoutParams(book.pageRects[0].width(),
@@ -64,6 +65,7 @@ class BookPagerAdapter(inBook: Book, inLayoutStateContainer: BookActivity.Layout
             holder.repopulate(stringList)
         }
         else {
+            //TODO Different page population for view holders in two-page layout
             var stringList = ArrayList<String>()
             var stringList2 = ArrayList<String>()
             when (position) {
@@ -89,6 +91,7 @@ class BookPagerAdapter(inBook: Book, inLayoutStateContainer: BookActivity.Layout
         return if (layoutStateContainer.layoutMode == BookActivity.LayoutMode.NORMAL) {
             book.numPages + 2
         } else {
+            //TODO Different view holder count in two-page layout
             (book.numPages / 2) + (book.numPages % 2) + 2
         }
 
@@ -109,6 +112,7 @@ open class PageViewHolder(val rootView: View, val fontSize: Int) : RecyclerView.
     }
 }
 
+//TODO Extra functionality for view holders in two-page layout
 class SplitPageViewHolder(view: View, int: Int) : PageViewHolder(view, int) {
     private val linearLayout2 = view.findViewById<LinearLayout>(R.id.linear_layout2)
 
