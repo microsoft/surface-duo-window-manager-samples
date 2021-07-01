@@ -50,6 +50,12 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
         renderLoading()
     }
 
+    override fun onResume() {
+        super.onResume()
+
+        renderLoading()
+    }
+
     //renderLoading() resets the activity view to render an empty pager view
     //this.onGlobalLayout() is added as a post-render callback
     private fun renderLoading() {
