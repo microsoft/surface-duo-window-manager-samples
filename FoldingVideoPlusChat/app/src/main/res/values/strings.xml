@@ -1,0 +1,14 @@
+<resources>
+    <string name="app_name">video_chat_sample</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="chat_text_1"><b><font color="#FF9800">Temetre</font></b>: evening brahs</string>
+    <string name="chat_text_2"><b><font color="#F44336">marrtiiin</font></b>: LOL</string>
+    <string name="chat_text_3"><b><font color="#2196F3">Mirai112</font></b>: i like my elo i wont be joining</string>
+    <string name="chat_text_4"><b><font color="#4CAF50">Cyberhusky</font></b>: i gotta go see yall!</string>
+    <string name="chat_text_5"><b><font color="#E91E63">somehumanperson</font></b>: D:</string>
+    <string name="chat_text_6"><b><font color="#9C27B0">hiiizzzxzzxxz</font></b>: Anarchy time</string>
+    <string name="chat_text_7"><b><font color="#FFEB3B">Mnensoz</font></b>: we spell it doughnuts - you know, the right way!😁</string>
+    <string name="chat_text_8"><b><font color="#673AB7">iplaythings</font></b>: How do you know go is going to resub? Twitch automatically chooses the subs. RIght?</string>
+    <string name="chat_text_9"><b><font color="#2196F3">skyy2504</font></b>: just click on your diamond membership next to your name</string>
+    <string name="chat_text_10"><b><font color="#F44336">marrtiiin</font></b>: press the diamond button</string>
+</resources>
