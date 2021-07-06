@@ -21,6 +21,7 @@ allprojects {
         mavenCentral()
         jcenter() // Warning: this repository is going to shut down soon
     }
+    apply from: "$rootDir/ktlint.gradle"
 }
 
 task clean(type: Delete) {
