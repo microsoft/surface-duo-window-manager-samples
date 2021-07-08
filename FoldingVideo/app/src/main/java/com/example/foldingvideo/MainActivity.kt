@@ -7,7 +7,6 @@ package com.example.foldingvideo
 
 import android.app.Activity
 import android.graphics.Rect
-import android.opengl.Visibility
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -15,7 +14,6 @@ import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.constraintlayout.widget.ReactiveGuide
 import androidx.core.util.Consumer
 import androidx.window.DisplayFeature
 import androidx.window.FoldingFeature
@@ -28,26 +26,25 @@ import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import java.util.concurrent.Executor
 
-
 class MainActivity : Activity() {
 
-    //WM
+    // WM
     private lateinit var motionLayout: MotionLayout
     private lateinit var windowManager: WindowManager
     private val handler = Handler(Looper.getMainLooper())
     private val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
     private val stateContainer = StateContainer()
 
-    //ExoPlayer
-    private lateinit var playerView : StyledPlayerView
-    private lateinit var connectedControls : View
-    private lateinit var controlView : StyledPlayerControlView
-    private lateinit var vertControlView : StyledPlayerControlView
-    private lateinit var player : SimpleExoPlayer
+    // ExoPlayer
+    private lateinit var playerView: StyledPlayerView
+    private lateinit var connectedControls: View
+    private lateinit var controlView: StyledPlayerControlView
+    private lateinit var vertControlView: StyledPlayerControlView
+    private lateinit var player: SimpleExoPlayer
 
-    private lateinit var fab : FloatingActionButton
-    private var lastFoldingFeature : FoldingFeature? = null
-    private var isSplit : Boolean = false
+    private lateinit var fab: FloatingActionButton
+    private var lastFoldingFeature: FoldingFeature? = null
+    private var isSplit: Boolean = false
 
     companion object {
         val PLAY_POSITION = "play_position"
@@ -66,25 +63,24 @@ class MainActivity : Activity() {
         playerView = findViewById(R.id.player_view)
         player = SimpleExoPlayer.Builder(this).build()
         playerView.player = player
-        //PlayerView connected controls (not external)
+        // PlayerView connected controls (not external)
         connectedControls = findViewById(R.id.exo_center_controls)
 
-        //dual-landscape controls
+        // dual-landscape controls
         controlView = findViewById(R.id.horiz_player_control_view)
         controlView.player = player
 
-        //dual-portrait controls
+        // dual-portrait controls
         vertControlView = findViewById(R.id.vert_player_control_view)
         vertControlView.player = player
 
-        //set up floating action button that splits controls in dual-portrait
+        // set up floating action button that splits controls in dual-portrait
         isSplit = false
         fab = findViewById(R.id.fab)
         fab.setOnClickListener { _ ->
             isSplit = !isSplit
             updateSplitControl(lastFoldingFeature)
         }
-
     }
 
     override fun onStart() {
@@ -98,7 +94,7 @@ class MainActivity : Activity() {
         player.prepare()
     }
 
-    override fun  onStop() {
+    override fun onStop() {
         super.onStop()
         player.stop()
         windowManager.unregisterLayoutChangeCallback(stateContainer)
@@ -106,25 +102,23 @@ class MainActivity : Activity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
 
-        //save exoplayer state vars
+        // save exoplayer state vars
         outState.putLong(PLAY_POSITION, player.currentPosition)
         outState.putBoolean(PLAY_WHEN_READY, player.playWhenReady)
         outState.putInt(CURRENT_WINDOW_INDEX, player.currentWindowIndex)
         outState.putBoolean(CONTROL_SPLIT, isSplit)
 
         super.onSaveInstanceState(outState)
-
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
 
-        //Load exoplayer state vars
+        // Load exoplayer state vars
         isSplit = savedInstanceState.getBoolean(CONTROL_SPLIT)
         player.playWhenReady = savedInstanceState.getBoolean(PLAY_WHEN_READY)
         player.seekTo(savedInstanceState.getInt(CURRENT_WINDOW_INDEX), savedInstanceState.getLong(PLAY_POSITION))
         player.prepare()
-
     }
 
     /**
@@ -142,7 +136,7 @@ class MainActivity : Activity() {
     /**
      * Returns the position of the vertical fold relative to the view
      */
-    fun verticalFoldPosition(view: View, foldingFeature: FoldingFeature?) : Int {
+    fun verticalFoldPosition(view: View, foldingFeature: FoldingFeature?): Int {
         val splitRect = getFeatureBoundsInWindow(foldingFeature, view)
         splitRect?.let {
             return view.width.minus(splitRect.right)
@@ -186,7 +180,7 @@ class MainActivity : Activity() {
         val featureRectInView = Rect(displayFeature.bounds)
         val intersects = featureRectInView.intersect(viewRect)
 
-        //Checks to see if the display feature overlaps with our view at all
+        // Checks to see if the display feature overlaps with our view at all
         if ((featureRectInView.width() == 0 && featureRectInView.height() == 0) ||
             !intersects
         ) {
@@ -198,7 +192,6 @@ class MainActivity : Activity() {
 
         return featureRectInView
     }
-
 
     /**
      * Sets the margins of a view
@@ -214,7 +207,7 @@ class MainActivity : Activity() {
     /**
      * Update the split controls in dual-portrait when hinge is vertical
      */
-    private fun updateSplitControl(foldFeature : FoldingFeature?) {
+    private fun updateSplitControl(foldFeature: FoldingFeature?) {
         if (foldFeature != null) {
             if (isSplit) {
                 var fold = verticalFoldPosition(motionLayout, foldFeature)
@@ -243,50 +236,44 @@ class MainActivity : Activity() {
 
                     lastFoldingFeature = foldFeature
 
-                    //isSeparating isn't currently working - it always returns true
-                    //We can use this workaround by checking if the device is a surface duo
-                    //and checking the foldFeature state if it isn't
+                    // isSeparating isn't currently working - it always returns true
+                    // We can use this workaround by checking if the device is a surface duo
+                    // and checking the foldFeature state if it isn't
                     if (foldFeature.isSeparating) {
 
                         if (foldFeature.orientation == FoldingFeature.ORIENTATION_HORIZONTAL) {
 
                             if (isDeviceSurfaceDuo()) {
-                                //if the device is a duo, it will always use a separate video controller
+                                // if the device is a duo, it will always use a separate video controller
                                 var fold = horizontalFoldPosition(motionLayout, foldFeature)
                                 ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, fold)
                                 playerView.useController = false
-
                             } else {
 
-                                //for other devices, it will only separate controls if isSeparating is true
-                                //Since isSeparating is not working, we will just check the fold state
+                                // for other devices, it will only separate controls if isSeparating is true
+                                // Since isSeparating is not working, we will just check the fold state
                                 if (foldFeature.state == FoldingFeature.STATE_HALF_OPENED) {
                                     var fold = horizontalFoldPosition(motionLayout, foldFeature)
                                     ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, fold)
                                     playerView.useController = false
-
                                 } else {
-                                    ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, 0);
+                                    ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, 0)
                                     playerView.useController = true // use on-video controls
-
                                 }
                             }
-                        }
-                        else {
-                            //move over on-video controls so it's not cut off by hinge
+                        } else {
+                            // move over on-video controls so it's not cut off by hinge
                             setMargins(connectedControls, connectedControls.width / 2, 0, 0, 0)
 
-                            //make split control fab visible
+                            // make split control fab visible
                             fab.show()
                             updateSplitControl(lastFoldingFeature)
                         }
-
                     } else {
-                        //reset fold values
+                        // reset fold values
                         ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, 0)
                         ConstraintLayout.getSharedValues().fireNewValue(R.id.vert_fold, 0)
                         playerView.useController = true // use on-video controls
-
                     }
                 }
             }
