@@ -59,7 +59,7 @@ class PreviewFragment : Fragment(), ScreenInfoListener {
             scrollVM = ViewModelProvider(requireActivity()).get(ScrollViewModel::class.java)
             webVM = ViewModelProvider(requireActivity()).get(WebViewModel::class.java)
 
-            val str: String? = (webVM.getText().value)
+            val str: String = (webVM.getText().value) ?: ""
             webView.loadData(str, Defines.HTML_TYPE, Defines.ENCODING)
         }
 

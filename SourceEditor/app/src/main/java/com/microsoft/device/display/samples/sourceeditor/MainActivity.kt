@@ -10,14 +10,26 @@ import android.app.Activity
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import androidx.window.WindowManager
 import android.widget.ImageView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.util.Consumer
 import androidx.lifecycle.ViewModelProvider
+import androidx.window.FoldingFeature
+import androidx.window.WindowLayoutInfo
 import com.microsoft.device.display.samples.sourceeditor.includes.FileHandler
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel
+import java.util.concurrent.Executor
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var windowManager: WindowManager
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private val mainThreadExecutor = Executor { r: Runnable -> mainHandler.post(r)}
+    private val wmCallback = WMCallback()
+
     private lateinit var fileBtn: ImageView
     private lateinit var saveBtn: ImageView
 
@@ -26,6 +38,8 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        windowManager = WindowManager(this)
         setContentView(R.layout.activity_main)
 
         webVM = ViewModelProvider(this).get(WebViewModel::class.java)
@@ -61,6 +75,31 @@ class MainActivity : AppCompatActivity() {
         else if (requestCode == FileHandler.PICK_TXT_FILE && resultCode == Activity.RESULT_OK) {
             resultData?.data?.also { uri ->
                 fileHandler.processFileData(uri, null)
+            }
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        windowManager.registerLayoutChangeCallback(mainThreadExecutor, wmCallback)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        windowManager.unregisterLayoutChangeCallback(wmCallback)
+    }
+
+    // Jetpack WM callback
+    inner class WMCallback : Consumer<WindowLayoutInfo> {
+        override fun accept(newLayoutInfo: WindowLayoutInfo?) {
+            // Add views that represent display features
+            newLayoutInfo?.let {
+                for (displayFeature in it.displayFeatures) {
+                    val foldingFeature = displayFeature as? FoldingFeature
+                    if (foldingFeature != null) {
+                        // do nothing for now?
+                    }
+                }
             }
         }
     }

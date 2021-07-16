@@ -33,9 +33,11 @@ dependencies {
 
     implementation androidxDependencies.appCompat
     implementation androidxDependencies.constraintLayout
+    implementation androidxDependencies.slidingPaneLayout
     implementation androidxDependencies.lifecycle
     implementation androidxDependencies.ktxCore
     implementation androidxDependencies.ktxFragment
+    implementation androidxDependencies.windowManager
 
     testImplementation testDependencies.junit
 
