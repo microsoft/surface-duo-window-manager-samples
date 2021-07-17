@@ -8,7 +8,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.ebook_reader_sample"
+        applicationId "com.microsoft.device.wm_samples.ebook_reader_sample"
         minSdkVersion 21
         targetSdkVersion 30
         versionCode 1
@@ -41,7 +41,7 @@ dependencies {
     implementation "androidx.viewpager2:viewpager2:1.0.0"
     implementation 'androidx.window:window:1.0.0-alpha08'
     implementation "androidx.slidingpanelayout:slidingpanelayout:1.2.0-alpha02"
-    implementation 'com.microsoft.design:fluent-system-icons:1.1.133@aar'
+    implementation 'com.microsoft.design:fluent-system-icons:1.1.135'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.3.0'

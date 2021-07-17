@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.ebook_reader_sample">
+    package="com.microsoft.device.wm_samples.ebook_reader_sample">
 
     <application
         android:allowBackup="true"
@@ -9,13 +9,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Test4">
-        <activity android:name="com.example.ebook_reader_sample.StartActivity">
+        <activity android:name="com.microsoft.device.wm_samples.ebook_reader_sample.StartActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="com.example.ebook_reader_sample.BookActivity"
+        <activity android:name="com.microsoft.device.wm_samples.ebook_reader_sample.BookActivity"
             android:configChanges="screenLayout|screenSize|smallestScreenSize|orientation|keyboardHidden">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -2,7 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License.
  */
-package com.example.ebook_reader_sample
+package com.microsoft.device.wm_samples.ebook_reader_sample
 
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
@@ -14,7 +14,10 @@ import android.widget.TextView
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 
+const val book_dir = "books/"
+
 class StartActivity : AppCompatActivity(){
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_start)
@@ -24,7 +27,7 @@ class StartActivity : AppCompatActivity(){
 
         val titleRecyclerView = findViewById<RecyclerView>(R.id.title_recycler)
         titleRecyclerView.layoutManager = LinearLayoutManager(this)
-        titleRecyclerView.adapter = TitleRecyclerAdapter(assets.list("books/")!!)
+        titleRecyclerView.adapter = TitleRecyclerAdapter(assets.list(book_dir)!!)
     }
 
 

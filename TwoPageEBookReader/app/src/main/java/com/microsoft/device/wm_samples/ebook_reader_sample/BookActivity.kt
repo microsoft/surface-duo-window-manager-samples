@@ -2,7 +2,7 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License.
  */
-package com.example.ebook_reader_sample
+package com.microsoft.device.wm_samples.ebook_reader_sample
 
 import android.content.res.Configuration
 import android.graphics.Rect
@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.util.Log
 import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.util.Consumer
@@ -117,26 +116,8 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
     inner class BookPagerCallback() : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             when (position) {
-                0 -> {
-                    if (book.currentChapter > 0) {
-                        bookPagerView.isUserInputEnabled = false
-                        handler.postDelayed({
-                            book.currentChapter = book.currentChapter - 1
-                            book.currentPage = book.numPages - 1
-                            renderBook()
-                        }, 250)
-                    }
-                }
-                bookPagerView.adapter!!.itemCount - 1 -> {
-                    if (book.currentChapter < book.numChapters - 1) {
-                        bookPagerView.isUserInputEnabled = false
-                        handler.postDelayed({
-                            book.currentChapter = book.currentChapter + 1
-                            book.currentPage = 0
-                            renderBook()
-                        }, 250)
-                    }
-                }
+                0 -> jumpToPreviousChapter()
+                bookPagerView.adapter!!.itemCount - 1 -> jumpToNextChapter()
                 else -> {
                     book.currentPage = if (layoutStateContainer.layoutMode == LayoutMode.NORMAL) {
                         position - 1
@@ -145,6 +126,28 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
                     }
                 }
             }
+        }
+    }
+
+    private fun jumpToPreviousChapter() {
+        if (book.currentChapter > 0) {
+            bookPagerView.isUserInputEnabled = false
+            handler.postDelayed({
+                book.currentChapter = book.currentChapter - 1
+                book.currentPage = book.numPages - 1
+                renderBook()
+            }, 250)
+        }
+    }
+    
+    private fun jumpToNextChapter() {
+        if (book.currentChapter < book.numChapters - 1) {
+            bookPagerView.isUserInputEnabled = false
+            handler.postDelayed({
+                book.currentChapter = book.currentChapter + 1
+                book.currentPage = 0
+                renderBook()
+            }, 250)
         }
     }
 
@@ -183,7 +186,7 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
         for (chapter in 0 until book.numChapters) {
             subMenu?.add("Section $chapter")
         }
-        subMenu?.add("Accreditation")
+        subMenu?.add(getString(R.string.attribution_label))
         return true
     }
 
@@ -203,12 +206,12 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
                 renderBook()
             }
             else -> {
-                if (item.title == "Accreditation") {
+                if (item.title == getString(R.string.attribution_label)) {
                     AlertDialog.Builder(this).setTitle("Project Gutenberg")
-                        .setMessage(this.resources.getString(R.string.accreditations))
+                        .setMessage(this.resources.getString(R.string.attribution_string))
                         .show()
                 }
-                else if (item.title != null && "Section (\\d+)".toRegex().matches(item.title)) {
+                else if (item.title != null && item.title.contains("Section")) {
                     book.currentChapter = item.title.substring(8).toInt()
                     book.currentPage = 0
                     renderBook()
