@@ -25,7 +25,7 @@ ext {
 
     //AndroidX versions
     appCompatVersion = "1.2.0"
-    constraintLayoutVersion = "2.0.4"
+    constraintLayoutVersion = "2.1.0-beta02"
     slidingPaneLayoutVersion = "1.2.0-alpha03"
     lifecycleExtensionsVersion = "2.2.0"
     recyclerViewVersion = "1.1.0"

@@ -25,6 +25,7 @@ import androidx.lifecycle.ViewModelProvider
 
 import com.google.android.material.textfield.TextInputEditText
 import com.microsoft.device.display.samples.sourceeditor.includes.DragHandler
+import com.microsoft.device.display.samples.sourceeditor.viewmodel.DualScreenViewModel
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.ScrollViewModel
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel
 
@@ -40,12 +41,15 @@ class CodeFragment : Fragment() {
     private lateinit var previewBtn: Button
     private lateinit var textField: TextInputEditText
 
+    private lateinit var dualScreenVM: DualScreenViewModel
     private lateinit var scrollVM: ScrollViewModel
     private lateinit var webVM: WebViewModel
 
     private var scrollingBuffer: Int = Defines.DEFAULT_BUFFER_SIZE
     private var scrollRange: Int = Defines.DEFAULT_RANGE
     private var rangeFound: Boolean = false
+
+    private var isDualScreen: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,13 +58,22 @@ class CodeFragment : Fragment() {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_item_code, container, false)
 
-         activity?.let {
+        activity?.let {
             // initialize ViewModels (find existing or create a new one)
+            dualScreenVM = ViewModelProvider(requireActivity()).get(DualScreenViewModel::class.java)
             scrollVM = ViewModelProvider(requireActivity()).get(ScrollViewModel::class.java)
             webVM = ViewModelProvider(requireActivity()).get(WebViewModel::class.java)
 
             textField = view.findViewById(R.id.textinput_code)
             scrollView = view.findViewById(R.id.scrollview_code)
+
+            dualScreenVM.getIsDualScreen().observe(requireActivity(), { bool ->
+                if (isDualScreen != bool) {
+                    isDualScreen = bool
+                    handleSpannedModeSelection(requireView(), isDualScreen)
+                }
+            })
+            isDualScreen = dualScreenVM.getIsDualScreen().value ?: false
 
             if (webVM.getText().value == null) {
                 webVM.setText(readFile(Defines.DEFAULT_SOURCE_PATH, context))
@@ -75,6 +88,7 @@ class CodeFragment : Fragment() {
             textField.setText(webVM.getText().value)
 
             setOnChangeListenerForTextInput(textField)
+            handleSpannedModeSelection(view, isDualScreen)
         }
 
         return view
@@ -111,19 +125,19 @@ class CodeFragment : Fragment() {
     }
 
     // single screen vs. dual screen logic
-    /*private fun handleSpannedModeSelection(view: View, screenInfo: ScreenInfo) {
+    private fun handleSpannedModeSelection(view: View, isDualMode: Boolean) {
         activity?.let {
             codeLayout = view.findViewById(R.id.code_layout)
             previewBtn = view.findViewById(R.id.btn_switch_to_preview)
             buttonToolbar = view.findViewById(R.id.button_toolbar)
 
-            if (screenInfo.isDualMode()) {
+            if (isDualMode) {
                 initializeDualScreen()
             } else {
                 initializeSingleScreen()
             }
         }
-    }*/
+    }
 
     // spanned selection helper
     private fun initializeSingleScreen() {

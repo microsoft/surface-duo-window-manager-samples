@@ -12,44 +12,47 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-//import androidx.window.WindowManager
+import androidx.window.WindowManager
 import android.widget.ImageView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ReactiveGuide
 import androidx.core.util.Consumer
 import androidx.lifecycle.ViewModelProvider
-//import androidx.slidingpanelayout.widget.SlidingPaneLayout
-//import androidx.window.FoldingFeature
-//import androidx.window.WindowLayoutInfo
+import androidx.window.FoldingFeature
+import androidx.window.WindowLayoutInfo
 import com.microsoft.device.display.samples.sourceeditor.includes.FileHandler
+import com.microsoft.device.display.samples.sourceeditor.viewmodel.DualScreenViewModel
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel
 import java.util.concurrent.Executor
 
 class MainActivity : AppCompatActivity() {
-    /*private lateinit var windowManager: WindowManager
+    private lateinit var windowManager: WindowManager
     private val mainHandler = Handler(Looper.getMainLooper())
     private val mainThreadExecutor = Executor { r: Runnable -> mainHandler.post(r)}
     private val wmCallback = WMCallback()
 
-    private val TAG = "SLIDEPANE"
-    lateinit var slidingPane: SlidingPaneLayout*/
-
     private lateinit var fileBtn: ImageView
     private lateinit var saveBtn: ImageView
+    private lateinit var verticalFold: ReactiveGuide
 
     private lateinit var fileHandler: FileHandler
     private lateinit var webVM: WebViewModel
+    private lateinit var dualScreenVM: DualScreenViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         setContentView(R.layout.activity_main)
 
-        /*slidingPane = findViewById(R.id.sliding_pane_layout)
-        windowManager = WindowManager(this)*/
+        windowManager = WindowManager(this)
 
         webVM = ViewModelProvider(this).get(WebViewModel::class.java)
+        dualScreenVM = ViewModelProvider(this).get(DualScreenViewModel::class.java)
         fileHandler = FileHandler(this, webVM, contentResolver)
+
+        dualScreenVM.setIsDualScreen(false) // assume single screen on startup
 
         // display action toolbar
         this.supportActionBar?.displayOptions = ActionBar.DISPLAY_SHOW_CUSTOM
@@ -66,6 +69,9 @@ class MainActivity : AppCompatActivity() {
         saveBtn.setOnClickListener {
             fileHandler.createFile(Uri.EMPTY)
         }
+
+        verticalFold = findViewById(R.id.vertical_fold)
+        verticalFold.setGuidelinePercent(1.0f)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
@@ -87,26 +93,32 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStart() {
         super.onStart()
-        //windowManager.registerLayoutChangeCallback(mainThreadExecutor, wmCallback)
+        windowManager.registerLayoutChangeCallback(mainThreadExecutor, wmCallback)
     }
 
     override fun onStop() {
         super.onStop()
-        //windowManager.unregisterLayoutChangeCallback(wmCallback)
+        windowManager.unregisterLayoutChangeCallback(wmCallback)
     }
 
-    /*// Jetpack WM callback
+    // Jetpack WM callback
     inner class WMCallback : Consumer<WindowLayoutInfo> {
         override fun accept(newLayoutInfo: WindowLayoutInfo?) {
             // Add views that represent display features
             newLayoutInfo?.let {
+                var isDualScreen = false
                 for (displayFeature in it.displayFeatures) {
                     val foldingFeature = displayFeature as? FoldingFeature
                     if (foldingFeature != null) {
-                        // do nothing for now?
+                        isDualScreen = true
+
+                        if (foldingFeature.orientation.equals(FoldingFeature.Orientation.HORIZONTAL)) {
+                            verticalFold.setGuidelinePercent(0.4f)
+                        }
                     }
                 }
+                dualScreenVM.setIsDualScreen(isDualScreen)
             }
         }
-    }*/
+    }
 }

@@ -24,20 +24,16 @@ android {
 }
 
 dependencies {
-    /*implementation microsoftDependencies.screenManager
-    implementation microsoftDependencies.layouts
-    implementation microsoftDependencies.fragmentsHandler*/
-
     implementation googleDependencies.material
     implementation kotlinDependencies.kotlinStdlib
 
     implementation androidxDependencies.appCompat
     implementation androidxDependencies.constraintLayout
-    implementation androidxDependencies.slidingPaneLayout
+    //implementation androidxDependencies.slidingPaneLayout
     implementation androidxDependencies.lifecycle
     implementation androidxDependencies.ktxCore
     implementation androidxDependencies.ktxFragment
-    //implementation androidxDependencies.windowManager
+    implementation androidxDependencies.windowManager
 
     testImplementation testDependencies.junit
 
