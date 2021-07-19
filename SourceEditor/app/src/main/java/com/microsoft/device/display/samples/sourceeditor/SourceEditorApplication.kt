@@ -1,6 +1,6 @@
 package com.microsoft.device.display.samples.sourceeditor
 
-import android.app.Application
+/*import android.app.Application
 import com.microsoft.device.dualscreen.ScreenManagerProvider
 import com.microsoft.device.dualscreen.fragmentshandler.FragmentManagerStateHandler
 
@@ -10,4 +10,4 @@ class SourceEditorApplication : Application() {
         ScreenManagerProvider.init(this)
         FragmentManagerStateHandler.init(this)
     }
-}
+}*/

@@ -7,7 +7,7 @@
 
 package com.microsoft.device.display.samples.sourceeditor
 
-import Defines
+/*import Defines
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -232,4 +232,4 @@ class CodeFragment : Fragment(), ScreenInfoListener {
             handler.onDrag(event)
         }
     }
-}
+}*/

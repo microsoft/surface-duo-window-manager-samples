@@ -7,7 +7,7 @@
 
 package com.microsoft.device.display.samples.sourceeditor
 
-import Defines
+/*import Defines
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -193,4 +193,4 @@ class PreviewFragment : Fragment(), ScreenInfoListener {
             handler.onDrag(event)
         }
     }
-}
+}*/
