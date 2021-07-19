@@ -26,13 +26,13 @@ import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel
 import java.util.concurrent.Executor
 
 class MainActivity : AppCompatActivity() {
-    //private lateinit var windowManager: WindowManager
+    /*private lateinit var windowManager: WindowManager
     private val mainHandler = Handler(Looper.getMainLooper())
     private val mainThreadExecutor = Executor { r: Runnable -> mainHandler.post(r)}
-    //private val wmCallback = WMCallback()
+    private val wmCallback = WMCallback()
 
     private val TAG = "SLIDEPANE"
-    //lateinit var slidingPane: SlidingPaneLayout
+    lateinit var slidingPane: SlidingPaneLayout*/
 
     private lateinit var fileBtn: ImageView
     private lateinit var saveBtn: ImageView
@@ -43,10 +43,10 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        //windowManager = WindowManager(this)
         setContentView(R.layout.activity_main)
 
         /*slidingPane = findViewById(R.id.sliding_pane_layout)
+        windowManager = WindowManager(this)*/
 
         webVM = ViewModelProvider(this).get(WebViewModel::class.java)
         fileHandler = FileHandler(this, webVM, contentResolver)
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         saveBtn = findViewById(R.id.btn_save)
         saveBtn.setOnClickListener {
             fileHandler.createFile(Uri.EMPTY)
-        }*/
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {

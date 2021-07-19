@@ -1,93 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!--
+  ~ Copyright (c) Microsoft Corporation. All rights reserved.
+  ~ Licensed under the MIT License.
+  ~
+-->
+
 <androidx.slidingpanelayout.widget.SlidingPaneLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/sliding_pane_layout">
 
-    <LinearLayout
-        android:id="@+id/side_pane_content"
-        android:layout_width="400dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@android:color/holo_orange_dark"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="Side Pane"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/side_open"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:backgroundTint="@android:color/white"
-            android:text="OPEN CONTENT PANE"
-            android:textColor="@android:color/black" />
-
-        <TextView
-            android:id="@+id/sliding_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="Slideable?"
-            android:textSize="20sp"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/side_pane_content2"
-        android:layout_width="400dp"
-        android:layout_height="match_parent"
-        android:layout_gravity="start"
-        android:background="@android:color/holo_green_dark"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="Side Pane"
-            android:textSize="30sp"
-            android:textStyle="bold" />
-
-        <Button
-            android:id="@+id/side_open2"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:backgroundTint="@android:color/white"
-            android:text="OPEN CONTENT PANE"
-            android:textColor="@android:color/black" />
-
-        <TextView
-            android:id="@+id/sliding_text2"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_margin="20dp"
-            android:text="Slideable?"
-            android:textSize="20sp"
-            />
-    </LinearLayout>
-
-    <!-- first child
+    <!-- first child -->
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_container_view_1"
+        android:id="@+id/code_fragment_container"
         android:name="com.microsoft.device.display.samples.sourceeditor.CodeFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"/>-->
+        android:layout_width="400dp"
+        android:layout_height="match_parent"/>
 
-    <!-- second child
+    <!-- second child -->
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/fragment_container_view_2"
+        android:id="@+id/preview_fragment_container"
         android:name="com.microsoft.device.display.samples.sourceeditor.PreviewFragment"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"/>-->
+        android:layout_height="match_parent"/>
 
 </androidx.slidingpanelayout.widget.SlidingPaneLayout>

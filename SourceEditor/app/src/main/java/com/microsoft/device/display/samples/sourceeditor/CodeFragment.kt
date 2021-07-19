@@ -7,7 +7,7 @@
 
 package com.microsoft.device.display.samples.sourceeditor
 
-/*import Defines
+import Defines
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -27,15 +27,12 @@ import com.google.android.material.textfield.TextInputEditText
 import com.microsoft.device.display.samples.sourceeditor.includes.DragHandler
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.ScrollViewModel
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel
-import com.microsoft.device.dualscreen.ScreenInfo
-import com.microsoft.device.dualscreen.ScreenInfoListener
-import com.microsoft.device.dualscreen.ScreenManagerProvider
 
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
 /* Fragment that defines functionality for source code editor */
-class CodeFragment : Fragment(), ScreenInfoListener {
+class CodeFragment : Fragment() {
     private lateinit var buttonToolbar: LinearLayout
     private lateinit var codeLayout: LinearLayout
     private lateinit var scrollView: ScrollView
@@ -57,7 +54,7 @@ class CodeFragment : Fragment(), ScreenInfoListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_item_code, container, false)
 
-        activity?.let {
+         activity?.let {
             // initialize ViewModels (find existing or create a new one)
             scrollVM = ViewModelProvider(requireActivity()).get(ScrollViewModel::class.java)
             webVM = ViewModelProvider(requireActivity()).get(WebViewModel::class.java)
@@ -83,18 +80,12 @@ class CodeFragment : Fragment(), ScreenInfoListener {
         return view
     }
 
-    override fun onScreenInfoChanged(screenInfo: ScreenInfo) {
-        handleSpannedModeSelection(requireView(), screenInfo)
-    }
-
     override fun onResume() {
         super.onResume()
-        ScreenManagerProvider.getScreenManager().addScreenInfoListener(this)
     }
 
     override fun onPause() {
         super.onPause()
-        ScreenManagerProvider.getScreenManager().removeScreenInfoListener(this)
     }
 
     // read from a base file in the assets folder
@@ -120,7 +111,7 @@ class CodeFragment : Fragment(), ScreenInfoListener {
     }
 
     // single screen vs. dual screen logic
-    private fun handleSpannedModeSelection(view: View, screenInfo: ScreenInfo) {
+    /*private fun handleSpannedModeSelection(view: View, screenInfo: ScreenInfo) {
         activity?.let {
             codeLayout = view.findViewById(R.id.code_layout)
             previewBtn = view.findViewById(R.id.btn_switch_to_preview)
@@ -132,7 +123,7 @@ class CodeFragment : Fragment(), ScreenInfoListener {
                 initializeSingleScreen()
             }
         }
-    }
+    }*/
 
     // spanned selection helper
     private fun initializeSingleScreen() {
@@ -166,13 +157,13 @@ class CodeFragment : Fragment(), ScreenInfoListener {
 
     // method that triggers transition to preview fragment
     private fun startPreviewFragment() {
-        parentFragmentManager.beginTransaction()
+        /*parentFragmentManager.beginTransaction()
             .replace(
                 R.id.first_container_id,
                 PreviewFragment(),
                 null
             ).addToBackStack("PreviewFragment")
-            .commit()
+            .commit()*/
     }
 
     // listener for changes to text in code editor
@@ -232,4 +223,4 @@ class CodeFragment : Fragment(), ScreenInfoListener {
             handler.onDrag(event)
         }
     }
-}*/
+}

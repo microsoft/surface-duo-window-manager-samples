@@ -7,7 +7,7 @@
 
 package com.microsoft.device.display.samples.sourceeditor
 
-/*import Defines
+import Defines
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -23,12 +23,9 @@ import androidx.lifecycle.ViewModelProvider
 import com.microsoft.device.display.samples.sourceeditor.includes.DragHandler
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.ScrollViewModel
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel
-import com.microsoft.device.dualscreen.ScreenInfo
-import com.microsoft.device.dualscreen.ScreenInfoListener
-import com.microsoft.device.dualscreen.ScreenManagerProvider
 
 /* Fragment that defines functionality for the source code previewer */
-class PreviewFragment : Fragment(), ScreenInfoListener {
+class PreviewFragment : Fragment() {
     private lateinit var buttonToolbar: LinearLayout
     private lateinit var scrollView: ScrollView
 
@@ -66,18 +63,12 @@ class PreviewFragment : Fragment(), ScreenInfoListener {
         return view
     }
 
-    override fun onScreenInfoChanged(screenInfo: ScreenInfo) {
-        handleSpannedModeSelection(requireView(), webView, screenInfo)
-    }
-
-    override fun onResume() {
+    /*override fun onResume() {
         super.onResume()
-        ScreenManagerProvider.getScreenManager().addScreenInfoListener(this)
     }
 
     override fun onPause() {
         super.onPause()
-        ScreenManagerProvider.getScreenManager().removeScreenInfoListener(this)
     }
 
     // mirror scrolling logic
@@ -192,5 +183,5 @@ class PreviewFragment : Fragment(), ScreenInfoListener {
         target.setOnDragListener { _, event ->
             handler.onDrag(event)
         }
-    }
-}*/
+    }*/
+}
