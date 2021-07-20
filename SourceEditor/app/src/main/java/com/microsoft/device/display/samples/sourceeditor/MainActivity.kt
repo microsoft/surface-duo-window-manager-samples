@@ -160,6 +160,21 @@ class MainActivity : AppCompatActivity() {
         bottomFragment.setPadding(0, hingeHeight, 0, 0)
     }
 
+    /**
+     * Set the bounding rectangle for a configuration with no hinge (single screen)
+     */
+    private fun setBoundsNoHinge() {
+        val boundingRect: View = findViewById(R.id.bounding_rect)
+        val params : ViewGroup.LayoutParams = boundingRect.layoutParams
+        // fill parent
+        params.height = -1
+        params.width = -1
+        boundingRect.layoutParams = params
+
+        val guide: ReactiveGuide = findViewById(R.id.horiz_guide)
+        guide.setGuidelineEnd(0)
+    }
+
     // Jetpack WM callback
     inner class WMCallback : Consumer<WindowLayoutInfo> {
         override fun accept(newLayoutInfo: WindowLayoutInfo?) {
@@ -170,19 +185,33 @@ class MainActivity : AppCompatActivity() {
                 for (displayFeature in it.displayFeatures) {
                     val foldingFeature = displayFeature as? FoldingFeature
                     if (foldingFeature != null) {
-                        isDualScreen = true
+                        if (isDeviceSurfaceDuo() || foldingFeature.state == FoldingFeature.State.HALF_OPENED) {
+                            isDualScreen = true
 
-                        val hingeBounds = foldingFeature.bounds
+                            val hingeBounds = foldingFeature.bounds
 
-                        if (foldingFeature.orientation.equals(FoldingFeature.Orientation.VERTICAL)) {
-                            setBoundsVerticalHinge(hingeBounds)
-                        } else {
-                            setBoundsHorizontalHinge(hingeBounds)
+                            if (foldingFeature.orientation.equals(FoldingFeature.Orientation.VERTICAL)) {
+                                setBoundsVerticalHinge(hingeBounds)
+                            } else {
+                                setBoundsHorizontalHinge(hingeBounds)
+                            }
                         }
                     }
+                }
+                if (!isDualScreen) {
+                    setBoundsNoHinge()
                 }
                 dualScreenVM.setIsDualScreen(isDualScreen)
             }
         }
+    }
+
+    /**
+     * HACK just to help with testing on Surface Duo AND foldable emulators until WM is stable
+     */
+    fun isDeviceSurfaceDuo(): Boolean {
+        val surfaceDuoSpecificFeature = "com.microsoft.device.display.displaymask"
+        val pm = this@MainActivity.packageManager
+        return pm.hasSystemFeature(surfaceDuoSpecificFeature)
     }
 }
