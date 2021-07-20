@@ -15,42 +15,45 @@
     android:id="@+id/sliding_pane_layout"
     tools:context=".MainActivity">
 
-    <!-- first child -->
+    <!-- secondary child -->
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/code_fragment_container"
-        android:name="com.microsoft.device.display.samples.sourceeditor.CodeFragment"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintRight_toLeftOf="@id/vertical_fold"
-        />
-
-    <androidx.constraintlayout.widget.ReactiveGuide
-        android:id="@+id/vertical_fold"
-        app:reactiveGuide_valueId="@id/vertical_fold"
-        app:reactiveGuide_applyToAllConstraintSets="true"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5"
-        android:layout_height="wrap_content"
-        android:layout_width="wrap_content" />
-
-    <View
-        android:id="@+id/vertical_background"
+        android:id="@+id/secondary_fragment_container"
+        android:name="com.microsoft.device.display.samples.sourceeditor.PreviewFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        android:background="@color/cardview_dark_background"
+        app:layout_constraintLeft_toLeftOf="@id/bounding_rect"
+        app:layout_constraintTop_toTopOf="@id/bounding_rect"
+        app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/vertical_fold"
-        app:layout_constraintTop_toTopOf="parent" />
+        />
 
-    <!-- second child -->
+    <!-- top child -->
     <androidx.fragment.app.FragmentContainerView
-        android:id="@+id/preview_fragment_container"
-        android:name="com.microsoft.device.display.samples.sourceeditor.PreviewFragment"
-        android:layout_width="wrap_content"
+        android:id="@+id/primary_fragment_container"
+        android:name="com.microsoft.device.display.samples.sourceeditor.CodeFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="@id/bounding_rect"
+        app:layout_constraintBottom_toBottomOf="@id/bounding_rect"
+        />
+
+    <View
+        android:id="@+id/bounding_rect"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_constraintLeft_toRightOf="@+id/vertical_fold"/>
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/horiz_guide"/>
+
+    <androidx.constraintlayout.widget.ReactiveGuide
+        android:id="@+id/horiz_guide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

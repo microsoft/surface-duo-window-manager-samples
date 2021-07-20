@@ -8,17 +8,21 @@ package com.microsoft.device.display.samples.sourceeditor
 
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.View
+import android.view.ViewGroup
 import androidx.window.WindowManager
 import android.widget.ImageView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ReactiveGuide
 import androidx.core.util.Consumer
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.window.FoldingFeature
 import androidx.window.WindowLayoutInfo
@@ -35,7 +39,6 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var fileBtn: ImageView
     private lateinit var saveBtn: ImageView
-    private lateinit var verticalFold: ReactiveGuide
 
     private lateinit var fileHandler: FileHandler
     private lateinit var webVM: WebViewModel
@@ -69,9 +72,6 @@ class MainActivity : AppCompatActivity() {
         saveBtn.setOnClickListener {
             fileHandler.createFile(Uri.EMPTY)
         }
-
-        verticalFold = findViewById(R.id.vertical_fold)
-        verticalFold.setGuidelinePercent(1.0f)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
@@ -101,6 +101,65 @@ class MainActivity : AppCompatActivity() {
         windowManager.unregisterLayoutChangeCallback(wmCallback)
     }
 
+    /**
+     * Calculate total height taken up by upper toolbars
+     * Add measurements here if additional status/toolbars are used
+     */
+    private fun upperToolbarSpacing() : Int {
+        val toolbar: Toolbar = findViewById(R.id.list_toolbar)
+        return toolbar.height
+    }
+
+    /**
+     * Calculate the center offset between the guideline and the bounding box
+     */
+    private fun boundingOffset(height: Int) : Int {
+        return height / 2
+    }
+
+    /**
+     * Set the bounding rectangle for a configuration with a vertical hinge
+     */
+    private fun setBoundsVerticalHinge(hingeBounds: Rect) {
+        val hingeWidth = hingeBounds.right - hingeBounds.left
+
+        val boundingRect: View = findViewById(R.id.bounding_rect)
+        val params : ViewGroup.LayoutParams = boundingRect.layoutParams
+        params.width = hingeWidth
+        boundingRect.layoutParams = params
+
+        // left fragment is aligned with the right side of the hinge and vice-versa
+        // add padding to ensure fragments do not overlap the hinge
+        val leftFragment: FragmentContainerView = findViewById(R.id.primary_fragment_container)
+        leftFragment.setPadding(0, 0, hingeWidth, 0)
+
+        val rightFragment: FragmentContainerView = findViewById(R.id.secondary_fragment_container)
+        rightFragment.setPadding(hingeWidth, 0, 0, 0)
+    }
+
+    /**
+     * Set the bounding rectangle for a configuration with a horizontal hinge
+     */
+    private fun setBoundsHorizontalHinge(hingeBounds: Rect) {
+        val hingeHeight = hingeBounds.bottom - hingeBounds.top
+
+        val boundingRect: View = findViewById(R.id.bounding_rect)
+        val params : ViewGroup.LayoutParams = boundingRect.layoutParams
+        params.height = hingeHeight
+        boundingRect.layoutParams = params
+
+        val guide: ReactiveGuide = findViewById(R.id.horiz_guide)
+        guide.setGuidelineBegin(hingeBounds.top + boundingOffset(hingeHeight) - upperToolbarSpacing())
+
+        // top fragment is aligned with the bottom side of the hinge and vice-versa
+        // add padding to ensure fragments do not overlap the hinge
+        val topFragment: FragmentContainerView = findViewById(R.id.primary_fragment_container)
+        topFragment.setPadding(0, 0, 0, hingeHeight)
+
+        val bottomFragment: FragmentContainerView = findViewById(R.id.secondary_fragment_container)
+        bottomFragment.setPadding(0, hingeHeight, 0, 0)
+    }
+
     // Jetpack WM callback
     inner class WMCallback : Consumer<WindowLayoutInfo> {
         override fun accept(newLayoutInfo: WindowLayoutInfo?) {
@@ -112,8 +171,12 @@ class MainActivity : AppCompatActivity() {
                     if (foldingFeature != null) {
                         isDualScreen = true
 
-                        if (foldingFeature.orientation.equals(FoldingFeature.Orientation.HORIZONTAL)) {
-                            verticalFold.setGuidelinePercent(0.4f)
+                        val hingeBounds = foldingFeature.bounds
+
+                        if (foldingFeature.orientation.equals(FoldingFeature.Orientation.VERTICAL)) {
+                            setBoundsVerticalHinge(hingeBounds)
+                        } else {
+                            setBoundsHorizontalHinge(hingeBounds)
                         }
                     }
                 }
