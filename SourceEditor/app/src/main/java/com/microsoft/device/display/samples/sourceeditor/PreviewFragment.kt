@@ -21,6 +21,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.microsoft.device.display.samples.sourceeditor.includes.DragHandler
+import com.microsoft.device.display.samples.sourceeditor.viewmodel.DualScreenViewModel
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.ScrollViewModel
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel
 
@@ -32,6 +33,7 @@ class PreviewFragment : Fragment() {
     private lateinit var editorBtn: Button
     private lateinit var webView: WebView
 
+    private lateinit var dualScreenVM: DualScreenViewModel
     private lateinit var scrollVM: ScrollViewModel
     private lateinit var webVM: WebViewModel
 
@@ -53,22 +55,21 @@ class PreviewFragment : Fragment() {
 
         activity?.let {
             // initialize ViewModels (find existing or create a new one)
+            dualScreenVM = ViewModelProvider(requireActivity()).get(DualScreenViewModel::class.java)
             scrollVM = ViewModelProvider(requireActivity()).get(ScrollViewModel::class.java)
             webVM = ViewModelProvider(requireActivity()).get(WebViewModel::class.java)
 
             val str: String = (webVM.getText().value) ?: ""
             webView.loadData(str, Defines.HTML_TYPE, Defines.ENCODING)
+
+            val isDualScreen = dualScreenVM.getIsDualScreen().value ?: false
+            handleSpannedModeSelection(view, webView, isDualScreen)
+            dualScreenVM.getIsDualScreen().observe(requireActivity(), { bool ->
+                handleSpannedModeSelection(view, webView, bool)
+            })
         }
 
         return view
-    }
-
-    /*override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
     }
 
     // mirror scrolling logic
@@ -86,7 +87,7 @@ class PreviewFragment : Fragment() {
     }
 
     // single screen vs. dual screen logic
-    private fun handleSpannedModeSelection(view: View, webView: WebView, screenInfo: ScreenInfo) {
+    private fun handleSpannedModeSelection(view: View, webView: WebView, isDualMode: Boolean) {
         activity?.let { activity ->
             editorBtn = view.findViewById(R.id.btn_switch_to_editor)
             buttonToolbar = view.findViewById(R.id.button_toolbar)
@@ -96,8 +97,14 @@ class PreviewFragment : Fragment() {
                 webView.loadData(str, Defines.HTML_TYPE, Defines.ENCODING)
             })
 
-            if (screenInfo.isDualMode()) {
-                initializeDualScreen(view)
+            if (isDualMode) {
+                val container_id = (view.parent as ViewGroup).id
+                if (container_id == R.id.primary_fragment_container) {
+                    // Ensure a code fragment is always in the primary fragment slot when spanned
+                    startCodeFragment()
+                } else {
+                    initializeDualScreen(view)
+                }
             } else {
                 initializeSingleScreen()
             }
@@ -139,9 +146,9 @@ class PreviewFragment : Fragment() {
     private fun startCodeFragment() {
         parentFragmentManager.beginTransaction()
             .replace(
-                R.id.first_container_id,
+                R.id.primary_fragment_container,
                 CodeFragment(),
-                null
+                "CodeFragment"
             ).addToBackStack("CodeFragment")
             .commit()
     }
@@ -183,5 +190,5 @@ class PreviewFragment : Fragment() {
         target.setOnDragListener { _, event ->
             handler.onDrag(event)
         }
-    }*/
+    }
 }

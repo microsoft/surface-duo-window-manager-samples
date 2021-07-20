@@ -49,7 +49,6 @@ class CodeFragment : Fragment() {
     private var scrollRange: Int = Defines.DEFAULT_RANGE
     private var rangeFound: Boolean = false
 
-    private var isDualScreen: Boolean = false
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -67,13 +66,11 @@ class CodeFragment : Fragment() {
             textField = view.findViewById(R.id.textinput_code)
             scrollView = view.findViewById(R.id.scrollview_code)
 
+            val isDualScreen = dualScreenVM.getIsDualScreen().value ?: false
+            handleSpannedModeSelection(view, isDualScreen)
             dualScreenVM.getIsDualScreen().observe(requireActivity(), { bool ->
-                if (isDualScreen != bool) {
-                    isDualScreen = bool
-                    handleSpannedModeSelection(requireView(), isDualScreen)
-                }
+                handleSpannedModeSelection(view, bool)
             })
-            isDualScreen = dualScreenVM.getIsDualScreen().value ?: false
 
             if (webVM.getText().value == null) {
                 webVM.setText(readFile(Defines.DEFAULT_SOURCE_PATH, context))
@@ -88,18 +85,9 @@ class CodeFragment : Fragment() {
             textField.setText(webVM.getText().value)
 
             setOnChangeListenerForTextInput(textField)
-            handleSpannedModeSelection(view, isDualScreen)
         }
 
         return view
-    }
-
-    override fun onResume() {
-        super.onResume()
-    }
-
-    override fun onPause() {
-        super.onPause()
     }
 
     // read from a base file in the assets folder
@@ -171,13 +159,13 @@ class CodeFragment : Fragment() {
 
     // method that triggers transition to preview fragment
     private fun startPreviewFragment() {
-        /*parentFragmentManager.beginTransaction()
+        parentFragmentManager.beginTransaction()
             .replace(
-                R.id.first_container_id,
+                R.id.primary_fragment_container,
                 PreviewFragment(),
-                null
+                "PreviewFragment"
             ).addToBackStack("PreviewFragment")
-            .commit()*/
+            .commit()
     }
 
     // listener for changes to text in code editor

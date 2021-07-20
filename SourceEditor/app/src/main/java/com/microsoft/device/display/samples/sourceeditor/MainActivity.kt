@@ -166,6 +166,7 @@ class MainActivity : AppCompatActivity() {
             // Add views that represent display features
             newLayoutInfo?.let {
                 var isDualScreen = false
+
                 for (displayFeature in it.displayFeatures) {
                     val foldingFeature = displayFeature as? FoldingFeature
                     if (foldingFeature != null) {
