@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+~ Copyright (c) Microsoft Corporation. All rights reserved.
+~ Licensed under the MIT License.
+-->
+<resources>
+    <string name="app_name">Photo Editor</string>
+    <string name="image_save_error">Bild kann nicht gespeichert werden</string>
+    <string name="bitmap_error">Bitmap konnte nicht komprimiert werden</string>
+    <string name="null_stream">Output stream ist null</string>
+    <string name="null_uri">Uri ist null</string>
+    <string name="pictures_folder">Bilder</string>
+    <string name="photo_description">Hergestellt mit Surface Duo Photo Editor Beispiel auf</string>
+    <string name="photo_name">Das Bild ist bearbeitet</string>
+    <string name="image">Das Bild wird gerade bearbeitet</string>
+    <string-array name="controls_array">
+        <item>Sättigung</item>
+        <item>Helligkeit</item>
+        <item>Wärme</item>
+    </string-array>
+    <string name="save_button">Das Bild in Fotogalerie speichern</string>
+    <string name="rotate_right">Das Bild um 90 Grad im Uhrzeigersinn drehen</string>
+    <string name="rotate_left">Das Bild um 90 Grad gegen den Uhrzeigersinn drehen</string>
+    <string name="warmth">Wärme</string>
+    <string name="save">Speichern</string>
+    <string name="saturation">Sättigung</string>
+    <string name="brightness">Helligkeit</string>
+    <string name="rotate">Drehen</string>
+</resources>
