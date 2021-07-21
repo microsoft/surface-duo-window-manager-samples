@@ -26,7 +26,6 @@ ext {
     //AndroidX versions
     appCompatVersion = "1.2.0"
     constraintLayoutVersion = "2.1.0-beta02"
-    slidingPaneLayoutVersion = "1.2.0-alpha03"
     lifecycleExtensionsVersion = "2.2.0"
     recyclerViewVersion = "1.1.0"
     cardViewVersion = "1.0.0"
@@ -38,7 +37,6 @@ ext {
     androidxDependencies = [
             appCompat       : "androidx.appcompat:appcompat:$appCompatVersion",
             constraintLayout: "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion",
-            slidingPaneLayout: "androidx.slidingpanelayout:slidingpanelayout:$slidingPaneLayoutVersion",
             lifecycle       : "androidx.lifecycle:lifecycle-extensions:$lifecycleExtensionsVersion",
             recyclerView    : "androidx.recyclerview:recyclerview:$recyclerViewVersion",
             cardView        : "androidx.cardview:cardview:$cardViewVersion",

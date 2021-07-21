@@ -34,7 +34,7 @@ import java.util.concurrent.Executor
 class MainActivity : AppCompatActivity() {
     private lateinit var windowManager: WindowManager
     private val mainHandler = Handler(Looper.getMainLooper())
-    private val mainThreadExecutor = Executor { r: Runnable -> mainHandler.post(r)}
+    private val mainThreadExecutor = Executor { r: Runnable -> mainHandler.post(r) }
     private val wmCallback = WMCallback()
 
     private lateinit var fileBtn: ImageView
@@ -46,15 +46,15 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(R.layout.activity_main)
 
-        windowManager = WindowManager(this)
-
+        // App based setup
         webVM = ViewModelProvider(this).get(WebViewModel::class.java)
-        dualScreenVM = ViewModelProvider(this).get(DualScreenViewModel::class.java)
         fileHandler = FileHandler(this, webVM, contentResolver)
 
+        // Layout based setup
+        windowManager = WindowManager(this)
+        dualScreenVM = ViewModelProvider(this).get(DualScreenViewModel::class.java)
         dualScreenVM.setIsDualScreen(false) // assume single screen on startup
 
         // display action toolbar
@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
      * Calculate total height taken up by upper toolbars
      * Add measurements here if additional status/toolbars are used
      */
-    private fun upperToolbarSpacing() : Int {
+    private fun upperToolbarSpacing(): Int {
         val toolbar: Toolbar = findViewById(R.id.list_toolbar)
         return toolbar.height
     }
@@ -113,7 +113,7 @@ class MainActivity : AppCompatActivity() {
     /**
      * Calculate the center offset between the guideline and the bounding box
      */
-    private fun boundingOffset(height: Int) : Int {
+    private fun boundingOffset(height: Int): Int {
         return height / 2
     }
 
@@ -124,7 +124,7 @@ class MainActivity : AppCompatActivity() {
         val hingeWidth = hingeBounds.right - hingeBounds.left
 
         val boundingRect: View = findViewById(R.id.bounding_rect)
-        val params : ViewGroup.LayoutParams = boundingRect.layoutParams
+        val params: ViewGroup.LayoutParams = boundingRect.layoutParams
         params.width = hingeWidth
         boundingRect.layoutParams = params
 
@@ -144,7 +144,7 @@ class MainActivity : AppCompatActivity() {
         val hingeHeight = hingeBounds.bottom - hingeBounds.top
 
         val boundingRect: View = findViewById(R.id.bounding_rect)
-        val params : ViewGroup.LayoutParams = boundingRect.layoutParams
+        val params: ViewGroup.LayoutParams = boundingRect.layoutParams
         params.height = hingeHeight
         boundingRect.layoutParams = params
 
@@ -165,7 +165,8 @@ class MainActivity : AppCompatActivity() {
      */
     private fun setBoundsNoHinge() {
         val boundingRect: View = findViewById(R.id.bounding_rect)
-        val params : ViewGroup.LayoutParams = boundingRect.layoutParams
+        val params: ViewGroup.LayoutParams = boundingRect.layoutParams
+
         // fill parent
         params.height = -1
         params.width = -1
@@ -175,22 +176,25 @@ class MainActivity : AppCompatActivity() {
         guide.setGuidelineEnd(0)
     }
 
-    // Jetpack WM callback
+    /**
+     * Jetpack Window Manager callback
+     * This callback gets triggered whenever there is a layout change (rotated, spanned, etc)
+     */
     inner class WMCallback : Consumer<WindowLayoutInfo> {
         override fun accept(newLayoutInfo: WindowLayoutInfo?) {
-            // Add views that represent display features
             newLayoutInfo?.let {
                 var isDualScreen = false
 
+                // Check display features for an active hinge/fold
                 for (displayFeature in it.displayFeatures) {
                     val foldingFeature = displayFeature as? FoldingFeature
                     if (foldingFeature != null) {
+                        // hinge found, check to see if it should be split screen
                         if (isDeviceSurfaceDuo() || foldingFeature.state == FoldingFeature.State.HALF_OPENED) {
+                            val hingeBounds = foldingFeature.bounds
                             isDualScreen = true
 
-                            val hingeBounds = foldingFeature.bounds
-
-                            if (foldingFeature.orientation.equals(FoldingFeature.Orientation.VERTICAL)) {
+                            if (foldingFeature.orientation == FoldingFeature.Orientation.VERTICAL) {
                                 setBoundsVerticalHinge(hingeBounds)
                             } else {
                                 setBoundsHorizontalHinge(hingeBounds)

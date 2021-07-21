@@ -49,7 +49,6 @@ class CodeFragment : Fragment() {
     private var scrollRange: Int = Defines.DEFAULT_RANGE
     private var rangeFound: Boolean = false
 
-
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
