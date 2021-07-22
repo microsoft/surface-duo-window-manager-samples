@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">eBook Reader Sample</string>
-    <string name="attribution_string">This eBook is for the use of anyone anywhere in the United States and most other parts of the world at no cost and with almost no restrictions whatsoever. You may copy it, give it away or re-use it under the terms of the Project Gutenberg License included with this eBook or online at www.gutenberg.org. If you are not located in the United States, you will have to check the laws of the country where you are located before using this eBook. \n\n Find the full Project Gutenberg license in the last chapter. Original formats of this text by Project Gutenberg can be found in the app/src/main/assets/ folder, as well as https://www.gutenberg.org/</string>
+    <string name="attribution_string">No attributions yet</string>
     <string name="attribution_label">Attribution</string>
     <string name="chapter_start">Chapter Start</string>
     <string name="chapter_end">Chapter End</string>
