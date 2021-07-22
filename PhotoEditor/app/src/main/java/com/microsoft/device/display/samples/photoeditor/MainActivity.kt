@@ -32,16 +32,13 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.drawToBitmap
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
-import com.microsoft.device.dualscreen.ScreenInfo
-import com.microsoft.device.dualscreen.ScreenInfoListener
-import com.microsoft.device.dualscreen.ScreenManagerProvider
 import kotlinx.android.synthetic.main.buttons.*
 import kotlinx.android.synthetic.main.picture_dual_screen.*
 import kotlinx.android.synthetic.main.single_screen_sliders.*
 import java.io.IOException
 import java.time.LocalDateTime
 
-class MainActivity : AppCompatActivity(), ScreenInfoListener {
+class MainActivity : AppCompatActivity() {
 
     companion object {
         // Request code for image select activity
@@ -51,10 +48,10 @@ class MainActivity : AppCompatActivity(), ScreenInfoListener {
         private const val DEFAULT_PROGRESS = 50
     }
 
-    private val screenLayout = MutableLiveData<ScreenInfo>()
+    //private val screenLayout = MutableLiveData<ScreenInfo>()
     private val viewModel: PhotoEditorViewModel by viewModels()
 
-    private fun registerRunnable(runnable: Runnable) {
+    /*private fun registerRunnable(runnable: Runnable) {
         val obs = Observer<ScreenInfo> {
             runnable.run()
         }
@@ -73,7 +70,7 @@ class MainActivity : AppCompatActivity(), ScreenInfoListener {
     override fun onPause() {
         super.onPause()
         ScreenManagerProvider.getScreenManager().removeScreenInfoListener(this)
-    }
+    }*/
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -91,7 +88,7 @@ class MainActivity : AppCompatActivity(), ScreenInfoListener {
             image.saturation = viewModel.saturation
             image.warmth = viewModel.warmth
         }
-        registerRunnable(setupLayoutRunnable)
+        //registerRunnable(setupLayoutRunnable)
     }
 
     /**
@@ -108,7 +105,7 @@ class MainActivity : AppCompatActivity(), ScreenInfoListener {
         outState.putInt("selectedControl", viewModel.selectedControl)
 
         // Actual edited image - saved in ViewModel
-        viewModel.updateImage(image.drawable)
+        //viewModel.updateImage(image.drawable)
 
         super.onSaveInstanceState(outState)
     }
@@ -131,7 +128,7 @@ class MainActivity : AppCompatActivity(), ScreenInfoListener {
             image.setImageBitmap(BitmapFactory.decodeStream(contentResolver.openInputStream(uri)))
 
             val resetControlsRunnable = Runnable { resetControls(image) }
-            registerRunnable(resetControlsRunnable)
+            //registerRunnable(resetControlsRunnable)
         }
     }
 
@@ -145,7 +142,7 @@ class MainActivity : AppCompatActivity(), ScreenInfoListener {
         brightness.progress = DEFAULT_PROGRESS
         warmth.progress = DEFAULT_PROGRESS
 
-        resetSeekBarVisibility()
+        //resetSeekBarVisibility()
 
         // Reset image filters
         viewModel.resetValues()
@@ -154,7 +151,7 @@ class MainActivity : AppCompatActivity(), ScreenInfoListener {
         image.warmth = viewModel.warmth
     }
 
-    private fun resetSeekBarVisibility() {
+    /*private fun resetSeekBarVisibility() {
         // Reset dropdown and SeekBar visibility if single-screen view
         screenLayout.value?.let { screenInfo ->
             if (!screenInfo.isDualMode()) {
@@ -164,7 +161,7 @@ class MainActivity : AppCompatActivity(), ScreenInfoListener {
                 controls.setSelection(0)
             }
         }
-    }
+    }*/
 
     private fun setupLayout() {
         // Set up click handling for importing images from photo gallery
@@ -202,17 +199,17 @@ class MainActivity : AppCompatActivity(), ScreenInfoListener {
         setUpRotate(image)
         setUpSave(image)
 
-        prepareToggle()
+        //prepareToggle()
     }
 
-    private fun prepareToggle() {
+    /*private fun prepareToggle() {
         screenLayout.value?.let { screenInfo ->
             // Set up single screen control dropdown
             if (!screenInfo.isDualMode()) {
                 setUpToggle(viewModel.selectedControl)
             }
         }
-    }
+    }*/
 
     /**
      * Revert any appearance changes related to drag/drop

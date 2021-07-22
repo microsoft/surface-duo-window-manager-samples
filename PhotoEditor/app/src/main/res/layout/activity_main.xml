@@ -3,12 +3,80 @@
   ~ Licensed under the MIT License.
   -->
 
-<com.microsoft.device.dualscreen.layouts.SurfaceDuoLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<androidx.slidingpanelayout.widget.SlidingPaneLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/sliding_pane_layout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    app:dual_screen_end_layout_id="@layout/tools_dual_screen"
-    app:dual_screen_start_layout_id="@layout/picture_dual_screen"
-    app:single_screen_layout_id="@layout/single_screen_layout"
-    app:tools_hinge_color="white"
-    app:tools_screen_mode="dual_screen" />
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/side_pane_content"
+        android:layout_width="400dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@android:color/holo_orange_dark"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="Side Pane"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/side_open"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:backgroundTint="@android:color/white"
+            android:text="OPEN CONTENT PANE"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/sliding_text"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="Slideable?"
+            android:textSize="20sp"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/side_pane_content2"
+        android:layout_width="400dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="start"
+        android:background="@android:color/holo_green_dark"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="Side Pane"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/side_open2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:backgroundTint="@android:color/white"
+            android:text="OPEN CONTENT PANE"
+            android:textColor="@android:color/black" />
+
+        <TextView
+            android:id="@+id/sliding_text2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:text="Slideable?"
+            android:textSize="20sp"
+            />
+    </LinearLayout>
+
+</androidx.slidingpanelayout.widget.SlidingPaneLayout>
