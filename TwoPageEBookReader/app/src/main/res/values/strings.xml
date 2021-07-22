@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">eBook Reader Sample</string>
+    <string name="attribution_string">No attributions yet</string>
+    <string name="attribution_label">Attribution</string>
+    <string name="chapter_start">Chapter Start</string>
+    <string name="chapter_end">Chapter End</string>
+
+</resources>
