@@ -53,20 +53,6 @@ ext {
             material: "com.google.android.material:material:$materialVersion"
     ]
 
-    //Microsoft dependencies version
-    screenManagerWindowManagerVersion = config.duoSdkVersion
-    screenManagerDisplayMaskVersion = config.duoSdkVersion
-    fragmentsHandlerVersion = config.duoSdkVersion
-    layoutsVersion = config.duoSdkVersion
-
-    microsoftDependencies = [
-            screenManagerWindowManager: "com.microsoft.device.dualscreen:screenmanager-windowmanager:$screenManagerWindowManagerVersion",
-            screenManagerDisplayMask  : "com.microsoft.device.dualscreen:screenmanager-displaymask:$screenManagerDisplayMaskVersion",
-            fragmentsHandler          : "com.microsoft.device.dualscreen:fragmentshandler:$fragmentsHandlerVersion",
-            layouts                   : "com.microsoft.device.dualscreen:layouts:$layoutsVersion",
-    ]
-    microsoftDependencies["screenManager"] = microsoftDependencies.screenManagerWindowManager
-
     //Test dependencies version
     junitVersion = "4.13"
 
