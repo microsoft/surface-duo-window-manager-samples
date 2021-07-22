@@ -1,0 +1,17 @@
+<resources>
+    <string name="app_name">TwoDo</string>
+    <string name="welcome_msg">Welcome to TwoDo!</string>
+    <string name="done_button">DONE</string>
+    <string name="task_list_title">Task List</string>
+    <string name="no_task_selected">Select or create a task</string>
+    <string name="new_task_title">New Task</string>
+    <string name="edit_task_title">Edit Task</string>
+    <string name="name_input_label">Name:</string>
+    <string name="name_input_hint">Task Name</string>
+    <string name="notes_input_label">Notes:</string>
+    <string name="notes_input_hint">Task Notes</string>
+    <string name="complete_label">Completed</string>
+    <string name="delete_button">DELETE</string>
+    <string name="save_button">SAVE</string>
+    <string name="invalid_entry">You must enter a task name</string>
+</resources>

@@ -1,0 +1,105 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Microsoft Corporation. All rights reserved.
+  ~  Licensed under the MIT License.
+  -->
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:layoutDescription="@xml/activity_main_scene"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/welcome_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/welcome_msg"
+        android:textSize="20sp"
+        app:layout_constraintBottom_toTopOf="@id/horiz_fold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/vert_fold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constrainedWidth="true"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/done_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/done_button"
+        android:onClick="goToTwoDoActivity"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/vert_fold"
+        app:layout_constraintBottom_toTopOf="@id/horiz_fold"/>
+
+
+    <!-- Vertical fold -->
+
+    <androidx.constraintlayout.widget.ReactiveGuide
+        android:id="@+id/vert_fold"
+        app:reactiveGuide_valueId="@id/vert_fold"
+        app:reactiveGuide_animateChange="true"
+        app:reactiveGuide_applyToAllConstraintSets="true"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="0dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+
+    <View
+        android:id="@+id/vert_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="?colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@id/vert_fold"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/logo_img"
+        android:layout_width="@id/vert_background"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_splash_icon"
+        app:layout_constraintStart_toStartOf="@id/vert_background"
+        app:layout_constraintEnd_toEndOf="@id/vert_background"
+        app:layout_constraintTop_toTopOf="@id/vert_background"
+        app:layout_constraintBottom_toBottomOf="@id/vert_background" />
+
+
+    <!-- Horizontal Fold -->
+
+    <androidx.constraintlayout.widget.ReactiveGuide
+        android:id="@+id/horiz_fold"
+        app:reactiveGuide_valueId="@id/horiz_fold"
+        app:reactiveGuide_animateChange="true"
+        app:reactiveGuide_applyToAllConstraintSets="true"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="0dp"
+        android:layout_height="wrap_content"
+        android:layout_width="wrap_content" />
+
+    <View
+        android:id="@+id/horiz_background"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:background="?colorPrimary"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/horiz_fold" />
+
+    <ImageView
+        android:id="@+id/horiz_logo_img"
+        android:layout_width="wrap_content"
+        android:layout_height="@id/horiz_background"
+        android:src="@drawable/ic_splash_icon"
+        app:layout_constraintStart_toStartOf="@id/horiz_background"
+        app:layout_constraintEnd_toEndOf="@id/horiz_background"
+        app:layout_constraintTop_toTopOf="@id/horiz_background"
+        app:layout_constraintBottom_toBottomOf="@id/horiz_background" />
+
+
+
+</androidx.constraintlayout.motion.widget.MotionLayout>
