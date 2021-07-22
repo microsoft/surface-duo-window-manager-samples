@@ -32,10 +32,10 @@ class DragHandler(activity: Activity, webVM: WebViewModel, contentResolver: Cont
             }
 
             DragEvent.ACTION_DRAG_ENTERED, DragEvent.ACTION_DRAG_LOCATION,
-            DragEvent.ACTION_DRAG_ENDED, DragEvent.ACTION_DRAG_EXITED ->
+            DragEvent.ACTION_DRAG_ENDED, DragEvent.ACTION_DRAG_EXITED -> {
                 // Ignore events
                 return true
-
+            }
             else -> false
         }
     }

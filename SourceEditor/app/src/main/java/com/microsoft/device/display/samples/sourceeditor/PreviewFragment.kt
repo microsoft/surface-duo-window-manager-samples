@@ -15,7 +15,6 @@ import android.view.ViewGroup
 import android.webkit.WebChromeClient
 import android.webkit.WebView
 import android.widget.Button
-import android.widget.LinearLayout
 import android.widget.ScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -27,10 +26,10 @@ import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel
 
 /* Fragment that defines functionality for the source code previewer */
 class PreviewFragment : Fragment() {
-    private lateinit var buttonToolbar: LinearLayout
     private lateinit var scrollView: ScrollView
 
     private lateinit var editorBtn: Button
+    private lateinit var previewBtn: Button
     private lateinit var webView: WebView
 
     private lateinit var dualScreenVM: DualScreenViewModel
@@ -90,7 +89,7 @@ class PreviewFragment : Fragment() {
     private fun handleSpannedModeSelection(view: View, webView: WebView, isDualMode: Boolean) {
         activity?.let { activity ->
             editorBtn = view.findViewById(R.id.btn_switch_to_editor)
-            buttonToolbar = view.findViewById(R.id.button_toolbar)
+            previewBtn = view.findViewById(R.id.btn_switch_to_preview)
 
             // listen for changes made to the editor
             webVM.getText().observe(requireActivity(), Observer { str ->
@@ -113,7 +112,8 @@ class PreviewFragment : Fragment() {
 
     // spanned selection helper
     private fun initializeSingleScreen() {
-        buttonToolbar.visibility = View.VISIBLE
+        editorBtn.visibility = View.VISIBLE
+        previewBtn.visibility = View.VISIBLE
         initializeDragListener()
 
         editorBtn.setOnClickListener {
@@ -127,7 +127,8 @@ class PreviewFragment : Fragment() {
         scrollRange = Defines.DEFAULT_RANGE
         rangeFound = false
 
-        buttonToolbar.visibility = View.GONE
+        editorBtn.visibility = View.GONE
+        previewBtn.visibility = View.GONE
 
         // set event and data listeners
         scrollView = view.findViewById(R.id.scrollview_preview)

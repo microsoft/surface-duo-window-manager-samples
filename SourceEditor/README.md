@@ -19,7 +19,7 @@ To learn how to load apps on the Surface Duo emulator, see the [documentation](h
 
 ## Features
 
-In contrast to the original SourceEditor [sample](https://github.com/microsoft/surface-duo-app-samples/tree/main/SourceEditor) which utilizes Microsoft's [SurfaceDuoLayout](https://docs.microsoft.com/dual-screen/android/api-reference/dualscreen-library/layouts/surfaceduo-layout) to handle dual screen devices, this project makes use of Android's [Window Manager](https://developer.android.com/jetpack/androidx/releases/window) API. This sample uses Window Manager to handle events that require consideration of a hinge or fold in the device's screen.
+In contrast to the original SourceEditor [sample](https://github.com/microsoft/surface-duo-app-samples/tree/main/SourceEditor) which utilizes Microsoft's [SurfaceDuoLayout](https://docs.microsoft.com/dual-screen/android/api-reference/dualscreen-library/layouts/surfaceduo-layout) to handle dual screen devices, this project makes use of Jetpack [Window Manager](https://developer.android.com/jetpack/androidx/releases/window) API. This sample uses Window Manager to handle events that require consideration of a hinge or fold in the device's screen.
 
 This project also uses [Fragments](https://developer.android.com/guide/components/fragments), one to display a code editing window and another to render and display formatted code through a [WebView](https://developer.android.com/reference/android/webkit/WebView). The app starts in single screen mode, but can be spanned to enable dual screen mode. See the Getting Started section above for more information about spanning.
 

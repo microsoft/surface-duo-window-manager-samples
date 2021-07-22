@@ -12,6 +12,7 @@ import android.content.ContentResolver
 import android.content.Intent
 import android.net.Uri
 import android.provider.DocumentsContract
+import android.util.Log
 import android.view.DragEvent
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.startActivityForResult
@@ -93,9 +94,9 @@ class FileHandler(
                 }
             }
         } catch (e: FileNotFoundException) {
-            e.printStackTrace()
+            Log.e(FileHandler::class.simpleName, e.stackTraceToString())
         } catch (e: IOException) {
-            e.printStackTrace()
+            Log.e(FileHandler::class.simpleName, e.stackTraceToString())
         }
     }
 }
