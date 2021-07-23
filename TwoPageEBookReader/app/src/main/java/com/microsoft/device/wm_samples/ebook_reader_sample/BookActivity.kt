@@ -137,22 +137,24 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
             bookPagerView.isUserInputEnabled = false
             handler.postDelayed(
                 {
-                book.currentChapter = book.currentChapter - 1
-                book.currentPage = book.numPages - 1
-                renderBook()
-                }, 250
+                    book.currentChapter = book.currentChapter - 1
+                    book.currentPage = book.numPages - 1
+                    renderBook()
+                },250
             )
         }
     }
-    
+
     private fun jumpToNextChapter() {
         if (book.currentChapter < book.numChapters - 1) {
             bookPagerView.isUserInputEnabled = false
-            handler.postDelayed({
-                book.currentChapter = book.currentChapter + 1
-                book.currentPage = 0
-                renderBook()
-            }, 250)
+            handler.postDelayed(
+                {
+                    book.currentChapter = book.currentChapter + 1
+                    book.currentPage = 0
+                    renderBook()
+                },250
+            )
         }
     }
 
@@ -215,8 +217,7 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
                     AlertDialog.Builder(this).setTitle("Project Gutenberg")
                         .setMessage(this.resources.getString(R.string.attribution_string))
                         .show()
-                }
-                else if (item.title != null && item.title.contains("Section")) {
+                } else if (item.title != null && item.title.contains("Section")) {
                     book.currentChapter = item.title.substring(8).toInt()
                     book.currentPage = 0
                     renderBook()
@@ -242,7 +243,7 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
     }
 
     // TODO Containers and callbacks for two-page layout information
-    inner class LayoutStateContainer : Consumer<WindowLayoutInfo> {
+    inner class LayoutStateContainer: Consumer<WindowLayoutInfo> {
         var layoutMode = LayoutMode.NORMAL
         var foldRect = Rect()
 

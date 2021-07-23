@@ -17,7 +17,7 @@ class BookPagerAdapter(inBook: Book, inLayoutStateContainer: BookActivity.Layout
     private val layoutStateContainer = inLayoutStateContainer
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PageViewHolder {
-        return when(layoutStateContainer.layoutMode) {
+        return when (layoutStateContainer.layoutMode) {
             BookActivity.LayoutMode.NORMAL -> {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.book_page_layout_normal, parent, false)
                 view.findViewById<TextView>(R.id.caption_view).text = book.chapterTitle
@@ -113,7 +113,7 @@ open class PageViewHolder(val rootView: View, val fontSize: Int) : RecyclerView.
     }
 }
 
-//TODO Extra functionality for view holders in two-page layout
+// TODO Extra functionality for view holders in two-page layout
 class SplitPageViewHolder(view: View, int: Int) : PageViewHolder(view, int) {
     private val linearLayout2 = view.findViewById<LinearLayout>(R.id.linear_layout2)
 
