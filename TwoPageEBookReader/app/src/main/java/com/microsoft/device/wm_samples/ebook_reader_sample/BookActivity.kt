@@ -140,7 +140,8 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
                     book.currentChapter = book.currentChapter - 1
                     book.currentPage = book.numPages - 1
                     renderBook()
-                },250
+                },
+                250
             )
         }
     }
@@ -153,7 +154,8 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
                     book.currentChapter = book.currentChapter + 1
                     book.currentPage = 0
                     renderBook()
-                },250
+                },
+                250
             )
         }
     }
@@ -243,14 +245,14 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
     }
 
     // TODO Containers and callbacks for two-page layout information
-    inner class LayoutStateContainer: Consumer<WindowLayoutInfo> {
+    inner class LayoutStateContainer : Consumer<WindowLayoutInfo> {
         var layoutMode = LayoutMode.NORMAL
         var foldRect = Rect()
 
         override fun accept(newLayoutInfo: WindowLayoutInfo) {
             layoutMode = LayoutMode.NORMAL
             foldRect = Rect()
-            for (displayFeature : DisplayFeature in newLayoutInfo.displayFeatures) {
+            for (displayFeature: DisplayFeature in newLayoutInfo.displayFeatures) {
                 if (displayFeature is FoldingFeature) {
                     foldRect = displayFeature.bounds
                     layoutMode = if (displayFeature.orientation == FoldingFeature.ORIENTATION_HORIZONTAL) {
