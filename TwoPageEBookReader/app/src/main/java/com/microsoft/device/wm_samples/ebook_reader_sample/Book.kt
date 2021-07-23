@@ -28,7 +28,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
     var chapterEndString = activityContext.resources.getString(R.string.chapter_end)
 
     val chapterTitle
-        get() = "(Section ${currentChapter}) ${paragraphStrings[0]}"
+        get() = "(Section $currentChapter) ${paragraphStrings[0]}"
 
     var currentChapter = 0
         set(inChapter) {
@@ -126,8 +126,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
     fun getPageStrings(index: Int): ArrayList<String> {
         return if (index < pageStrings.size && index >= 0) {
             pageStrings[index]
-        }
-        else {
+        } else {
             ArrayList()
         }
     }
@@ -135,7 +134,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
     private fun getCurrentPageHelper(): Int {
         var page = 0
         var remainingParagraphs = currentParagraph
-        while (page < pageStrings.size && pageStrings[page].size <= remainingParagraphs ) {
+        while (page < pageStrings.size && pageStrings[page].size <= remainingParagraphs) {
             remainingParagraphs -= pageStrings[page].size
             page += 1
         }
@@ -160,8 +159,8 @@ class Book(private val filePath: String, private val activityContext: Context) {
         return textView.measuredHeight
     }
 
-    //buildPages() uses the available rects of the current layout to organize the chapter's strings into pages
-    //TODO buildPages() supports multiple pages by cycling through pageRects instead of using only one Rect of constraints
+    // buildPages() uses the available rects of the current layout to organize the chapter's strings into pages
+    // TODO buildPages() supports multiple pages by cycling through pageRects instead of using only one Rect of constraints
     private fun buildPages() {
         if (pageRects.isEmpty()) { return }
 
@@ -183,7 +182,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
                 var measuredHeight2 = measuredHeight
 
                 while (splitIndex > 0 && measuredHeight2 > availableHeight) {
-                    splitIndex = max(0, paragraphString.lastIndexOf(' ',splitIndex - 1))
+                    splitIndex = max(0, paragraphString.lastIndexOf(' ', splitIndex - 1))
                     measuredHeight2 = measureTextHeight(paragraphString.substring(0, splitIndex), pageRects[pageRectIndex].width())
                 }
 
@@ -195,7 +194,6 @@ class Book(private val filePath: String, private val activityContext: Context) {
                 textStrings = ArrayList()
                 pageRectIndex = (pageRectIndex + 1) % pageRects.size
                 availableHeight = pageRects[pageRectIndex].height() - (2 * pagePadding)
-
             } else {
                 availableHeight -= measuredHeight
                 textStrings.add(paragraphString)
@@ -207,7 +205,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
 
     private fun formatGutenbergToHTML(inString: String): String {
         val step1 = inString.replace("\\s+".toRegex(), " ")
-        val step2 = step1.replace("_(?<italics>((?!_).)+)_".toRegex(),"<i>\${italics}</i>")
+        val step2 = step1.replace("_(?<italics>((?!_).)+)_".toRegex(), "<i>\${italics}</i>")
 
         return "\t$step2"
     }

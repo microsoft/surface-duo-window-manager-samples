@@ -23,14 +23,15 @@ class BookPagerAdapter(inBook: Book, inLayoutStateContainer: BookActivity.Layout
                 view.findViewById<TextView>(R.id.caption_view).text = book.chapterTitle
                 PageViewHolder(view, book.fontSize)
             }
-            //TODO Setting view holder to two-page layout
+            // TODO Setting view holder to two-page layout
             BookActivity.LayoutMode.SPLIT_HORIZONTAL -> {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.book_page_layout_split_horizontal, parent, false)
-                view.findViewWithTag<View>("page_container_0").layoutParams = LinearLayout.LayoutParams(book.pageRects[0].width(),
-                    LinearLayout.LayoutParams.MATCH_PARENT)
-                view.findViewWithTag<View>("page_container_1").layoutParams = LinearLayout.LayoutParams(book.pageRects[1].width(),
-                    LinearLayout.LayoutParams.MATCH_PARENT)
-
+                view.findViewWithTag<View>("page_container_0").layoutParams = LinearLayout.LayoutParams(
+                    book.pageRects[0].width(), LinearLayout.LayoutParams.MATCH_PARENT
+                )
+                view.findViewWithTag<View>("page_container_1").layoutParams = LinearLayout.LayoutParams(
+                    book.pageRects[1].width(), LinearLayout.LayoutParams.MATCH_PARENT
+                )
                 view.findViewById<TextView>(R.id.caption_view).text = book.chapterTitle
                 view.findViewById<TextView>(R.id.caption_view2).text = book.chapterTitle
                 SplitPageViewHolder(view, book.fontSize)
@@ -38,9 +39,11 @@ class BookPagerAdapter(inBook: Book, inLayoutStateContainer: BookActivity.Layout
             BookActivity.LayoutMode.SPLIT_VERTICAL -> {
                 val view = LayoutInflater.from(parent.context).inflate(R.layout.book_page_layout_split_vertical, parent, false)
                 view.findViewWithTag<View>("page_container_0").layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, book.pageRects[0].height())
+                    LinearLayout.LayoutParams.MATCH_PARENT, book.pageRects[0].height()
+                )
                 view.findViewWithTag<View>("page_container_1").layoutParams = LinearLayout.LayoutParams(
-                    LinearLayout.LayoutParams.MATCH_PARENT, book.pageRects[1].height())
+                    LinearLayout.LayoutParams.MATCH_PARENT, book.pageRects[1].height()
+                )
 
                 view.findViewById<TextView>(R.id.caption_view).text = book.chapterTitle
                 SplitPageViewHolder(view, book.fontSize)
@@ -63,9 +66,8 @@ class BookPagerAdapter(inBook: Book, inLayoutStateContainer: BookActivity.Layout
                 }
             }
             holder.repopulate(stringList)
-        }
-        else {
-            //TODO Different page population for view holders in two-page layout
+        } else {
+            // TODO Different page population for view holders in two-page layout
             var stringList = ArrayList<String>()
             var stringList2 = ArrayList<String>()
             when (position) {
@@ -91,10 +93,9 @@ class BookPagerAdapter(inBook: Book, inLayoutStateContainer: BookActivity.Layout
         return if (layoutStateContainer.layoutMode == BookActivity.LayoutMode.NORMAL) {
             book.numPages + 2
         } else {
-            //TODO Different view holder count in two-page layout
+            // TODO Different view holder count in two-page layout
             (book.numPages / 2) + (book.numPages % 2) + 2
         }
-
     }
 }
 

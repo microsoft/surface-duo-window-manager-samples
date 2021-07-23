@@ -6,12 +6,15 @@ package com.microsoft.device.wm_samples.ebook_reader_sample
 
 import android.content.res.Configuration
 import android.graphics.Rect
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.view.*
+import android.view.Menu
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewTreeObserver
 import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.util.Consumer
 import androidx.viewpager2.widget.ViewPager2
 import androidx.window.DisplayFeature
@@ -55,8 +58,8 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
         renderLoading()
     }
 
-    //renderLoading() resets the activity view to render an empty pager view
-    //this.onGlobalLayout() is added as a post-render callback
+    // renderLoading() resets the activity view to render an empty pager view
+    // this.onGlobalLayout() is added as a post-render callback
     private fun renderLoading() {
         setContentView(R.layout.activity_book)
 
@@ -68,8 +71,8 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
         bookPagerView.viewTreeObserver.addOnGlobalLayoutListener(this)
     }
 
-    //onGlobalLayout() gets the layout metrics of the empty pager view, and passes them to the Book object
-    //At the end, renderBook() is called
+    // onGlobalLayout() gets the layout metrics of the empty pager view, and passes them to the Book object
+    // At the end, renderBook() is called
     override fun onGlobalLayout() {
         bookPagerView.viewTreeObserver.removeOnGlobalLayoutListener(this)
 
@@ -83,7 +86,7 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
             LayoutMode.NORMAL -> {
                 tempPageRects.add(Rect(bookPagerRect.left, bookPagerRect.top, bookPagerRect.right, bookPagerRect.bottom - captionHeight))
             }
-            //TODO Setting book to two-page layout
+            // TODO Setting book to two-page layout
             LayoutMode.SPLIT_VERTICAL -> {
                 tempPageRects.add(Rect(bookPagerRect.left, bookPagerRect.top, bookPagerRect.right, layoutStateContainer.foldRect.top))
                 tempPageRects.add(Rect(bookPagerRect.left, layoutStateContainer.foldRect.bottom, bookPagerRect.right, bookPagerRect.bottom - captionHeight))
@@ -99,7 +102,7 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
         renderBook()
     }
 
-    //renderBook() creates or replaces the pager in the pager view
+    // renderBook() creates or replaces the pager in the pager view
     private fun renderBook() {
         if (bookPagerView.adapter != null) {
             bookPagerView.unregisterOnPageChangeCallback(pagePagerCallback)
@@ -107,7 +110,7 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
 
         bookPagerView.adapter = BookPagerAdapter(book, layoutStateContainer)
         bookPagerView.setPageTransformer(PageTransformer())
-        val position = if (layoutStateContainer.layoutMode == LayoutMode.NORMAL) book.currentPage + 1 else (book.currentPage/2) + 1
+        val position = if (layoutStateContainer.layoutMode == LayoutMode.NORMAL) book.currentPage + 1 else (book.currentPage / 2) + 1
         bookPagerView.setCurrentItem(position, false)
         bookPagerView.registerOnPageChangeCallback(pagePagerCallback)
         bookPagerView.isUserInputEnabled = true
@@ -132,11 +135,13 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
     private fun jumpToPreviousChapter() {
         if (book.currentChapter > 0) {
             bookPagerView.isUserInputEnabled = false
-            handler.postDelayed({
+            handler.postDelayed(
+                {
                 book.currentChapter = book.currentChapter - 1
                 book.currentPage = book.numPages - 1
                 renderBook()
-            }, 250)
+                }, 250
+            )
         }
     }
     
@@ -236,7 +241,7 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
         NORMAL, SPLIT_VERTICAL, SPLIT_HORIZONTAL
     }
 
-    //TODO Containers and callbacks for two-page layout information
+    // TODO Containers and callbacks for two-page layout information
     inner class LayoutStateContainer : Consumer<WindowLayoutInfo> {
         var layoutMode = LayoutMode.NORMAL
         var foldRect = Rect()
@@ -257,5 +262,4 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
             renderLoading()
         }
     }
-
 }
