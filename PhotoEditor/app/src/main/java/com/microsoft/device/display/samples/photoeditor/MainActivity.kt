@@ -32,6 +32,9 @@ import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.drawToBitmap
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import androidx.window.FoldingFeature
+import androidx.window.WindowLayoutInfo
+import androidx.window.WindowManager
 import kotlinx.android.synthetic.main.buttons.*
 import kotlinx.android.synthetic.main.picture_dual_screen.*
 import kotlinx.android.synthetic.main.single_screen_sliders.*
@@ -47,6 +50,11 @@ class MainActivity : AppCompatActivity() {
         // Default progress value for SeekBar controls
         private const val DEFAULT_PROGRESS = 50
     }
+
+    private lateinit var windowManager: WindowManager
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private val mainThreadExecutor = Executor { r: Runnable -> mainHandler.post(r) }
+    private val wmCallback = WMCallback()
 
     //private val screenLayout = MutableLiveData<ScreenInfo>()
     private val viewModel: PhotoEditorViewModel by viewModels()
@@ -75,6 +83,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        // Layout based setup
+        windowManager = WindowManager(this)
 
         val setupLayoutRunnable = Runnable {
             setupLayout()
@@ -452,5 +463,134 @@ class MainActivity : AppCompatActivity() {
                 Toast.LENGTH_SHORT
             ).show()
         }
+    }
+
+    //-----------------------------------------------------------------------------------------\\
+    override fun onStart() {
+        super.onStart()
+        windowManager.registerLayoutChangeCallback(mainThreadExecutor, wmCallback)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        windowManager.unregisterLayoutChangeCallback(wmCallback)
+    }
+
+    /**
+     * Calculate total height taken up by upper toolbars
+     * Add measurements here if additional status/toolbars are used
+     */
+    private fun upperToolbarSpacing(): Int {
+        val toolbar: Toolbar = findViewById(R.id.list_toolbar)
+        return toolbar.height
+    }
+
+    /**
+     * Calculate the center offset between the guideline and the bounding box
+     */
+    private fun boundingOffset(height: Int): Int {
+        return height / 2
+    }
+
+    /**
+     * Set the bounding rectangle for a configuration with a vertical hinge
+     */
+    private fun setBoundsVerticalHinge(hingeBounds: Rect) {
+        val hingeWidth = hingeBounds.right - hingeBounds.left
+
+        val boundingRect: View = findViewById(R.id.bounding_rect)
+        val params: ViewGroup.LayoutParams = boundingRect.layoutParams
+        params.width = hingeWidth
+        boundingRect.layoutParams = params
+
+        // left fragment is aligned with the right side of the hinge and vice-versa
+        // add padding to ensure fragments do not overlap the hinge
+        val leftFragment: FragmentContainerView = findViewById(R.id.primary_fragment_container)
+        leftFragment.setPadding(0, 0, hingeWidth, 0)
+
+        val rightFragment: FragmentContainerView = findViewById(R.id.secondary_fragment_container)
+        rightFragment.setPadding(hingeWidth, 0, 0, 0)
+    }
+
+    /**
+     * Set the bounding rectangle for a configuration with a horizontal hinge
+     */
+    private fun setBoundsHorizontalHinge(hingeBounds: Rect) {
+        val hingeHeight = hingeBounds.bottom - hingeBounds.top
+
+        val boundingRect: View = findViewById(R.id.bounding_rect)
+        val params: ViewGroup.LayoutParams = boundingRect.layoutParams
+        params.height = hingeHeight
+        boundingRect.layoutParams = params
+
+        val guide: ReactiveGuide = findViewById(R.id.horiz_guide)
+        guide.setGuidelineBegin(hingeBounds.top + boundingOffset(hingeHeight) - upperToolbarSpacing())
+
+        // top fragment is aligned with the bottom side of the hinge and vice-versa
+        // add padding to ensure fragments do not overlap the hinge
+        val topFragment: FragmentContainerView = findViewById(R.id.primary_fragment_container)
+        topFragment.setPadding(0, 0, 0, hingeHeight)
+
+        val bottomFragment: FragmentContainerView = findViewById(R.id.secondary_fragment_container)
+        bottomFragment.setPadding(0, hingeHeight, 0, 0)
+    }
+
+    /**
+     * Set the bounding rectangle for a configuration with no hinge (single screen)
+     */
+    private fun setBoundsNoHinge() {
+        val boundingRect: View = findViewById(R.id.bounding_rect)
+        val params: ViewGroup.LayoutParams = boundingRect.layoutParams
+
+        // fill parent
+        params.height = -1
+        params.width = -1
+        boundingRect.layoutParams = params
+
+        val guide: ReactiveGuide = findViewById(R.id.horiz_guide)
+        guide.setGuidelineEnd(0)
+    }
+
+    /**
+     * Jetpack Window Manager callback
+     * This callback gets triggered whenever there is a layout change (rotated, spanned, etc)
+     */
+    inner class WMCallback : Consumer<WindowLayoutInfo> {
+        override fun accept(newLayoutInfo: WindowLayoutInfo?) {
+            newLayoutInfo?.let {
+                var isDualScreen = false
+
+                // Check display features for an active hinge/fold
+                for (displayFeature in it.displayFeatures) {
+                    val foldingFeature = displayFeature as? FoldingFeature
+                    if (foldingFeature != null) {
+                        // hinge found, check to see if it should be split screen
+                        if (isDeviceSurfaceDuo() || foldingFeature.state == FoldingFeature.State.HALF_OPENED) {
+                            val hingeBounds = foldingFeature.bounds
+                            isDualScreen = true
+
+                            if (foldingFeature.orientation == FoldingFeature.Orientation.VERTICAL) {
+                                setBoundsVerticalHinge(hingeBounds)
+                            } else {
+                                setBoundsHorizontalHinge(hingeBounds)
+                            }
+                        }
+                    }
+                }
+                if (!isDualScreen) {
+                    setBoundsNoHinge()
+                }
+                dualScreenVM.setIsDualScreen(isDualScreen)
+            }
+        }
+    }
+
+    /**
+     * HACK just to help with testing on Surface Duo AND foldable emulators until WM is stable
+     */
+    fun isDeviceSurfaceDuo(): Boolean {
+        val surfaceDuoSpecificFeature = "com.microsoft.device.display.displaymask"
+        val pm = this@MainActivity.packageManager
+        return pm.hasSystemFeature(surfaceDuoSpecificFeature)
     }
 }

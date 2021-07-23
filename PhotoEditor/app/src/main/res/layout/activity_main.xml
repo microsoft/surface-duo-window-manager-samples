@@ -1,24 +1,56 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+
+<!--
   ~ Copyright (c) Microsoft Corporation. All rights reserved.
   ~ Licensed under the MIT License.
-  -->
+  ~
+-->
 
-<androidx.slidingpanelayout.widget.SlidingPaneLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/sliding_pane_layout"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:id="@+id/sliding_pane_layout">
 
-    <include
-        android:id="@+id/single_screen_layout"
-        layout="@layout/single_screen_layout"
+    <!-- secondary child -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/secondary_fragment_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="@id/bounding_rect"
+        app:layout_constraintTop_toTopOf="@id/bounding_rect"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        />
+
+    <!-- top child -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/primary_fragment_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintRight_toRightOf="@id/bounding_rect"
+        app:layout_constraintBottom_toBottomOf="@id/bounding_rect"
+        />
+
+    <View
+        android:id="@+id/bounding_rect"
+        android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_width="wrap_content" />
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/horiz_guide"/>
 
-    <include
-        android:id="@+id/dual_screen_layout"
-        layout="@layout/tools_dual_screen"
-        android:layout_height="match_parent"
-        android:layout_width="wrap_content" />
+    <androidx.constraintlayout.widget.ReactiveGuide
+        android:id="@+id/horiz_guide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
 
-</androidx.slidingpanelayout.widget.SlidingPaneLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
