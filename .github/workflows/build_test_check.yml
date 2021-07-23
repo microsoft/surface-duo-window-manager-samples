@@ -21,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        projects: [ FoldingVideo, FoldingVideoPlusChat ]
+        projects: [ FoldingVideo, FoldingVideoPlusChat, SourceEditor ]
       fail-fast: false
 
     steps:
