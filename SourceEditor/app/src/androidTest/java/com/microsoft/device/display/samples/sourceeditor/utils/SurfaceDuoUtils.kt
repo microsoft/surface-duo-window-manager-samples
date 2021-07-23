@@ -13,14 +13,14 @@ import androidx.test.uiautomator.UiDevice
 // testing device
 private val device: UiDevice = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
-private const val leftX: Int = 675          // middle of left screen
-private const val rightX: Int = 2109        // middle of right screen
-private const val leftMiddleX: Int = 1340   // left of hinge area
-private const val rightMiddleX: Int = 1434  // right of hinge area
-private const val bottomY: Int = 1780       // bottom of screen
-private const val middleY: Int = 900        // middle of screen
-private const val spanSteps: Int = 400      // spanning/unspanning swipe
-private const val switchSteps: Int = 600    // switch from one screen to the other
+private const val leftX: Int = 675 //           middle of left screen
+private const val rightX: Int = 2109 //         middle of right screen
+private const val leftMiddleX: Int = 1340 //    left of hinge area
+private const val rightMiddleX: Int = 1434 //   right of hinge area
+private const val bottomY: Int = 1780 //        bottom of screen
+private const val middleY: Int = 900 //         middle of screen
+private const val spanSteps: Int = 400 //       spanning/unspanning swipe
+private const val switchSteps: Int = 600 //     switch from one screen to the other
 
 fun spanFromLeft() {
     device.swipe(leftX, bottomY, leftMiddleX, middleY, spanSteps)

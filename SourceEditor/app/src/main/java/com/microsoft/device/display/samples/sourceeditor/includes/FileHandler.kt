@@ -20,8 +20,8 @@ import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel
 import java.io.BufferedReader
 import java.io.FileNotFoundException
 import java.io.FileOutputStream
-import java.io.InputStreamReader
 import java.io.IOException
+import java.io.InputStreamReader
 import java.nio.charset.Charset
 
 /* Class used to make file read/write requests */

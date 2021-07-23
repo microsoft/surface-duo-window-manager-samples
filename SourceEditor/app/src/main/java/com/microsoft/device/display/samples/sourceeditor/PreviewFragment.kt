@@ -7,7 +7,6 @@
 
 package com.microsoft.device.display.samples.sourceeditor
 
-import Defines
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -17,8 +16,8 @@ import android.webkit.WebView
 import android.widget.Button
 import android.widget.ScrollView
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.microsoft.device.display.samples.sourceeditor.includes.Defines
 import com.microsoft.device.display.samples.sourceeditor.includes.DragHandler
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.DualScreenViewModel
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.ScrollViewModel
@@ -63,9 +62,10 @@ class PreviewFragment : Fragment() {
 
             val isDualScreen = dualScreenVM.getIsDualScreen().value ?: false
             handleSpannedModeSelection(view, webView, isDualScreen)
-            dualScreenVM.getIsDualScreen().observe(requireActivity(), { bool ->
-                handleSpannedModeSelection(view, webView, bool)
-            })
+            dualScreenVM.getIsDualScreen().observe(
+                requireActivity(),
+                { bool -> handleSpannedModeSelection(view, webView, bool) }
+            )
         }
 
         return view
@@ -92,13 +92,16 @@ class PreviewFragment : Fragment() {
             previewBtn = view.findViewById(R.id.btn_switch_to_preview)
 
             // listen for changes made to the editor
-            webVM.getText().observe(requireActivity(), Observer { str ->
-                webView.loadData(str, Defines.HTML_TYPE, Defines.ENCODING)
-            })
+            webVM.getText().observe(
+                requireActivity(),
+                { str ->
+                    webView.loadData(str, Defines.HTML_TYPE, Defines.ENCODING)
+                }
+            )
 
             if (isDualMode) {
-                val container_id = (view.parent as ViewGroup).id
-                if (container_id == R.id.primary_fragment_container) {
+                val containerId = (view.parent as ViewGroup).id
+                if (containerId == R.id.primary_fragment_container) {
                     // Ensure a code fragment is always in the primary fragment slot when spanned
                     startCodeFragment()
                 } else {
@@ -136,11 +139,14 @@ class PreviewFragment : Fragment() {
             handleScrolling(false, scrollY)
         }
 
-        scrollVM.getScroll().observe(requireActivity(), Observer { state ->
-            if (state.scrollKey != Defines.PREVIEW_KEY) {
-                handleScrolling(true, state.scrollPercentage)
+        scrollVM.getScroll().observe(
+            requireActivity(),
+            { state ->
+                if (state.scrollKey != Defines.PREVIEW_KEY) {
+                    handleScrolling(true, state.scrollPercentage)
+                }
             }
-        })
+        )
     }
 
     // method that triggers transition to code fragment

@@ -51,10 +51,10 @@ class SourceEditorInDualScreenTest {
 
     private fun testPreview() {
         onView(
-                childOf(withId(R.id.first_container_id), withId(R.id.btn_switch_to_editor))
+            childOf(withId(R.id.primary_fragment_container), withId(R.id.btn_switch_to_editor))
         ).check(matches(Matchers.not(ViewMatchers.isDisplayed())))
         onView(
-                childOf(withId(R.id.first_container_id), withId(R.id.btn_switch_to_preview))
+            childOf(withId(R.id.primary_fragment_container), withId(R.id.btn_switch_to_preview))
         ).check(matches(Matchers.not(ViewMatchers.isDisplayed())))
         onView(withId(R.id.textinput_code)).check(matches(ViewMatchers.isDisplayed()))
         onView(withId(R.id.webview_preview)).check(matches(ViewMatchers.isDisplayed()))

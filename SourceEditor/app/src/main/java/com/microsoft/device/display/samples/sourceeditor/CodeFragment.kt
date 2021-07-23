@@ -7,7 +7,6 @@
 
 package com.microsoft.device.display.samples.sourceeditor
 
-import Defines
 import android.content.Context
 import android.os.Bundle
 import android.text.Editable
@@ -18,17 +17,14 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.ScrollView
-
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-
 import com.google.android.material.textfield.TextInputEditText
+import com.microsoft.device.display.samples.sourceeditor.includes.Defines
 import com.microsoft.device.display.samples.sourceeditor.includes.DragHandler
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.DualScreenViewModel
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.ScrollViewModel
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel
-
 import java.io.BufferedReader
 import java.io.InputStreamReader
 
@@ -67,19 +63,23 @@ class CodeFragment : Fragment() {
 
             val isDualScreen = dualScreenVM.getIsDualScreen().value ?: false
             handleSpannedModeSelection(view, isDualScreen)
-            dualScreenVM.getIsDualScreen().observe(requireActivity(), { bool ->
-                handleSpannedModeSelection(view, bool)
-            })
+            dualScreenVM.getIsDualScreen().observe(
+                requireActivity(),
+                { bool -> handleSpannedModeSelection(view, bool) }
+            )
 
             if (webVM.getText().value == null) {
                 webVM.setText(readFile(Defines.DEFAULT_SOURCE_PATH, context))
             }
 
-            webVM.getText().observe(requireActivity(), Observer { str ->
-                if (str != textField.text.toString()) {
-                    textField.setText(str)
+            webVM.getText().observe(
+                requireActivity(),
+                { str ->
+                    if (str != textField.text.toString()) {
+                        textField.setText(str)
+                    }
                 }
-            })
+            )
 
             textField.setText(webVM.getText().value)
 
@@ -149,11 +149,14 @@ class CodeFragment : Fragment() {
             handleScrolling(false, scrollY)
         }
 
-        scrollVM.getScroll().observe(requireActivity(), Observer { state ->
-            if (state.scrollKey != Defines.CODE_KEY) {
-                handleScrolling(true, state.scrollPercentage)
+        scrollVM.getScroll().observe(
+            requireActivity(),
+            { state ->
+                if (state.scrollKey != Defines.CODE_KEY) {
+                    handleScrolling(true, state.scrollPercentage)
+                }
             }
-        })
+        )
     }
 
     // method that triggers transition to preview fragment

@@ -15,7 +15,6 @@ import android.os.Handler
 import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
-import androidx.window.WindowManager
 import android.widget.ImageView
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +25,7 @@ import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.ViewModelProvider
 import androidx.window.FoldingFeature
 import androidx.window.WindowLayoutInfo
+import androidx.window.WindowManager
 import com.microsoft.device.display.samples.sourceeditor.includes.FileHandler
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.DualScreenViewModel
 import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel

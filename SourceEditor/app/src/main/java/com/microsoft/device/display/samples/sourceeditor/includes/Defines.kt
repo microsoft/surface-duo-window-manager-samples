@@ -5,6 +5,8 @@
  *
  */
 
+package com.microsoft.device.display.samples.sourceeditor.includes
+
 object Defines {
     // Scrolling values //
     const val DEFAULT_RANGE = 1
