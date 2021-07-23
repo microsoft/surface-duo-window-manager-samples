@@ -32,7 +32,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
 
     var currentChapter = 0
         set(inChapter) {
-            _setCurrentChapter(inChapter)
+            _setCurrentChapterHelper(inChapter)
             field = inChapter
         }
 
@@ -45,10 +45,10 @@ class Book(private val filePath: String, private val activityContext: Context) {
         get() = pageStrings.size
 
     var currentPage: Int
-        get() = _getCurrentPage()
-        set(inPage) = _setCurrentPage(inPage)
+        get() = getCurrentPageHelper()
+        set(inPage) = setCurrentPageHelper(inPage)
 
-    val pagePadding = activityContext.resources.getDimension(R.dimen.page_padding).toInt()
+    private val pagePadding = activityContext.resources.getDimension(R.dimen.page_padding).toInt()
     var pageRects = ArrayList<Rect>()
         set(input) {
             field = input
@@ -94,7 +94,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
         chapterLengths.removeAt(0)
     }
 
-    private fun _setCurrentChapter(inChapter: Int) {
+    private fun _setCurrentChapterHelper(inChapter: Int) {
         paragraphStrings = ArrayList()
 
         if (inChapter >= 0 && inChapter < chapterStarts.size) {
@@ -132,7 +132,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
         }
     }
 
-    private fun _getCurrentPage(): Int {
+    private fun getCurrentPageHelper(): Int {
         var page = 0
         var remainingParagraphs = currentParagraph
         while (page < pageStrings.size && pageStrings[page].size <= remainingParagraphs ) {
@@ -142,7 +142,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
         return page
     }
 
-    private fun _setCurrentPage(inPage: Int) {
+    private fun setCurrentPageHelper(inPage: Int) {
         currentParagraph = 0
         for (page in 0 until min(inPage, pageStrings.size)) {
             currentParagraph += pageStrings[page].size
@@ -154,7 +154,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
         textView.layoutParams = LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT)
         textView.textSize = fontSize.toFloat()
         textView.text = Html.fromHtml(string)
-        var widthSpec = View.MeasureSpec.makeMeasureSpec(width - (2 * pagePadding), View.MeasureSpec.AT_MOST)
+        val widthSpec = View.MeasureSpec.makeMeasureSpec(width - (2 * pagePadding), View.MeasureSpec.AT_MOST)
         val heightSpec = View.MeasureSpec.makeMeasureSpec(0, View.MeasureSpec.UNSPECIFIED)
         textView.measure(widthSpec, heightSpec)
         return textView.measuredHeight
@@ -162,7 +162,7 @@ class Book(private val filePath: String, private val activityContext: Context) {
 
     //buildPages() uses the available rects of the current layout to organize the chapter's strings into pages
     //TODO buildPages() supports multiple pages by cycling through pageRects instead of using only one Rect of constraints
-    fun buildPages() {
+    private fun buildPages() {
         if (pageRects.isEmpty()) { return }
 
         pageStrings = ArrayList()

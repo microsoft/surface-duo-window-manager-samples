@@ -113,7 +113,7 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
         bookPagerView.isUserInputEnabled = true
     }
 
-    inner class BookPagerCallback() : ViewPager2.OnPageChangeCallback() {
+    inner class BookPagerCallback : ViewPager2.OnPageChangeCallback() {
         override fun onPageSelected(position: Int) {
             when (position) {
                 0 -> jumpToPreviousChapter()
