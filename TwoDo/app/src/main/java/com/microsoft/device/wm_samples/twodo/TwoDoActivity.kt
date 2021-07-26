@@ -95,18 +95,20 @@ class TwoDoActivity : AppCompatActivity(), TaskAdapter.TaskEvents {
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        var fragment = savedInstanceState.getString(FRAGMENT_NAME)
-        when (fragment) {
-            "SPLASH" -> {
-                showSplashFragment()
-            }
-            "EDIT" -> {
-                showNewEditFragment()
+        var fragmentStr = savedInstanceState.getString(FRAGMENT_NAME)
+        fragmentStr?.let {
+            when (TwoDoFragments.valueOf(it)) {
+                TwoDoFragments.SPLASH -> {
+                    showSplashFragment()
+                }
+                TwoDoFragments.EDIT -> {
+                    showNewEditFragment()
+                }
             }
         }
     }
 
-    fun hideKeyboard() {
+    private fun hideKeyboard() {
         // Check if no view has focus:
         val view = currentFocus
         if (view != null) {
