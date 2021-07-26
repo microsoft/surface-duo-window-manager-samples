@@ -25,6 +25,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         android:visibility="gone">
 
+        <include
+            layout="@layout/tools_dual_screen"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- top child -->
@@ -38,7 +45,7 @@
         app:layout_constraintBottom_toBottomOf="@id/bounding_rect">
 
         <include
-            layout="@layout/single_screen_layout"
+            layout="@layout/picture_dual_screen"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"

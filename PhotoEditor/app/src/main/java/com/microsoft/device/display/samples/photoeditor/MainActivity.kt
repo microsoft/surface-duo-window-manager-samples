@@ -6,32 +6,28 @@
 package com.microsoft.device.display.samples.photoeditor
 
 import android.app.Activity
-import android.content.ClipData
-import android.content.ContentResolver
-import android.content.ContentValues
-import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.graphics.Color
-import android.graphics.Matrix
-import android.graphics.RectF
+import android.content.*
+import android.graphics.*
 import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.os.PersistableBundle
 import android.provider.MediaStore
+import android.util.AttributeSet
 import android.view.DragEvent
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.SeekBar
-import android.widget.Toast
+import android.view.ViewGroup
+import android.widget.*
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.utils.widget.ImageFilterView
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ReactiveGuide
 import androidx.core.app.ActivityCompat
 import androidx.core.graphics.drawable.toBitmap
+import androidx.core.util.Consumer
 import androidx.core.view.drawToBitmap
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
 import androidx.window.FoldingFeature
 import androidx.window.WindowLayoutInfo
 import androidx.window.WindowManager
@@ -40,6 +36,7 @@ import kotlinx.android.synthetic.main.picture_dual_screen.*
 import kotlinx.android.synthetic.main.single_screen_sliders.*
 import java.io.IOException
 import java.time.LocalDateTime
+import java.util.concurrent.Executor
 
 class MainActivity : AppCompatActivity() {
 
@@ -56,29 +53,9 @@ class MainActivity : AppCompatActivity() {
     private val mainThreadExecutor = Executor { r: Runnable -> mainHandler.post(r) }
     private val wmCallback = WMCallback()
 
-    //private val screenLayout = MutableLiveData<ScreenInfo>()
+    private lateinit var image: ImageFilterView
     private val viewModel: PhotoEditorViewModel by viewModels()
-
-    /*private fun registerRunnable(runnable: Runnable) {
-        val obs = Observer<ScreenInfo> {
-            runnable.run()
-        }
-        screenLayout.observeOnce(this, obs)
-    }
-
-    override fun onScreenInfoChanged(screenInfo: ScreenInfo) {
-        screenLayout.value = screenInfo
-    }
-
-    override fun onResume() {
-        super.onResume()
-        ScreenManagerProvider.getScreenManager().addScreenInfoListener(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        ScreenManagerProvider.getScreenManager().removeScreenInfoListener(this)
-    }*/
+    private var isDualScreen: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -86,20 +63,6 @@ class MainActivity : AppCompatActivity() {
 
         // Layout based setup
         windowManager = WindowManager(this)
-
-        val setupLayoutRunnable = Runnable {
-            setupLayout()
-
-            // Restore image
-            viewModel.getImage().value?.let {
-                image.setImageDrawable(viewModel.getImage().value)
-            }
-
-            image.brightness = viewModel.brightness
-            image.saturation = viewModel.saturation
-            image.warmth = viewModel.warmth
-        }
-        //registerRunnable(setupLayoutRunnable)
     }
 
     /**
@@ -116,7 +79,7 @@ class MainActivity : AppCompatActivity() {
         outState.putInt("selectedControl", viewModel.selectedControl)
 
         // Actual edited image - saved in ViewModel
-        //viewModel.updateImage(image.drawable)
+        viewModel.updateImage(image.drawable)
 
         super.onSaveInstanceState(outState)
     }
@@ -138,8 +101,7 @@ class MainActivity : AppCompatActivity() {
             val uri: Uri = data.data!!
             image.setImageBitmap(BitmapFactory.decodeStream(contentResolver.openInputStream(uri)))
 
-            val resetControlsRunnable = Runnable { resetControls(image) }
-            //registerRunnable(resetControlsRunnable)
+            resetControls(image)
         }
     }
 
@@ -153,7 +115,7 @@ class MainActivity : AppCompatActivity() {
         brightness.progress = DEFAULT_PROGRESS
         warmth.progress = DEFAULT_PROGRESS
 
-        //resetSeekBarVisibility()
+        resetSeekBarVisibility()
 
         // Reset image filters
         viewModel.resetValues()
@@ -162,19 +124,19 @@ class MainActivity : AppCompatActivity() {
         image.warmth = viewModel.warmth
     }
 
-    /*private fun resetSeekBarVisibility() {
+    private fun resetSeekBarVisibility() {
         // Reset dropdown and SeekBar visibility if single-screen view
-        screenLayout.value?.let { screenInfo ->
-            if (!screenInfo.isDualMode()) {
-                saturation.visibility = View.VISIBLE
-                brightness.visibility = View.INVISIBLE
-                warmth.visibility = View.INVISIBLE
-                controls.setSelection(0)
-            }
+        if (isDualScreen) {
+            saturation.visibility = View.VISIBLE
+            brightness.visibility = View.INVISIBLE
+            warmth.visibility = View.INVISIBLE
+            controls.setSelection(0)
         }
-    }*/
+    }
 
     private fun setupLayout() {
+        image = findViewById(R.id.image)
+
         // Set up click handling for importing images from photo gallery
         image.setOnClickListener {
             val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
@@ -210,17 +172,30 @@ class MainActivity : AppCompatActivity() {
         setUpRotate(image)
         setUpSave(image)
 
-        //prepareToggle()
+        prepareToggle()
+        restoreImage()
+        if (isDualScreen) {
+            image.brightness = 0f
+        }
     }
 
-    /*private fun prepareToggle() {
-        screenLayout.value?.let { screenInfo ->
-            // Set up single screen control dropdown
-            if (!screenInfo.isDualMode()) {
-                setUpToggle(viewModel.selectedControl)
-            }
+    private fun restoreImage() {
+        // Restore image
+        viewModel.getImage().value?.let {
+            image.setImageDrawable(viewModel.getImage().value)
         }
-    }*/
+
+        image.brightness = viewModel.brightness
+        image.saturation = viewModel.saturation
+        image.warmth = viewModel.warmth
+    }
+
+    private fun prepareToggle() {
+        // Set up single screen control dropdown
+        if (!isDualScreen) {
+            setUpToggle(viewModel.selectedControl)
+        }
+    }
 
     /**
      * Revert any appearance changes related to drag/drop
@@ -465,10 +440,15 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    //-----------------------------------------------------------------------------------------\\
+    //---------------------------------Window Manager Setup----------------------------------\\
     override fun onStart() {
         super.onStart()
         windowManager.registerLayoutChangeCallback(mainThreadExecutor, wmCallback)
+    }
+
+    override fun onResume() {
+        super.onResume()
+        setupLayout()
     }
 
     override fun onStop() {
@@ -481,8 +461,8 @@ class MainActivity : AppCompatActivity() {
      * Add measurements here if additional status/toolbars are used
      */
     private fun upperToolbarSpacing(): Int {
-        val toolbar: Toolbar = findViewById(R.id.list_toolbar)
-        return toolbar.height
+        val noExternalToolbarOffset = 18 // even with no toolbar, the hinge is offset by a default amount
+        return noExternalToolbarOffset
     }
 
     /**
@@ -505,11 +485,12 @@ class MainActivity : AppCompatActivity() {
 
         // left fragment is aligned with the right side of the hinge and vice-versa
         // add padding to ensure fragments do not overlap the hinge
-        val leftFragment: FragmentContainerView = findViewById(R.id.primary_fragment_container)
+        val leftFragment: ConstraintLayout = findViewById(R.id.primary_fragment_container)
         leftFragment.setPadding(0, 0, hingeWidth, 0)
 
-        val rightFragment: FragmentContainerView = findViewById(R.id.secondary_fragment_container)
+        val rightFragment: ConstraintLayout = findViewById(R.id.secondary_fragment_container)
         rightFragment.setPadding(hingeWidth, 0, 0, 0)
+        rightFragment.visibility = View.VISIBLE
     }
 
     /**
@@ -528,11 +509,12 @@ class MainActivity : AppCompatActivity() {
 
         // top fragment is aligned with the bottom side of the hinge and vice-versa
         // add padding to ensure fragments do not overlap the hinge
-        val topFragment: FragmentContainerView = findViewById(R.id.primary_fragment_container)
+        val topFragment: ConstraintLayout = findViewById(R.id.primary_fragment_container)
         topFragment.setPadding(0, 0, 0, hingeHeight)
 
-        val bottomFragment: FragmentContainerView = findViewById(R.id.secondary_fragment_container)
+        val bottomFragment: ConstraintLayout = findViewById(R.id.secondary_fragment_container)
         bottomFragment.setPadding(0, hingeHeight, 0, 0)
+        bottomFragment.visibility = View.VISIBLE
     }
 
     /**
@@ -558,7 +540,7 @@ class MainActivity : AppCompatActivity() {
     inner class WMCallback : Consumer<WindowLayoutInfo> {
         override fun accept(newLayoutInfo: WindowLayoutInfo?) {
             newLayoutInfo?.let {
-                var isDualScreen = false
+                isDualScreen = false
 
                 // Check display features for an active hinge/fold
                 for (displayFeature in it.displayFeatures) {
@@ -568,6 +550,7 @@ class MainActivity : AppCompatActivity() {
                         if (isDeviceSurfaceDuo() || foldingFeature.state == FoldingFeature.State.HALF_OPENED) {
                             val hingeBounds = foldingFeature.bounds
                             isDualScreen = true
+                            setContentView(R.layout.activity_main_dual)
 
                             if (foldingFeature.orientation == FoldingFeature.Orientation.VERTICAL) {
                                 setBoundsVerticalHinge(hingeBounds)
@@ -580,7 +563,6 @@ class MainActivity : AppCompatActivity() {
                 if (!isDualScreen) {
                     setBoundsNoHinge()
                 }
-                dualScreenVM.setIsDualScreen(isDualScreen)
             }
         }
     }
