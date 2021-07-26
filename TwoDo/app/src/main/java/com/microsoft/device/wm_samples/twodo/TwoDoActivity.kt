@@ -7,16 +7,14 @@ package com.microsoft.device.wm_samples.twodo
 
 import android.content.Context
 import android.os.Bundle
-import android.view.View
 import android.view.inputmethod.InputMethodManager
 import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import androidx.slidingpanelayout.widget.SlidingPaneLayout
+import com.microsoft.device.wm_samples.twodo.databinding.ActivityTwoDoBinding
 
 enum class TwoDoFragments {
     SPLASH, EDIT
@@ -24,12 +22,9 @@ enum class TwoDoFragments {
 
 class TwoDoActivity : AppCompatActivity(), TaskAdapter.TaskEvents {
 
-    lateinit var slidingPane: SlidingPaneLayout
-
-    private lateinit var taskContainer: FragmentContainerView
-
     private lateinit var taskViewModel: TaskViewModel
     private lateinit var taskAdapter: TaskAdapter
+    private lateinit var binding: ActivityTwoDoBinding
 
     // current fragment in FragmentContainerView
     private var currentFragment = TwoDoFragments.SPLASH
@@ -40,39 +35,21 @@ class TwoDoActivity : AppCompatActivity(), TaskAdapter.TaskEvents {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_two_do)
+        binding = ActivityTwoDoBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        taskAdapter = TaskAdapter(this)
-
-        // set up recyclerview
-        val rclList = findViewById<RecyclerView>(R.id.recycler_view)
-        rclList.adapter = taskAdapter
-        rclList.layoutManager = LinearLayoutManager(this)
-        rclList.addItemDecoration(DividerItemDecoration(rclList.context, DividerItemDecoration.VERTICAL))
-
-        taskContainer = findViewById(R.id.task_container)
+        setUpRecyclerView()
         showSplashFragment()
+        setupViewModelAndObserve()
 
-        // set up viewmodel
-        taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
-        // when the task list changes, update the recyclerview
-        taskViewModel.getTaskList().observe(
-            this,
-            Observer { task ->
-                task.let { updateTaskList(task) }
-            }
-        )
-
-        slidingPane = findViewById(R.id.sliding_pane_layout)
-        val fab: View = findViewById(R.id.fab)
-        fab.setOnClickListener { view ->
+        binding.fab.setOnClickListener {
             taskViewModel.editing = false
             showNewEditFragment()
         }
     }
 
     override fun onBackPressed() {
-        slidingPane.close()
+        binding.root.close()
         showSplashFragment()
         hideKeyboard()
     }
@@ -121,6 +98,25 @@ class TwoDoActivity : AppCompatActivity(), TaskAdapter.TaskEvents {
         }
     }
 
+    private fun setUpRecyclerView() {
+        taskAdapter = TaskAdapter(this)
+        val rclList = findViewById<RecyclerView>(R.id.recycler_view)
+        rclList.adapter = taskAdapter
+        rclList.layoutManager = LinearLayoutManager(this)
+        rclList.addItemDecoration(DividerItemDecoration(rclList.context, DividerItemDecoration.VERTICAL))
+    }
+
+    private fun setupViewModelAndObserve() {
+        taskViewModel = ViewModelProvider(this).get(TaskViewModel::class.java)
+        // when the task list changes, update the recyclerview
+        taskViewModel.getTaskList().observe(
+            this,
+            Observer { task ->
+                task.let { updateTaskList(task) }
+            }
+        )
+    }
+
     private fun updateTaskList(tasks: List<Task>) {
         taskAdapter.setTasks(tasks)
     }
@@ -136,7 +132,7 @@ class TwoDoActivity : AppCompatActivity(), TaskAdapter.TaskEvents {
         val transaction = supportFragmentManager.beginTransaction()
         transaction.replace(R.id.task_container, TaskFragment())
         transaction.commit()
-        slidingPane.open()
+        binding.root.open()
         currentFragment = TwoDoFragments.EDIT
     }
 }

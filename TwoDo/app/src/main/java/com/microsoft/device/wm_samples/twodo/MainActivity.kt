@@ -12,31 +12,35 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
-import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.util.Consumer
 import androidx.window.DisplayFeature
 import androidx.window.FoldingFeature
 import androidx.window.WindowLayoutInfo
 import androidx.window.WindowManager
+import com.microsoft.device.wm_samples.twodo.databinding.ActivityMainBinding
 import java.util.concurrent.Executor
 
 class MainActivity : Activity() {
 
     // Jetpack WM
-    private lateinit var motionLayout: MotionLayout
     private lateinit var windowManager: WindowManager
     private val handler = Handler(Looper.getMainLooper())
     private val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
     private val stateContainer = StateContainer()
 
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         windowManager = WindowManager(this)
-        setContentView(R.layout.activity_main)
 
-        motionLayout = findViewById<MotionLayout>(R.id.root)
+        binding.doneButton.setOnClickListener {
+            goToTwoDoActivity()
+        }
     }
 
     override fun onStart() {
@@ -49,7 +53,7 @@ class MainActivity : Activity() {
         windowManager.unregisterLayoutChangeCallback(stateContainer)
     }
 
-    fun goToTwoDoActivity(view: View) {
+    fun goToTwoDoActivity() {
         val intent = Intent(this, TwoDoActivity::class.java)
         startActivity(intent)
     }
@@ -133,10 +137,10 @@ class MainActivity : Activity() {
                 val foldFeature = displayFeature as? FoldingFeature
                 if (foldFeature != null) {
                     if (foldFeature.orientation == FoldingFeature.ORIENTATION_HORIZONTAL) {
-                        var fold = horizontalFoldPosition(motionLayout, foldFeature)
+                        var fold = horizontalFoldPosition(binding.root, foldFeature)
                         ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, fold)
                     } else {
-                        var fold = verticalFoldPosition(motionLayout, foldFeature)
+                        var fold = verticalFoldPosition(binding.root, foldFeature)
                         ConstraintLayout.getSharedValues().fireNewValue(R.id.vert_fold, fold)
                     }
                 }

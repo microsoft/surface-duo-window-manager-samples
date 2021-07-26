@@ -9,51 +9,28 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.CheckBox
-import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.Observer
-import androidx.slidingpanelayout.widget.SlidingPaneLayout
+import com.microsoft.device.wm_samples.twodo.databinding.FragmentTaskBinding
 
 class TaskFragment : Fragment(), View.OnClickListener {
 
     private val taskViewModel: TaskViewModel by activityViewModels()
 
-    private lateinit var title: TextView
-    private lateinit var taskName: EditText
-    private lateinit var taskNotes: EditText
-    private lateinit var taskComplete: CheckBox
+    private var _binding: FragmentTaskBinding? = null
+    private val binding get() = _binding!!
 
     private lateinit var task: Task
-
-    lateinit var slidingPane: SlidingPaneLayout
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-        // Inflate the layout for this fragment
-        val view = inflater.inflate(R.layout.fragment_task, container, false)
-
-        // task fields
-        title = view.findViewById<TextView>(R.id.create_edit_title)
-        taskName = view.findViewById<EditText>(R.id.task_name_input)
-        taskNotes = view.findViewById<EditText>(R.id.task_notes_input)
-        taskComplete = view.findViewById<CheckBox>(R.id.task_complete)
-
-        // get slidingpanelayout
-        slidingPane = requireActivity().findViewById(R.id.sliding_pane_layout)
-
+        _binding = FragmentTaskBinding.inflate(inflater, container, false)
+        val view = binding.root
         return view
     }
 
@@ -67,31 +44,34 @@ class TaskFragment : Fragment(), View.OnClickListener {
                     viewLifecycleOwner,
                     Observer<Task> { item ->
                         // Update the UI using new item data
-                        title.setText(R.string.edit_task_title)
+                        binding.createEditTitle.setText(R.string.edit_task_title)
                         task = item
-                        taskName.setText(task.name)
-                        taskNotes.setText(task.notes)
-                        taskComplete.isChecked = task.complete
+                        binding.taskNameInput.setText(task.name)
+                        binding.taskNotesInput.setText(task.notes)
+                        binding.taskComplete.isChecked = task.complete
                     }
                 )
             }
         }
 
-        val saveButton = view.findViewById<Button>(R.id.save_button)
-        saveButton.setOnClickListener(this)
+        binding.saveButton.setOnClickListener(this)
+        binding.deleteButton.setOnClickListener(this)
 
-        val deleteButton = view.findViewById<Button>(R.id.delete_button)
-        deleteButton.setOnClickListener(this)
         // delete button only visible when editing
         if (taskViewModel.editing) {
-            deleteButton.visibility = View.VISIBLE
+            binding.deleteButton.visibility = View.VISIBLE
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 
     override fun onClick(view: View) {
         when (view.id) {
             R.id.save_button -> {
-                if (taskName.text.isEmpty()) {
+                if (binding.taskNameInput.text.isEmpty()) {
                     Toast.makeText(
                         activity?.applicationContext,
                         R.string.invalid_entry,
@@ -100,16 +80,16 @@ class TaskFragment : Fragment(), View.OnClickListener {
                 } else {
 
                     if (taskViewModel.editing) {
-                        task.name = taskName.text.toString()
-                        task.notes = taskNotes.text.toString()
-                        task.complete = taskComplete.isChecked
+                        task.name = binding.taskNameInput.text.toString()
+                        task.notes = binding.taskNotesInput.text.toString()
+                        task.complete = binding.taskComplete.isChecked
                         taskViewModel.updateTask(task)
                         taskViewModel.editing = false
                     } else {
                         val task = Task(
-                            name = taskName.text.toString(),
-                            notes = taskNotes.text.toString(),
-                            complete = taskComplete.isChecked
+                            name = binding.taskNameInput.text.toString(),
+                            notes = binding.taskNotesInput.text.toString(),
+                            complete = binding.taskComplete.isChecked
                         )
                         taskViewModel.insertTask(task)
                     }

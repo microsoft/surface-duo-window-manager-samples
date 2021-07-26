@@ -29,11 +29,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/done_button"
-        android:onClick="goToTwoDoActivity"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/vert_fold"
         app:layout_constraintBottom_toTopOf="@id/horiz_fold"/>
-
 
     <!-- Vertical fold -->
 
@@ -67,7 +65,6 @@
         app:layout_constraintTop_toTopOf="@id/vert_background"
         app:layout_constraintBottom_toBottomOf="@id/vert_background" />
 
-
     <!-- Horizontal Fold -->
 
     <androidx.constraintlayout.widget.ReactiveGuide
@@ -99,7 +96,5 @@
         app:layout_constraintEnd_toEndOf="@id/horiz_background"
         app:layout_constraintTop_toTopOf="@id/horiz_background"
         app:layout_constraintBottom_toBottomOf="@id/horiz_background" />
-
-
 
 </androidx.constraintlayout.motion.widget.MotionLayout>
