@@ -4,7 +4,7 @@
   ~  Licensed under the MIT License.
   -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.twodo">
+    package="com.microsoft.device.wm_samples.twodo">
 
     <application
         android:allowBackup="true"

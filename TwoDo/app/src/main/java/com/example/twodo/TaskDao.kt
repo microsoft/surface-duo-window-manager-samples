@@ -3,7 +3,7 @@
  *  Licensed under the MIT License.
  */
 
-package com.example.twodo
+package com.microsoft.device.wm_samples.twodo
 
 import androidx.lifecycle.LiveData
 import androidx.room.Dao

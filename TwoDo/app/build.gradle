@@ -10,7 +10,7 @@ android {
     buildToolsVersion "30.0.3"
 
     defaultConfig {
-        applicationId "com.example.twodo"
+        applicationId 'com.microsoft.device.wm_samples.twodo'
         minSdkVersion 24
         targetSdkVersion 30
         versionCode 1
