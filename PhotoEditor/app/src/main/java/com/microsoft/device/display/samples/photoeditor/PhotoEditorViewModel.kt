@@ -23,6 +23,7 @@ class PhotoEditorViewModel : ViewModel() {
     private var _brightness = MutableLiveData<Float>()
     private var _warmth = MutableLiveData<Float>()
     private var _selectedControl = MutableLiveData<Int>()
+    private var _isDualScreen = MutableLiveData<Boolean>()
 
     fun updateImage(newImage: Drawable) {
         image.value = newImage
@@ -61,6 +62,14 @@ class PhotoEditorViewModel : ViewModel() {
         }
         get() {
             return _selectedControl.value ?: DEFAULT_SELECTED_CONTROL
+        }
+
+    var isDualScreen: Boolean
+        set(value) {
+            _isDualScreen.value = value
+        }
+        get() {
+            return _isDualScreen.value ?: false
         }
 
     fun resetValues() {
