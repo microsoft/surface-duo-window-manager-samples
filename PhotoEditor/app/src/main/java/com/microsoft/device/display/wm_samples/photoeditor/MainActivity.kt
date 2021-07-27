@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-package com.microsoft.device.display.samples.photoeditor
+package com.microsoft.device.display.wm_samples.photoeditor
 
 import android.graphics.Rect
 import android.os.Bundle
@@ -94,7 +94,6 @@ class MainActivity : AppCompatActivity() {
 
         val rightFragment: ConstraintLayout = findViewById(R.id.secondary_fragment_container)
         rightFragment.setPadding(hingeWidth, 0, 0, 0)
-        rightFragment.visibility = View.VISIBLE
     }
 
     /**
@@ -118,7 +117,6 @@ class MainActivity : AppCompatActivity() {
 
         val bottomFragment: ConstraintLayout = findViewById(R.id.secondary_fragment_container)
         bottomFragment.setPadding(0, hingeHeight, 0, 0)
-        bottomFragment.visibility = View.VISIBLE
     }
 
     /**

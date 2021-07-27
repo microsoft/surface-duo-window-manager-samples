@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-package com.microsoft.device.display.samples.photoeditor
+package com.microsoft.device.display.wm_samples.photoeditor
 
 import org.junit.Assert.assertEquals
 import org.junit.Test

@@ -3,7 +3,7 @@
  * Licensed under the MIT License.
  */
 
-package com.microsoft.device.display.samples.photoeditor
+package com.microsoft.device.display.wm_samples.photoeditor
 
 import android.content.Intent
 import android.os.Build
@@ -23,7 +23,7 @@ import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
-import com.microsoft.device.display.samples.photoeditor.utils.ScreenInfoListenerImpl
+import com.microsoft.device.display.wm_samples.photoeditor.utils.ScreenInfoListenerImpl
 import com.microsoft.device.dualscreen.ScreenManagerProvider
 import org.hamcrest.CoreMatchers.not
 import org.junit.After

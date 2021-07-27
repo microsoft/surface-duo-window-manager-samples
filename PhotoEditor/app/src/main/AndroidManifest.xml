@@ -4,7 +4,7 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.microsoft.device.display.samples.photoeditor">
+    package="com.microsoft.device.display.wm_samples.photoeditor">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <application
@@ -14,7 +14,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name="com.microsoft.device.display.samples.photoeditor.MainActivity">
+        <activity android:name="com.microsoft.device.display.wm_samples.photoeditor.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
