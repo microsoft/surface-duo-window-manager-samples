@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+~ Copyright (c) Microsoft Corporation. All rights reserved.
+~ Licensed under the MIT License.
+~
+7-Jan-21 MACHINE-GENERATED FRENCH TRANSLATION (for testing)
+-->
+<resources>
+    <string name="app_name">Source Editor</string>
+    <string name="btn_switch_to_editor">ÉDITEUR SOURCE</string>
+    <string name="btn_switch_to_preview">APERÇU</string>
+</resources>
