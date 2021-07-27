@@ -4,29 +4,23 @@
 </head>
 <body>
 
-<h1> Testing in a browser </h1>
-<p> While the proposals work their way through the standards process, it is possible to test an implementation of these ideas using the
-    <a href="https://github.com/foldable-devices/spanning-css-polyfill" target="_blank" class="x-hidden-focus">spanning-css-polyfill</a>
-    and <a href="https://github.com/foldable-devices/windowsegments-polyfill" target="_blank">windowsegments-polyfill</a>.
-    There is a <a href="https://foldable-devices.github.io/demos/photo-gallery/" target="_blank">photo-gallery example</a>
-    with a panel that simulates dual-screen devices in any modern browser.
-    Click the left-most icon to enable a dual-screen experience in the browser:<br>
+<h1>Jetpack Window Manager for foldable devices</h1>
 
-<img src="https://devblogs.microsoft.com/surface-duo/wp-content/uploads/sites/53/2020/06/word-image-4.png"><br>
+<p>Jetpack Window Manager provides a standard API for working with all foldable devices.</p>
 
-Figure 1: foldable configurator for testing </p>
+<img src="https://devblogs.microsoft.com/surface-duo/wp-content/uploads/sites/53/2021/03/a-screenshot-of-a-computer-description-automatica.png" width="400"><br>
 
-<p>Click the third icon to expand the configurator and preview a Surface Duo-specific experience:
-<img src="https://devblogs.microsoft.com/surface-duo/wp-content/uploads/sites/53/2020/06/word-image-6.png"
-     width="500" height="500"><br>
+<i>Figure 1: single- and dual-screen foldable devices</i></p>
 
-Figure 2: simulating the Surface Duo web experience </p>
+<p>It contains two important classes:</p>
 
-<p> You can also use the polyfills with your own website.
-    Follow these <a href="https://github.com/foldable-devices/device-configurator" target="_blank">
-        instructions to add the configurator for testing</a>,
-    and keep in mind these proposals may change in the future.</p>
+<ul>
+    <li><b>DisplayFeature</b> - Identifies disruptions in the continuous flat screen surface such as hinges or folds. Window Manager will return a collection of display features from a layout change callback.</li>
+    <li><b>FoldingFeature</b> - Provides information about a specific feature of the device - while the Surface Duo only has one folding feature, it's possible that other devices might have more. The FoldingFeature class provides information about the state of that part of the device, with properties for bounds, occlusionType, orientation, state, and isSeparating.</li>
+</ul>
 
-<br>
+For more information, visit our <a href="https://docs.microsoft.com/dual-screen/android/platform/jetpack-window-manager/">Jetpack Window Manager docs</a>
+and this <a href="https://github.com/googlecodelabs/android-foldable-codelab/">Google Codelab</a>, and the <a href="https://medium.com/androiddevelopers/support-new-form-factors-with-the-new-jetpack-windowmanager-library-4be98f5450da">Android developers blog</a>.
+
 </body>
 </html>
