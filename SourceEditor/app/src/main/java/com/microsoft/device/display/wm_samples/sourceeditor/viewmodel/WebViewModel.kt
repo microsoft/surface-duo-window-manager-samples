@@ -5,7 +5,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.sourceeditor.viewmodel
+package com.microsoft.device.display.wm_samples.sourceeditor.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

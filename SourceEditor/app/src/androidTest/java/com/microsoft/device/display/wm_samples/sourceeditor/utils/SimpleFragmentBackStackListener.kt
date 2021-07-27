@@ -4,7 +4,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.sourceeditor.utils
+package com.microsoft.device.display.wm_samples.sourceeditor.utils
 
 import androidx.fragment.app.FragmentManager
 import java.util.concurrent.CountDownLatch

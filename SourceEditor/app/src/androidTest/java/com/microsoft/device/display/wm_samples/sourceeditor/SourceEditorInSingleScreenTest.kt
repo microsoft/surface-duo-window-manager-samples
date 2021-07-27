@@ -4,7 +4,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.sourceeditor
+package com.microsoft.device.display.wm_samples.sourceeditor
 
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -13,11 +13,11 @@ import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.filters.MediumTest
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.rule.ActivityTestRule
-import com.microsoft.device.display.samples.sourceeditor.utils.SimpleFragmentBackStackListener
-import com.microsoft.device.display.samples.sourceeditor.utils.forceClick
-import com.microsoft.device.display.samples.sourceeditor.utils.setOrientationLeft
-import com.microsoft.device.display.samples.sourceeditor.utils.setOrientationRight
-import com.microsoft.device.display.samples.sourceeditor.utils.unfreezeRotation
+import com.microsoft.device.display.wm_samples.sourceeditor.utils.SimpleFragmentBackStackListener
+import com.microsoft.device.display.wm_samples.sourceeditor.utils.forceClick
+import com.microsoft.device.display.wm_samples.sourceeditor.utils.setOrientationLeft
+import com.microsoft.device.display.wm_samples.sourceeditor.utils.setOrientationRight
+import com.microsoft.device.display.wm_samples.sourceeditor.utils.unfreezeRotation
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule

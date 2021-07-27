@@ -5,7 +5,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.sourceeditor.includes
+package com.microsoft.device.display.wm_samples.sourceeditor.includes
 
 object Defines {
     // Scrolling values //

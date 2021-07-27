@@ -5,7 +5,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.sourceeditor.includes
+package com.microsoft.device.display.wm_samples.sourceeditor.includes
 
 import android.app.Activity
 import android.content.ContentResolver
@@ -16,7 +16,7 @@ import android.util.Log
 import android.view.DragEvent
 import androidx.core.app.ActivityCompat
 import androidx.core.app.ActivityCompat.startActivityForResult
-import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel
+import com.microsoft.device.display.wm_samples.sourceeditor.viewmodel.WebViewModel
 import java.io.BufferedReader
 import java.io.FileNotFoundException
 import java.io.FileOutputStream

@@ -13,7 +13,7 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
-        applicationId 'com.microsoft.device.display.samples.sourceeditor'
+        applicationId 'com.microsoft.device.display.wm_samples.sourceeditor'
         minSdkVersion 29
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

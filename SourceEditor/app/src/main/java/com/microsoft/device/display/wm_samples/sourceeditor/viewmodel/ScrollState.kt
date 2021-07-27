@@ -5,7 +5,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.sourceeditor.viewmodel
+package com.microsoft.device.display.wm_samples.sourceeditor.viewmodel
 
 /* Class used to define a key, value pair for scrolling data */
 data class ScrollState(val scrollKey: String, val scrollPercentage: Int)

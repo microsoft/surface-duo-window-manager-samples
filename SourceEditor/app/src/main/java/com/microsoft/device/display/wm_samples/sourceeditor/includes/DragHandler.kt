@@ -5,12 +5,12 @@
  *
  */
 
-package com.microsoft.device.display.samples.sourceeditor.includes
+package com.microsoft.device.display.wm_samples.sourceeditor.includes
 
 import android.app.Activity
 import android.content.ContentResolver
 import android.view.DragEvent
-import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel
+import com.microsoft.device.display.wm_samples.sourceeditor.viewmodel.WebViewModel
 
 /* Class used to update app contents when an appropriate drag event occurs */
 class DragHandler(activity: Activity, webVM: WebViewModel, contentResolver: ContentResolver) {

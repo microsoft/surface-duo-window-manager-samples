@@ -18,7 +18,7 @@
     <!-- secondary child -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/secondary_fragment_container"
-        android:name="com.microsoft.device.display.samples.sourceeditor.PreviewFragment"
+        android:name="com.microsoft.device.display.wm_samples.sourceeditor.PreviewFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintLeft_toLeftOf="@id/bounding_rect"
@@ -30,7 +30,7 @@
     <!-- top child -->
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/primary_fragment_container"
-        android:name="com.microsoft.device.display.samples.sourceeditor.CodeFragment"
+        android:name="com.microsoft.device.display.wm_samples.sourceeditor.CodeFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         app:layout_constraintLeft_toLeftOf="parent"

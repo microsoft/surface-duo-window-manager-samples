@@ -4,7 +4,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.sourceeditor.utils
+package com.microsoft.device.display.wm_samples.sourceeditor.utils
 
 import android.view.View
 import android.view.ViewGroup

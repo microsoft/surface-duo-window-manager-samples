@@ -4,7 +4,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.sourceeditor
+package com.microsoft.device.display.wm_samples.sourceeditor
 
 import android.app.Activity
 import android.content.Intent
@@ -26,9 +26,9 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.window.FoldingFeature
 import androidx.window.WindowLayoutInfo
 import androidx.window.WindowManager
-import com.microsoft.device.display.samples.sourceeditor.includes.FileHandler
-import com.microsoft.device.display.samples.sourceeditor.viewmodel.DualScreenViewModel
-import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel
+import com.microsoft.device.display.wm_samples.sourceeditor.includes.FileHandler
+import com.microsoft.device.display.wm_samples.sourceeditor.viewmodel.DualScreenViewModel
+import com.microsoft.device.display.wm_samples.sourceeditor.viewmodel.WebViewModel
 import java.util.concurrent.Executor
 
 class MainActivity : AppCompatActivity() {

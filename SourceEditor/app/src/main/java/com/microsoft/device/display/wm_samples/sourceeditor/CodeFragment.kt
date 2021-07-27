@@ -5,31 +5,37 @@
  *
  */
 
-package com.microsoft.device.display.samples.sourceeditor
+package com.microsoft.device.display.wm_samples.sourceeditor
 
+import android.content.Context
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.webkit.WebChromeClient
-import android.webkit.WebView
 import android.widget.Button
+import android.widget.LinearLayout
 import android.widget.ScrollView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import com.microsoft.device.display.samples.sourceeditor.includes.Defines
-import com.microsoft.device.display.samples.sourceeditor.includes.DragHandler
-import com.microsoft.device.display.samples.sourceeditor.viewmodel.DualScreenViewModel
-import com.microsoft.device.display.samples.sourceeditor.viewmodel.ScrollViewModel
-import com.microsoft.device.display.samples.sourceeditor.viewmodel.WebViewModel
+import com.google.android.material.textfield.TextInputEditText
+import com.microsoft.device.display.wm_samples.sourceeditor.includes.Defines
+import com.microsoft.device.display.wm_samples.sourceeditor.includes.DragHandler
+import com.microsoft.device.display.wm_samples.sourceeditor.viewmodel.DualScreenViewModel
+import com.microsoft.device.display.wm_samples.sourceeditor.viewmodel.ScrollViewModel
+import com.microsoft.device.display.wm_samples.sourceeditor.viewmodel.WebViewModel
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
-/* Fragment that defines functionality for the source code previewer */
-class PreviewFragment : Fragment() {
+/* Fragment that defines functionality for source code editor */
+class CodeFragment : Fragment() {
+    private lateinit var buttonToolbar: LinearLayout
+    private lateinit var codeLayout: LinearLayout
     private lateinit var scrollView: ScrollView
 
-    private lateinit var editorBtn: Button
     private lateinit var previewBtn: Button
-    private lateinit var webView: WebView
+    private lateinit var textField: TextInputEditText
 
     private lateinit var dualScreenVM: DualScreenViewModel
     private lateinit var scrollVM: ScrollViewModel
@@ -44,12 +50,7 @@ class PreviewFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_item_preview, container, false)
-
-        webView = view.findViewById(R.id.webview_preview)
-        webView.settings.domStorageEnabled = true
-        webView.settings.javaScriptEnabled = true
-        webView.webChromeClient = WebChromeClient()
+        val view = inflater.inflate(R.layout.fragment_item_code, container, false)
 
         activity?.let {
             // initialize ViewModels (find existing or create a new one)
@@ -57,18 +58,44 @@ class PreviewFragment : Fragment() {
             scrollVM = ViewModelProvider(requireActivity()).get(ScrollViewModel::class.java)
             webVM = ViewModelProvider(requireActivity()).get(WebViewModel::class.java)
 
-            val str: String = (webVM.getText().value) ?: ""
-            webView.loadData(str, Defines.HTML_TYPE, Defines.ENCODING)
+            textField = view.findViewById(R.id.textinput_code)
+            scrollView = view.findViewById(R.id.scrollview_code)
 
             val isDualScreen = dualScreenVM.getIsDualScreen().value ?: false
-            handleSpannedModeSelection(view, webView, isDualScreen)
+            handleSpannedModeSelection(view, isDualScreen)
             dualScreenVM.getIsDualScreen().observe(
                 requireActivity(),
-                { bool -> handleSpannedModeSelection(view, webView, bool) }
+                { bool -> handleSpannedModeSelection(view, bool) }
             )
+
+            if (webVM.getText().value == null) {
+                webVM.setText(readFile(Defines.DEFAULT_SOURCE_PATH, context))
+            }
+
+            webVM.getText().observe(
+                requireActivity(),
+                { str ->
+                    if (str != textField.text.toString()) {
+                        textField.setText(str)
+                    }
+                }
+            )
+
+            textField.setText(webVM.getText().value)
+
+            setOnChangeListenerForTextInput(textField)
         }
 
         return view
+    }
+
+    // read from a base file in the assets folder
+    private fun readFile(file: String, context: Context?): String {
+        return BufferedReader(InputStreamReader(context?.assets?.open(file))).useLines { lines ->
+            val results = StringBuilder()
+            lines.forEach { results.append(it + System.getProperty("line.separator")) }
+            results.toString()
+        }
     }
 
     // mirror scrolling logic
@@ -76,37 +103,23 @@ class PreviewFragment : Fragment() {
         if (!rangeFound) {
             calibrateScrollView()
         } else {
-            // code window scrolled, auto scroll to match editor
             if (observing) {
                 autoScroll(int)
             } else {
-                updateScrollValues(int, Defines.PREVIEW_KEY)
+                updateScrollValues(int, Defines.CODE_KEY)
             }
         }
     }
 
     // single screen vs. dual screen logic
-    private fun handleSpannedModeSelection(view: View, webView: WebView, isDualMode: Boolean) {
-        activity?.let { activity ->
-            editorBtn = view.findViewById(R.id.btn_switch_to_editor)
+    private fun handleSpannedModeSelection(view: View, isDualMode: Boolean) {
+        activity?.let {
+            codeLayout = view.findViewById(R.id.code_layout)
             previewBtn = view.findViewById(R.id.btn_switch_to_preview)
-
-            // listen for changes made to the editor
-            webVM.getText().observe(
-                requireActivity(),
-                { str ->
-                    webView.loadData(str, Defines.HTML_TYPE, Defines.ENCODING)
-                }
-            )
+            buttonToolbar = view.findViewById(R.id.button_toolbar)
 
             if (isDualMode) {
-                val containerId = (view.parent as? ViewGroup)?.id
-                if (containerId == R.id.primary_fragment_container) {
-                    // Ensure a code fragment is always in the primary fragment slot when spanned
-                    startCodeFragment()
-                } else {
-                    initializeDualScreen(view)
-                }
+                initializeDualScreen()
             } else {
                 initializeSingleScreen()
             }
@@ -115,26 +128,23 @@ class PreviewFragment : Fragment() {
 
     // spanned selection helper
     private fun initializeSingleScreen() {
-        editorBtn.visibility = View.VISIBLE
-        previewBtn.visibility = View.VISIBLE
+        buttonToolbar.visibility = View.VISIBLE
         initializeDragListener()
 
-        editorBtn.setOnClickListener {
-            startCodeFragment()
+        previewBtn.setOnClickListener {
+            startPreviewFragment()
         }
     }
 
     // spanned selection helper
-    private fun initializeDualScreen(view: View) {
+    private fun initializeDualScreen() {
+        buttonToolbar.visibility = View.GONE
+
         scrollingBuffer = Defines.DEFAULT_BUFFER_SIZE
         scrollRange = Defines.DEFAULT_RANGE
         rangeFound = false
 
-        editorBtn.visibility = View.GONE
-        previewBtn.visibility = View.GONE
-
         // set event and data listeners
-        scrollView = view.findViewById(R.id.scrollview_preview)
         scrollView.setOnScrollChangeListener { _, _, scrollY, _, _ ->
             handleScrolling(false, scrollY)
         }
@@ -142,22 +152,36 @@ class PreviewFragment : Fragment() {
         scrollVM.getScroll().observe(
             requireActivity(),
             { state ->
-                if (state.scrollKey != Defines.PREVIEW_KEY) {
+                if (state.scrollKey != Defines.CODE_KEY) {
                     handleScrolling(true, state.scrollPercentage)
                 }
             }
         )
     }
 
-    // method that triggers transition to code fragment
-    private fun startCodeFragment() {
+    // method that triggers transition to preview fragment
+    private fun startPreviewFragment() {
         parentFragmentManager.beginTransaction()
             .replace(
                 R.id.primary_fragment_container,
-                CodeFragment(),
-                "CodeFragment"
-            ).addToBackStack("CodeFragment")
+                PreviewFragment(),
+                "PreviewFragment"
+            ).addToBackStack("PreviewFragment")
             .commit()
+    }
+
+    // listener for changes to text in code editor
+    private fun setOnChangeListenerForTextInput(field: TextInputEditText) {
+        field.addTextChangedListener(object : TextWatcher {
+
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+                webVM.setText(s.toString())
+            }
+
+            override fun afterTextChanged(s: Editable?) {}
+        })
     }
 
     // get bounds of scroll window
@@ -189,12 +213,17 @@ class PreviewFragment : Fragment() {
         }
     }
 
-    // create a drop target for the preview screen
+    // create drop targets for the editor screen
     private fun initializeDragListener() {
         val handler = DragHandler(requireActivity(), webVM, requireActivity().contentResolver)
-        val target = webView
 
-        target.setOnDragListener { _, event ->
+        // Main target will trigger when textField has content
+        textField.setOnDragListener { _, event ->
+            handler.onDrag(event)
+        }
+
+        // Sub target will trigger when textField is empty
+        codeLayout.setOnDragListener { _, event ->
             handler.onDrag(event)
         }
     }
