@@ -100,7 +100,7 @@ class PreviewFragment : Fragment() {
             )
 
             if (isDualMode) {
-                val containerId = (view.parent as ViewGroup).id
+                val containerId = (view.parent as? ViewGroup)?.id
                 if (containerId == R.id.primary_fragment_container) {
                     // Ensure a code fragment is always in the primary fragment slot when spanned
                     startCodeFragment()
