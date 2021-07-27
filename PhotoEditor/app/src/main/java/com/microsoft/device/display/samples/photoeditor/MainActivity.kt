@@ -164,7 +164,8 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 if (!viewModel.isDualScreen) {
-                    setBoundsNoHinge()
+                    // Since the fragment switches between layouts, we don't need to do anything here
+                    // setBoundsNoHinge()
                 }
             }
         }

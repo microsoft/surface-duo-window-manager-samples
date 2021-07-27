@@ -1,3 +1,8 @@
+/*
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ */
+
 package com.microsoft.device.display.samples.photoeditor
 
 import android.app.Activity
@@ -57,8 +62,8 @@ class ActivityFragment : Fragment() {
     ): View? {
         viewModel = ViewModelProvider(requireActivity()).get(PhotoEditorViewModel::class.java)
         val view = (
-            if (!viewModel.isDualScreen) inflater.inflate(R.layout.activity_main_single, container, false)
-            else inflater.inflate(R.layout.activity_main_dual, container, false)
+            if (!viewModel.isDualScreen) inflater.inflate(R.layout.fragment_single_screen, container, false)
+            else inflater.inflate(R.layout.fragment_dual_screen, container, false)
             )
 
         initializeViews(view)
@@ -67,6 +72,10 @@ class ActivityFragment : Fragment() {
         return view
     }
 
+    /**
+     * Finds all the views in the current layout
+     * @param v: view group that contains all the necessary controls
+     */
     private fun initializeViews(v: View) {
         image = v.findViewById(R.id.image)
         saturation = v.findViewById(R.id.saturation)
@@ -128,8 +137,10 @@ class ActivityFragment : Fragment() {
         image.warmth = viewModel.warmth
     }
 
+    /**
+     * Reset dropdown and SeekBar visibility if single-screen view
+     */
     private fun resetSeekBarVisibility() {
-        // Reset dropdown and SeekBar visibility if single-screen view
         if (!viewModel.isDualScreen) {
             saturation.visibility = View.VISIBLE
             brightness.visibility = View.INVISIBLE
@@ -138,6 +149,9 @@ class ActivityFragment : Fragment() {
         }
     }
 
+    /**
+     * Initialize aspects of the app that users can interact with
+     */
     private fun setupLayout() {
         image.let {
             // Set up click handling for importing images from photo gallery
@@ -180,8 +194,11 @@ class ActivityFragment : Fragment() {
         }
     }
 
+    /**
+     * Update the image based on info from the viewModel.
+     * Used to restore image settings after screen and orientation changes.
+     */
     private fun restoreImage() {
-        // Restore image
         viewModel.getImage().value?.let {
             image.setImageDrawable(viewModel.getImage().value)
         }
@@ -240,6 +257,10 @@ class ActivityFragment : Fragment() {
         image.setBackgroundColor(Color.parseColor("grey"))
     }
 
+    /**
+     * Initialize the single screen spinner tied to saturation/brightness/warmth selection
+     * @param selectedControl: state to initialize the spinner to
+     */
     private fun setUpToggle(selectedControl: Int?) {
         // Set up contents of controls dropdown
         ArrayAdapter.createFromResource(
@@ -280,6 +301,11 @@ class ActivityFragment : Fragment() {
         }
     }
 
+    /**
+     * Initialize the image warmth control
+     * @param image: the image object affected by changes in the seekbar
+     * @param progress: value to initialize the seekbar to
+     */
     private fun setUpWarmth(image: ImageFilterView, progress: Float?) {
         // Restore value from previous state if available
         progress?.let {
@@ -301,6 +327,11 @@ class ActivityFragment : Fragment() {
         })
     }
 
+    /**
+     * Initialize the image brightness control
+     * @param image: the image object affected by changes in the seekbar
+     * @param progress: value to initialize the seekbar to
+     */
     private fun setUpBrightness(image: ImageFilterView, progress: Float?) {
         // Restore value from previous state if available
         progress?.let {
@@ -322,6 +353,11 @@ class ActivityFragment : Fragment() {
         })
     }
 
+    /**
+     * Initialize the image saturation control
+     * @param image: the image object affected by changes in the seekbar
+     * @param progress: value to initialize the seekbar to
+     */
     private fun setUpSaturation(image: ImageFilterView, progress: Float?) {
         // Restore value from previous state if available
         progress?.let {
@@ -343,6 +379,10 @@ class ActivityFragment : Fragment() {
         })
     }
 
+    /**
+     * Initialize the image rotation control
+     * @param image: the image object affected by button presses
+     */
     private fun setUpRotate(image: ImageFilterView) {
         rotate_left.setOnClickListener {
             applyRotationMatrix(270f, image)
