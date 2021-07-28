@@ -5,7 +5,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.twonote.fragments
+package com.microsoft.device.display.wm_samples.twonote.fragments
 
 import Defines.INODE
 import Defines.LIST_FRAGMENT
@@ -35,18 +35,19 @@ import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.view.iterator
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.textfield.TextInputEditText
-import com.microsoft.device.display.samples.twonote.MainActivity
-import com.microsoft.device.display.samples.twonote.R
-import com.microsoft.device.display.samples.twonote.models.INode
-import com.microsoft.device.display.samples.twonote.models.Note
-import com.microsoft.device.display.samples.twonote.models.Stroke
-import com.microsoft.device.display.samples.twonote.utils.DataProvider
-import com.microsoft.device.display.samples.twonote.utils.DragHandler
-import com.microsoft.device.display.samples.twonote.utils.FileSystem
-import com.microsoft.device.display.samples.twonote.utils.PenDrawView
-import com.microsoft.device.dualscreen.ScreenInfoProvider
+import com.microsoft.device.display.wm_samples.twonote.MainActivity
+import com.microsoft.device.display.wm_samples.twonote.R
+import com.microsoft.device.display.wm_samples.twonote.models.DualScreenViewModel
+import com.microsoft.device.display.wm_samples.twonote.models.INode
+import com.microsoft.device.display.wm_samples.twonote.models.Note
+import com.microsoft.device.display.wm_samples.twonote.models.Stroke
+import com.microsoft.device.display.wm_samples.twonote.utils.DataProvider
+import com.microsoft.device.display.wm_samples.twonote.utils.DragHandler
+import com.microsoft.device.display.wm_samples.twonote.utils.FileSystem
+import com.microsoft.device.display.wm_samples.twonote.utils.PenDrawView
 import java.io.File
 import java.io.FileOutputStream
 import java.time.LocalDateTime
@@ -78,6 +79,8 @@ class NoteDetailFragment : Fragment() {
     private var textItem: MenuItem? = null
     private var imageItem: MenuItem? = null
     private var deleteImageMode = false
+
+    private var dualScreenVM = DualScreenViewModel()
 
     /**
      * Listener that communicates note changes between detail and list fragments
@@ -118,6 +121,7 @@ class NoteDetailFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_note_detail, container, false)
+        dualScreenVM = ViewModelProvider(requireActivity()).get(DualScreenViewModel::class.java)
 
         noteTitle = view.findViewById(R.id.title_input)
         noteText = view.findViewById(R.id.text_input)
@@ -730,7 +734,7 @@ class NoteDetailFragment : Fragment() {
      */
     fun closeFragment() {
         activity?.let { activity ->
-            if (ScreenInfoProvider.getScreenInfo(activity).isDualMode() &&
+            if (dualScreenVM.isDualScreen &&
                 !MainActivity.isRotated(activity)
             ) {
                 // Tell NoteListFragment that list data has changed
@@ -740,7 +744,7 @@ class NoteDetailFragment : Fragment() {
                 // If spanned and not rotated (list/detail view), show GetStartedFragment in second container
                 parentFragmentManager.beginTransaction()
                     .replace(
-                        R.id.second_container_id,
+                        R.id.secondary_fragment_container,
                         GetStartedFragment(),
                         null
                     ).commit()
@@ -748,7 +752,7 @@ class NoteDetailFragment : Fragment() {
                 // If unspanned, or spanned and rotated (extended canvas), show NoteListFragment in first container
                 parentFragmentManager.beginTransaction()
                     .replace(
-                        R.id.first_container_id,
+                        R.id.primary_fragment_container,
                         NoteListFragment(),
                         LIST_FRAGMENT
                     ).commit()

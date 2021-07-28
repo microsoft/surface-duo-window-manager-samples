@@ -5,14 +5,14 @@
  *
  */
 
-package com.microsoft.device.display.samples.twonote.fragments
+package com.microsoft.device.display.wm_samples.twonote.fragments
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import com.microsoft.device.display.samples.twonote.R
+import com.microsoft.device.display.wm_samples.twonote.R
 
 /**
  * Fragment that shows a welcome screen when a note is not selected in list-detail view

@@ -5,7 +5,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.twonote.models
+package com.microsoft.device.display.wm_samples.twonote.models
 
 import java.io.Serializable
 import java.time.LocalDateTime

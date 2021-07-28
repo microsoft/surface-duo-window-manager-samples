@@ -5,14 +5,14 @@
  *
  */
 
-package com.microsoft.device.display.samples.twonote.utils
+package com.microsoft.device.display.wm_samples.twonote.utils
 
 import android.content.Context
 import android.util.Log
-import com.microsoft.device.display.samples.twonote.R
-import com.microsoft.device.display.samples.twonote.models.DirEntry
-import com.microsoft.device.display.samples.twonote.models.INode
-import com.microsoft.device.display.samples.twonote.models.Note
+import com.microsoft.device.display.wm_samples.twonote.R
+import com.microsoft.device.display.wm_samples.twonote.models.DirEntry
+import com.microsoft.device.display.wm_samples.twonote.models.INode
+import com.microsoft.device.display.wm_samples.twonote.models.Note
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream

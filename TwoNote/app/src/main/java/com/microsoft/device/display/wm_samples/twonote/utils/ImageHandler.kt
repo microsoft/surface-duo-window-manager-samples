@@ -5,7 +5,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.twonote.utils
+package com.microsoft.device.display.wm_samples.twonote.utils
 
 import Defines.LAND_TO_PORT
 import Defines.MIN_DIMEN
@@ -28,9 +28,9 @@ import android.view.ViewConfiguration
 import android.widget.ImageView
 import android.widget.RelativeLayout
 import androidx.core.view.drawToBitmap
-import com.microsoft.device.display.samples.twonote.MainActivity
-import com.microsoft.device.display.samples.twonote.fragments.NoteDetailFragment
-import com.microsoft.device.display.samples.twonote.models.SerializedImage
+import com.microsoft.device.display.wm_samples.twonote.MainActivity
+import com.microsoft.device.display.wm_samples.twonote.fragments.NoteDetailFragment
+import com.microsoft.device.display.wm_samples.twonote.models.SerializedImage
 import java.io.ByteArrayOutputStream
 import java.util.Calendar
 import kotlin.math.abs

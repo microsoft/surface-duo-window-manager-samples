@@ -57,7 +57,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
-        <com.microsoft.device.display.samples.twonote.utils.PenDrawView
+        <com.microsoft.device.display.wm_samples.twonote.utils.PenDrawView
             android:id="@+id/draw_view"
             android:layout_width="0dp"
             android:layout_height="0dp"

@@ -5,7 +5,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.twonote.utils
+package com.microsoft.device.display.wm_samples.twonote.utils
 
 import android.view.ActionMode
 import android.view.Menu
@@ -13,9 +13,9 @@ import android.view.MenuItem
 import android.widget.AbsListView
 import android.widget.ArrayAdapter
 import android.widget.ListView
-import com.microsoft.device.display.samples.twonote.R
-import com.microsoft.device.display.samples.twonote.fragments.NoteListFragment
-import com.microsoft.device.display.samples.twonote.models.INode
+import com.microsoft.device.display.wm_samples.twonote.R
+import com.microsoft.device.display.wm_samples.twonote.fragments.NoteListFragment
+import com.microsoft.device.display.wm_samples.twonote.models.INode
 
 /**
  * Class that handles multiple choice mode for the list of notes

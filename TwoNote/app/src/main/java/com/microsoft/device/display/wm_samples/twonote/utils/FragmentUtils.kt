@@ -5,13 +5,13 @@
  *
  */
 
-package com.microsoft.device.display.samples.twonote.utils
+package com.microsoft.device.display.wm_samples.twonote.utils
 
 import Defines.DETAIL_FRAGMENT
 import Defines.FIRST_CONTAINER
 import Defines.SECOND_CONTAINER
 import Defines.TAG_DELIMITER
-import com.microsoft.device.display.samples.twonote.R
+import com.microsoft.device.display.wm_samples.twonote.R
 
 /**
  * Build the unique tag for the detail view fragment based on the container and the content
@@ -22,9 +22,9 @@ import com.microsoft.device.display.samples.twonote.R
  */
 fun buildDetailTag(container: Int, inodeId: Int, noteId: Int): String {
     val result = StringBuilder()
-    if (container == R.id.first_container_id) {
+    if (container == R.id.primary_fragment_container) {
         result.append(FIRST_CONTAINER)
-    } else if (container == R.id.second_container_id) {
+    } else if (container == R.id.secondary_fragment_container) {
         result.append(SECOND_CONTAINER)
     }
     result.append(TAG_DELIMITER)

@@ -5,7 +5,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.twonote
+package com.microsoft.device.display.wm_samples.twonote
 
 import androidx.test.espresso.Espresso.onData
 import androidx.test.espresso.Espresso.onView

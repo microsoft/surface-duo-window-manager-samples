@@ -5,9 +5,9 @@
  *
  */
 
-package com.microsoft.device.display.samples.twonote.utils
+package com.microsoft.device.display.wm_samples.twonote.utils
 
-import com.microsoft.device.display.samples.twonote.models.INode
+import com.microsoft.device.display.wm_samples.twonote.models.INode
 import kotlin.math.max
 
 /**

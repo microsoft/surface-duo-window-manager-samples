@@ -5,7 +5,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.twonote.utils
+package com.microsoft.device.display.wm_samples.twonote.utils
 
 import Defines.IMAGE_PREFIX
 import Defines.TEXT_PREFIX
@@ -13,9 +13,9 @@ import android.content.ContentResolver
 import android.view.DragEvent
 import android.widget.ImageView
 import androidx.core.app.ActivityCompat
-import com.microsoft.device.display.samples.twonote.MainActivity
-import com.microsoft.device.display.samples.twonote.fragments.NoteDetailFragment
-import com.microsoft.device.display.samples.twonote.models.SerializedImage
+import com.microsoft.device.display.wm_samples.twonote.MainActivity
+import com.microsoft.device.display.wm_samples.twonote.fragments.NoteDetailFragment
+import com.microsoft.device.display.wm_samples.twonote.models.SerializedImage
 
 /**
  *  Class used to update app contents when an appropriate drag event occurs

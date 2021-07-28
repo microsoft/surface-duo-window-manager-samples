@@ -5,7 +5,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.twonote.utils
+package com.microsoft.device.display.wm_samples.twonote.utils
 
 import Defines.DEFAULT_THICKNESS
 import Defines.ERASER_RADIUS
@@ -24,8 +24,8 @@ import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import androidx.core.graphics.ColorUtils
-import com.microsoft.device.display.samples.twonote.models.SerializedStroke
-import com.microsoft.device.display.samples.twonote.models.Stroke
+import com.microsoft.device.display.wm_samples.twonote.models.SerializedStroke
+import com.microsoft.device.display.wm_samples.twonote.models.Stroke
 import kotlin.math.min
 
 /**

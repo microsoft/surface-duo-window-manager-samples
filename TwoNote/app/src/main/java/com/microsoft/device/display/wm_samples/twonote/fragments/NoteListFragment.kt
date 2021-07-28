@@ -5,7 +5,7 @@
  *
  */
 
-package com.microsoft.device.display.samples.twonote.fragments
+package com.microsoft.device.display.wm_samples.twonote.fragments
 
 import Defines.LIST_VIEW
 import android.graphics.Typeface
@@ -22,19 +22,20 @@ import android.widget.ListView
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.google.android.material.textfield.TextInputEditText
-import com.microsoft.device.display.samples.twonote.MainActivity
-import com.microsoft.device.display.samples.twonote.R
-import com.microsoft.device.display.samples.twonote.models.DirEntry
-import com.microsoft.device.display.samples.twonote.models.INode
-import com.microsoft.device.display.samples.twonote.models.Note
-import com.microsoft.device.display.samples.twonote.utils.DataProvider
-import com.microsoft.device.display.samples.twonote.utils.FileSystem
-import com.microsoft.device.display.samples.twonote.utils.NoteSelectionListener
-import com.microsoft.device.display.samples.twonote.utils.buildDetailTag
-import com.microsoft.device.dualscreen.ScreenInfoProvider
+import com.microsoft.device.display.wm_samples.twonote.MainActivity
+import com.microsoft.device.display.wm_samples.twonote.R
+import com.microsoft.device.display.wm_samples.twonote.models.DirEntry
+import com.microsoft.device.display.wm_samples.twonote.models.DualScreenViewModel
+import com.microsoft.device.display.wm_samples.twonote.models.INode
+import com.microsoft.device.display.wm_samples.twonote.models.Note
+import com.microsoft.device.display.wm_samples.twonote.utils.DataProvider
+import com.microsoft.device.display.wm_samples.twonote.utils.FileSystem
+import com.microsoft.device.display.wm_samples.twonote.utils.NoteSelectionListener
+import com.microsoft.device.display.wm_samples.twonote.utils.buildDetailTag
 
 /**
  * Fragment that shows a list view of the user's notes and lets the user add, delete, and rename
@@ -55,6 +56,8 @@ class NoteListFragment : Fragment(), AdapterView.OnItemClickListener, AdapterVie
     private val root = ""
     private var selectedFlag = false
     private var noteSelectionListener: NoteSelectionListener? = null
+
+    private var dualScreenVM = DualScreenViewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,6 +108,7 @@ class NoteListFragment : Fragment(), AdapterView.OnItemClickListener, AdapterVie
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_note_list, container, false)
+        dualScreenVM = ViewModelProvider(requireActivity()).get(DualScreenViewModel::class.java)
 
         editText = view.findViewById(R.id.title_list_input)
         editText.setText(DataProvider.getActiveCategoryName())
@@ -227,23 +231,23 @@ class NoteListFragment : Fragment(), AdapterView.OnItemClickListener, AdapterVie
             if (note == null)
                 note = Note(inode.id, resources.getString(R.string.default_note_name))
 
-            if (ScreenInfoProvider.getScreenInfo(requireActivity()).isDualMode() &&
+            if (dualScreenVM.isDualScreen &&
                 !MainActivity.isRotated(requireActivity())
             ) {
                 // If spanned and not rotated (list view), open NoteDetailFragment in second container
                 parentFragmentManager.beginTransaction()
                     .replace(
-                        R.id.second_container_id,
+                        R.id.secondary_fragment_container,
                         NoteDetailFragment.newInstance(inode, note),
-                        buildDetailTag(R.id.second_container_id, inode.id, note.id)
+                        buildDetailTag(R.id.secondary_fragment_container, inode.id, note.id)
                     ).commit()
             } else {
                 // If unspanned or spanned and rotated (extended canvas), open NoteDetailFragment in first container
                 parentFragmentManager.beginTransaction()
                     .replace(
-                        R.id.first_container_id,
+                        R.id.primary_fragment_container,
                         NoteDetailFragment.newInstance(inode, note),
-                        buildDetailTag(R.id.first_container_id, inode.id, note.id)
+                        buildDetailTag(R.id.primary_fragment_container, inode.id, note.id)
                     ).addToBackStack(null)
                     .commit()
             }
@@ -258,8 +262,8 @@ class NoteListFragment : Fragment(), AdapterView.OnItemClickListener, AdapterVie
      */
     fun exitDetailFragment(deleting: Boolean) {
         activity?.let {
-            if (ScreenInfoProvider.getScreenInfo(it).isDualMode() && !MainActivity.isRotated(it)) {
-                val fragment = parentFragmentManager.findFragmentById(R.id.second_container_id) as? NoteDetailFragment
+            if (dualScreenVM.isDualScreen && !MainActivity.isRotated(it)) {
+                val fragment = parentFragmentManager.findFragmentById(R.id.secondary_fragment_container) as? NoteDetailFragment
 
                 fragment?.let { detail ->
                     if (!deleting) {

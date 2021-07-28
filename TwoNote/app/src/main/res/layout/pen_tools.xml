@@ -47,7 +47,7 @@
         android:id="@+id/erase"
         style="@style/penToolsButtonStyle"
         android:contentDescription="@string/action_erase_on"
-        android:src="@drawable/ic_fluent_erase_20_filled" />
+        android:src="@drawable/ic_fluent_eraser_20_filled" />
 
     <View style="@style/spacerStyle" />
 
