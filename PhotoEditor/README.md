@@ -22,6 +22,8 @@ To learn how to load apps on the Surface Duo emulator, see the [documentation](h
 
 ## Features
 
+In contrast to the original PhotoEditor [sample](https://github.com/microsoft/surface-duo-app-samples/tree/main/PhotoEditor) which utilizes Microsoft's [SurfaceDuoLayout](https://docs.microsoft.com/dual-screen/android/api-reference/dualscreen-library/layouts/surfaceduo-layout) to handle dual screen devices, this project makes use of Jetpack [Window Manager](https://developer.android.com/jetpack/androidx/releases/window) API. This sample uses Window Manager to handle events that require consideration of a hinge or fold in the device's screen.
+
 This app supports three main actions: selection, editing, and saving. To select a photo, click on the current image to open the device's photo gallery. To modify image properties, use the buttons and sliders. Finally, to save the changes in a new photo, click the save button.
 
 ![PhotoEditor app on left screen with edited image and photo gallery on right screen displaying the same edited image after it was saved](screenshots/save_feature.png)

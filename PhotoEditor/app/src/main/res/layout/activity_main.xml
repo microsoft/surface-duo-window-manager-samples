@@ -11,6 +11,6 @@
     android:id="@+id/main_fragment"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:name="com.microsoft.device.display.samples.photoeditor.ActivityFragment">
+    android:name="com.microsoft.device.display.wm_samples.photoeditor.ActivityFragment">
 
 </androidx.fragment.app.FragmentContainerView>

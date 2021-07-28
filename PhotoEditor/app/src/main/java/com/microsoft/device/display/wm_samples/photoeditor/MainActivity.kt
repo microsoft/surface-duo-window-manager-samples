@@ -21,6 +21,9 @@ import androidx.window.WindowLayoutInfo
 import androidx.window.WindowManager
 import java.util.concurrent.Executor
 
+// even with no toolbar, the hinge is offset by a default amount
+const val DEFAULT_TOOLBAR_OFFSET = 18
+
 class MainActivity : AppCompatActivity() {
 
     private lateinit var windowManager: WindowManager
@@ -65,8 +68,8 @@ class MainActivity : AppCompatActivity() {
      * Add measurements here if additional status/toolbars are used
      */
     private fun upperToolbarSpacing(): Int {
-        val noExternalToolbarOffset = 18 // even with no toolbar, the hinge is offset by a default amount
-        return noExternalToolbarOffset
+        // The toolbar for this app is a child of the main activity, so we can use the default value
+        return DEFAULT_TOOLBAR_OFFSET
     }
 
     /**
@@ -80,59 +83,60 @@ class MainActivity : AppCompatActivity() {
      * Set the bounding rectangle for a configuration with a vertical hinge
      */
     private fun setBoundsVerticalHinge(hingeBounds: Rect) {
-        val hingeWidth = hingeBounds.right - hingeBounds.left
+        findViewById<View?>(R.id.bounding_rect)?.let { boundingRect ->
+            val hingeWidth = hingeBounds.right - hingeBounds.left
+            val params: ViewGroup.LayoutParams = boundingRect.layoutParams
+            params.width = hingeWidth
+            boundingRect.layoutParams = params
 
-        val boundingRect: View = findViewById(R.id.bounding_rect)
-        val params: ViewGroup.LayoutParams = boundingRect.layoutParams
-        params.width = hingeWidth
-        boundingRect.layoutParams = params
+            // left fragment is aligned with the right side of the hinge and vice-versa
+            // add padding to ensure fragments do not overlap the hinge
+            val leftFragment: ConstraintLayout = findViewById(R.id.primary_fragment_container)
+            leftFragment.setPadding(0, 0, hingeWidth, 0)
 
-        // left fragment is aligned with the right side of the hinge and vice-versa
-        // add padding to ensure fragments do not overlap the hinge
-        val leftFragment: ConstraintLayout = findViewById(R.id.primary_fragment_container)
-        leftFragment.setPadding(0, 0, hingeWidth, 0)
-
-        val rightFragment: ConstraintLayout = findViewById(R.id.secondary_fragment_container)
-        rightFragment.setPadding(hingeWidth, 0, 0, 0)
+            val rightFragment: ConstraintLayout = findViewById(R.id.secondary_fragment_container)
+            rightFragment.setPadding(hingeWidth, 0, 0, 0)
+        }
     }
 
     /**
      * Set the bounding rectangle for a configuration with a horizontal hinge
      */
     private fun setBoundsHorizontalHinge(hingeBounds: Rect) {
-        val hingeHeight = hingeBounds.bottom - hingeBounds.top
+        findViewById<View?>(R.id.bounding_rect)?.let { boundingRect ->
+            val hingeHeight = hingeBounds.bottom - hingeBounds.top
+            val params: ViewGroup.LayoutParams = boundingRect.layoutParams
+            params.height = hingeHeight
+            boundingRect.layoutParams = params
 
-        val boundingRect: View = findViewById(R.id.bounding_rect)
-        val params: ViewGroup.LayoutParams = boundingRect.layoutParams
-        params.height = hingeHeight
-        boundingRect.layoutParams = params
+            val guide: ReactiveGuide = findViewById(R.id.horiz_guide)
+            guide.setGuidelineBegin(hingeBounds.top + boundingOffset(hingeHeight) - upperToolbarSpacing())
 
-        val guide: ReactiveGuide = findViewById(R.id.horiz_guide)
-        guide.setGuidelineBegin(hingeBounds.top + boundingOffset(hingeHeight) - upperToolbarSpacing())
+            // top fragment is aligned with the bottom side of the hinge and vice-versa
+            // add padding to ensure fragments do not overlap the hinge
+            val topFragment: ConstraintLayout = findViewById(R.id.primary_fragment_container)
+            topFragment.setPadding(0, 0, 0, hingeHeight)
 
-        // top fragment is aligned with the bottom side of the hinge and vice-versa
-        // add padding to ensure fragments do not overlap the hinge
-        val topFragment: ConstraintLayout = findViewById(R.id.primary_fragment_container)
-        topFragment.setPadding(0, 0, 0, hingeHeight)
-
-        val bottomFragment: ConstraintLayout = findViewById(R.id.secondary_fragment_container)
-        bottomFragment.setPadding(0, hingeHeight, 0, 0)
+            val bottomFragment: ConstraintLayout = findViewById(R.id.secondary_fragment_container)
+            bottomFragment.setPadding(0, hingeHeight, 0, 0)
+        }
     }
 
     /**
      * Set the bounding rectangle for a configuration with no hinge (single screen)
      */
     private fun setBoundsNoHinge() {
-        val boundingRect: View = findViewById(R.id.bounding_rect)
-        val params: ViewGroup.LayoutParams = boundingRect.layoutParams
+        findViewById<View?>(R.id.bounding_rect)?.let { boundingRect ->
+            val params: ViewGroup.LayoutParams = boundingRect.layoutParams
 
-        // fill parent
-        params.height = -1
-        params.width = -1
-        boundingRect.layoutParams = params
+            // fill parent
+            params.height = -1
+            params.width = -1
+            boundingRect.layoutParams = params
 
-        val guide: ReactiveGuide = findViewById(R.id.horiz_guide)
-        guide.setGuidelineEnd(0)
+            val guide: ReactiveGuide = findViewById(R.id.horiz_guide)
+            guide.setGuidelineEnd(0)
+        }
     }
 
     /**
@@ -162,8 +166,7 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 if (!viewModel.isDualScreen) {
-                    // Since the fragment switches between layouts, we don't need to do anything here
-                    // setBoundsNoHinge()
+                    setBoundsNoHinge()
                 }
             }
         }

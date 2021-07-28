@@ -37,23 +37,26 @@ import androidx.lifecycle.ViewModelProvider
 import java.io.IOException
 import java.time.LocalDateTime
 
-private lateinit var viewModel: PhotoEditorViewModel
-
 // Request code for image select activity
 private const val SELECT_IMAGE = 1000
 
 // Default progress value for SeekBar controls
 private const val DEFAULT_PROGRESS = 50
 
+/**
+ * Fragment that initializes app controls that the user interacts with.
+ * Also inflates the appropriate layout based on spanned status (dual screen layout when spanned).
+ */
 class ActivityFragment : Fragment() {
+    private lateinit var viewModel: PhotoEditorViewModel
     private lateinit var image: ImageFilterView
     private lateinit var saturation: SeekBar
     private lateinit var brightness: SeekBar
     private lateinit var warmth: SeekBar
-    private var controls: Spinner? = null
     private lateinit var rotate_left: AppCompatImageButton
     private lateinit var rotate_right: AppCompatImageButton
     private lateinit var save: AppCompatImageButton
+    private var controls: Spinner? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -61,6 +64,8 @@ class ActivityFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewModel = ViewModelProvider(requireActivity()).get(PhotoEditorViewModel::class.java)
+
+        // Check the spanned status and choose which layout to inflate
         val view = (
             if (!viewModel.isDualScreen) inflater.inflate(R.layout.fragment_single_screen, container, false)
             else inflater.inflate(R.layout.fragment_dual_screen, container, false)
