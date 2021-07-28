@@ -29,7 +29,7 @@
         android:layout_height="0dp"
         android:layout_marginBottom="@dimen/large_padding"
         android:contentDescription="@string/image"
-        android:src="@drawable/flower"
+        android:src="@drawable/chipmunk"
         app:layout_constraintBottom_toTopOf="@+id/single_screen_sliders"
         app:layout_constraintEnd_toEndOf="@id/guideline"
         app:layout_constraintStart_toStartOf="parent"
