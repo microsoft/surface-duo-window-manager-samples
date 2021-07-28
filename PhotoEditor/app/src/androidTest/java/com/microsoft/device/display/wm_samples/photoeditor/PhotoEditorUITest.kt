@@ -23,12 +23,8 @@ import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
-import com.microsoft.device.display.wm_samples.photoeditor.utils.ScreenInfoListenerImpl
-import com.microsoft.device.dualscreen.ScreenManagerProvider
 import org.hamcrest.CoreMatchers.not
-import org.junit.After
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -43,21 +39,6 @@ import org.hamcrest.CoreMatchers.`is` as iz
 class PhotoEditorUITest {
     @get:Rule
     val activityRule = ActivityTestRule(MainActivity::class.java)
-    private var screenInfoListener = ScreenInfoListenerImpl()
-
-    @Before
-    fun setup() {
-        val screenManager = ScreenManagerProvider.getScreenManager()
-        screenManager.addScreenInfoListener(screenInfoListener)
-    }
-
-    @After
-    fun tearDown() {
-        val screenManager = ScreenManagerProvider.getScreenManager()
-        screenManager.removeScreenInfoListener(screenInfoListener)
-        screenInfoListener.resetScreenInfo()
-        screenInfoListener.resetScreenInfoCounter()
-    }
 
     /**
      * Tests visibility of controls when app spanned vs. unspanned
@@ -77,7 +58,6 @@ class PhotoEditorUITest {
         onView(withId(R.id.warmth)).check(matches(withEffectiveVisibility(Visibility.INVISIBLE)))
 
         spanFromLeft()
-        waitForScreenInfoAndAssert { Assert.assertTrue(isSpanned()) }
 
         // Switched to dual-screen mode, so dropdown should not exist and all sliders should be visible
         onView(withId(R.id.controls)).check(doesNotExist())
@@ -170,16 +150,12 @@ class PhotoEditorUITest {
     @Test
     fun testSpanningHelperFunctions() {
         spanFromLeft()
-        assertThat(isSpanned(), iz(true))
 
         unspanToRight()
-        assertThat(isSpanned(), iz(false))
 
         spanFromRight()
-        assertThat(isSpanned(), iz(true))
 
         unspanToLeft()
-        assertThat(isSpanned(), iz(false))
 
         switchToRight()
         switchToLeft()
@@ -232,15 +208,5 @@ class PhotoEditorUITest {
 
     private fun closeRight() {
         device.swipe(rightX, bottomY, rightX, middleY, closeSteps)
-    }
-
-    private fun waitForScreenInfoAndAssert(assert: () -> Unit) {
-        screenInfoListener.waitForScreenInfoChanges()
-        assert()
-        screenInfoListener.resetScreenInfo()
-    }
-
-    private fun isSpanned(): Boolean {
-        return screenInfoListener.screenInfo?.isDualMode() == true
     }
 }
