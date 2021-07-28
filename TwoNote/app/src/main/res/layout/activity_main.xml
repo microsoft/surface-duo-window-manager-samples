@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~  Copyright (c) Microsoft Corporation. All rights reserved.
+  ~  Licensed under the MIT License.
+  ~
+  -->
+<com.microsoft.device.dualscreen.layouts.SurfaceDuoLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    app:is_dual_landscape_single_container="true"
+    app:show_in_dual_landscape_single_container="@layout/fragment_note_detail"
+    app:show_in_dual_screen_end="@layout/fragment_note_detail"
+    app:show_in_dual_screen_start="@layout/fragment_note_list"
+    app:show_in_single_screen="@layout/fragment_note_list"
+    app:tools_screen_mode="dual_screen" />
