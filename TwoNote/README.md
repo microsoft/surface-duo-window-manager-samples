@@ -19,6 +19,8 @@ To learn how to load apps on the Surface Duo emulator, see the [documentation](h
 
 ## Features
 
+In contrast to the original TwoNote [sample](https://github.com/microsoft/surface-duo-app-samples/tree/main/TwoNote) which utilizes Microsoft's [SurfaceDuoLayout](https://docs.microsoft.com/dual-screen/android/api-reference/dualscreen-library/layouts/surfaceduo-layout) to handle dual screen devices, this project makes use of Jetpack [Window Manager](https://developer.android.com/jetpack/androidx/releases/window) API. This sample uses Window Manager to handle events that require consideration of a hinge or fold in the device's screen.
+
 In addition to including various dual-screen enhancements, this app supports a range of operations related to notes, note categories, and note contents.
 
 ### Notes

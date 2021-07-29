@@ -20,6 +20,7 @@ import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Handler
+import android.os.Looper
 import android.util.Base64
 import android.view.DragEvent
 import android.view.MotionEvent
@@ -77,7 +78,7 @@ class ImageHandler(private val fragment: NoteDetailFragment) {
             createShadowDragListener(imageView)
 
             // Add image data to ImageHandler's lists
-            Handler().postDelayed(
+            Handler(Looper.getMainLooper()).postDelayed(
                 {
                     trackImageData(seg, imageView, encodeImage(imageView.drawToBitmap()), isRotated)
                 },

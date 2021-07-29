@@ -20,7 +20,6 @@ import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ReactiveGuide
 import androidx.core.util.Consumer
 import androidx.fragment.app.FragmentContainerView
@@ -28,7 +27,6 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.window.FoldingFeature
 import androidx.window.WindowLayoutInfo
 import androidx.window.WindowManager
-import com.google.android.material.appbar.AppBarLayout
 import com.microsoft.device.display.wm_samples.twonote.fragments.GetStartedFragment
 import com.microsoft.device.display.wm_samples.twonote.fragments.NoteDetailFragment
 import com.microsoft.device.display.wm_samples.twonote.fragments.NoteListFragment
@@ -57,9 +55,9 @@ class MainActivity :
          */
         fun isRotated(context: Context, isDualScreen: Boolean): Boolean {
             val singleScreenLandscape = !isDualScreen &&
-                    (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+                (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
             val dualScreenLandscape = isDualScreen &&
-                    (context.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+                (context.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
             return singleScreenLandscape || dualScreenLandscape
         }
     }

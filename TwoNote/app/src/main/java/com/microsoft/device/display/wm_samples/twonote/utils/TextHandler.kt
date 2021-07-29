@@ -34,7 +34,7 @@ class TextHandler(private val activity: Activity) {
             BufferedReader(InputStreamReader(inputStream)).use { reader ->
                 var line: String? = reader.readLine()
                 while (line != null) {
-                    stringBuilder.appendln(line)
+                    stringBuilder.appendLine(line)
                     line = reader.readLine()
                 }
             }
