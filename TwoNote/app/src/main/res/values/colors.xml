@@ -5,8 +5,8 @@
   ~
   -->
 <resources>
-    <color name="colorPrimary">#C62828</color>
-    <color name="colorPrimaryVariant">#8E0000</color>
+    <color name="colorPrimary">#BB28C6</color>
+    <color name="colorPrimaryVariant">#85008E</color>
     <color name="colorSecondary">#90A4AE</color>
     <color name="colorSecondaryVariant">#62757F</color>
     <color name="colorBackground">#F5F5F5</color>
