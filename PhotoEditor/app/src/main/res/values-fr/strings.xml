@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+~ Copyright (c) Microsoft Corporation. All rights reserved.
+~ Licensed under the MIT License.
+~
+7-Jan-21 MACHINE-GENERATED FRENCH TRANSLATION (for testing)
+-->
+<resources>
+    <string name="app_name">Photo Editor</string>
+    <string name="rotate">Tourner</string>
+    <string name="brightness">Luminosité</string>
+    <string name="saturation">Saturation</string>
+    <string name="save">Enregistrer</string>
+    <string name="warmth">Chaleur</string>
+    <string name="rotate_left">Rotation de l’image à 90 degrés dans le sens inverse des aiguilles d’une montre</string>
+    <string name="rotate_right">Rotation de l’image à 90 degrés dans le sens des aiguilles d’une montre</string>
+    <string name="save_button">Enregistrer l’image dans la galerie de photos</string>
+    <string name="image">Image en cours d’édition</string>
+    <string-array name="controls_array">
+        <item>Saturation</item>
+        <item>Luminosité</item>
+        <item>Chaleur</item>
+    </string-array>
+    <string name="photo_name">Photo éditée</string>
+    <string name="photo_description">Fabriqué avec Surface Duo Photo Editor échantillon sur</string>
+    <string name="pictures_folder">Photos</string>
+    <string name="null_uri">Uri est nul</string>
+    <string name="null_stream">Le flux de sortie est nul</string>
+    <string name="bitmap_error">Bitmap n’a pas pu être compressé</string>
+    <string name="image_save_error">Impossible d’enregistrer l’image</string>
+</resources>

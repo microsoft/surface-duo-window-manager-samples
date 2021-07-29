@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Microsoft Corporation. All rights reserved.
+  ~ Licensed under the MIT License.
+  -->
+
+<GridLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_gravity="center"
+    android:columnCount="2"
+    android:rowCount="1">
+
+    <LinearLayout
+        android:id="@+id/rotate_layout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_row="0"
+        android:layout_column="0"
+        android:layout_columnWeight="1"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/textViewStyle"
+            android:text="@string/rotate" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="@dimen/med_padding"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/rotate_left"
+                style="@style/buttonStyle"
+                android:layout_marginEnd="@dimen/xl_padding"
+                android:layout_weight="1"
+                android:contentDescription="@string/rotate_left"
+                android:src="@drawable/ic_rotate_left" />
+
+            <ImageButton
+                android:id="@+id/rotate_right"
+                style="@style/buttonStyle"
+                android:layout_weight="1"
+                android:contentDescription="@string/rotate_right"
+                android:src="@drawable/ic_rotate_right" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_row="0"
+        android:layout_column="1"
+        android:layout_columnWeight="1"
+        android:layout_gravity="center_horizontal"
+        android:orientation="vertical">
+
+        <TextView
+            style="@style/textViewStyle"
+            android:text="@string/save" />
+
+        <ImageButton
+            android:id="@+id/save"
+            style="@style/buttonStyle"
+            android:layout_marginTop="@dimen/med_padding"
+            android:contentDescription="@string/save_button"
+            android:src="@drawable/ic_save" />
+
+    </LinearLayout>
+
+</GridLayout>
