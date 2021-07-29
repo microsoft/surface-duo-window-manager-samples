@@ -408,7 +408,7 @@ class NoteDetailFragment : Fragment() {
             }
         }
         drawView.setStrokeList(strokeList)
-        drawView.setRotation(MainActivity.isRotated(requireActivity()))
+        drawView.setRotation(MainActivity.isRotated(requireActivity(), dualScreenVM.isDualScreen))
     }
 
     /**
@@ -494,7 +494,7 @@ class NoteDetailFragment : Fragment() {
         // Update image list in drag handler
         note?.let { n ->
             val imageList = n.images
-            dragHandler.setImageList(imageList, MainActivity.isRotated(requireContext()))
+            dragHandler.setImageList(imageList, MainActivity.isRotated(requireContext(), dualScreenVM.isDualScreen))
         }
     }
 
@@ -735,7 +735,7 @@ class NoteDetailFragment : Fragment() {
     fun closeFragment() {
         activity?.let { activity ->
             if (dualScreenVM.isDualScreen &&
-                !MainActivity.isRotated(activity)
+                !MainActivity.isRotated(activity, dualScreenVM.isDualScreen)
             ) {
                 // Tell NoteListFragment that list data has changed
                 (parentFragmentManager.findFragmentByTag(LIST_FRAGMENT) as? NoteListFragment)
@@ -758,5 +758,9 @@ class NoteDetailFragment : Fragment() {
                     ).commit()
             }
         }
+    }
+
+    fun isRotated(): Boolean {
+        return dualScreenVM.isDualScreen
     }
 }

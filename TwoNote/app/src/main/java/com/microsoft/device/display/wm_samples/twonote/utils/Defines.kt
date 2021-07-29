@@ -51,4 +51,7 @@ object Defines {
     val PORT_TO_LAND = Matrix().apply {
         postScale(SCALE_RATIO, SCALE_RATIO)
     }
+
+    // even with no toolbar, the hinge is offset by a default amount
+    const val DEFAULT_TOOLBAR_OFFSET = 18
 }

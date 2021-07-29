@@ -232,7 +232,7 @@ class NoteListFragment : Fragment(), AdapterView.OnItemClickListener, AdapterVie
                 note = Note(inode.id, resources.getString(R.string.default_note_name))
 
             if (dualScreenVM.isDualScreen &&
-                !MainActivity.isRotated(requireActivity())
+                !MainActivity.isRotated(requireActivity(), dualScreenVM.isDualScreen)
             ) {
                 // If spanned and not rotated (list view), open NoteDetailFragment in second container
                 parentFragmentManager.beginTransaction()
@@ -262,7 +262,7 @@ class NoteListFragment : Fragment(), AdapterView.OnItemClickListener, AdapterVie
      */
     fun exitDetailFragment(deleting: Boolean) {
         activity?.let {
-            if (dualScreenVM.isDualScreen && !MainActivity.isRotated(it)) {
+            if (dualScreenVM.isDualScreen && !MainActivity.isRotated(it, dualScreenVM.isDualScreen)) {
                 val fragment = parentFragmentManager.findFragmentById(R.id.secondary_fragment_container) as? NoteDetailFragment
 
                 fragment?.let { detail ->

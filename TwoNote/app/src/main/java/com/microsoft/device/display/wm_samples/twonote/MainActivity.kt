@@ -28,6 +28,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.window.FoldingFeature
 import androidx.window.WindowLayoutInfo
 import androidx.window.WindowManager
+import com.google.android.material.appbar.AppBarLayout
 import com.microsoft.device.display.wm_samples.twonote.fragments.GetStartedFragment
 import com.microsoft.device.display.wm_samples.twonote.fragments.NoteDetailFragment
 import com.microsoft.device.display.wm_samples.twonote.fragments.NoteListFragment
@@ -54,8 +55,12 @@ class MainActivity :
          * @param context: application context
          * @return true if rotated, false otherwise
          */
-        fun isRotated(context: Context): Boolean {
-            return context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
+        fun isRotated(context: Context, isDualScreen: Boolean): Boolean {
+            val singleScreenLandscape = !isDualScreen &&
+                    (context.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE)
+            val dualScreenLandscape = isDualScreen &&
+                    (context.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT)
+            return singleScreenLandscape || dualScreenLandscape
         }
     }
 
@@ -90,13 +95,15 @@ class MainActivity :
      * @param inode: inode from savedInstanceState
      */
     private fun selectSingleScreenFragment(noteSelected: Boolean, note: Note?, inode: INode?) {
-        // Remove fragment from second container if it exists
-        removeSecondFragment()
+        if (!supportFragmentManager.isDestroyed) {
+            // Remove fragment from second container if it exists
+            removeSecondFragment()
 
-        if (noteSelected) {
-            startNoteDetailFragment(R.id.primary_fragment_container, note!!, inode!!)
-        } else {
-            startNoteListFragment()
+            if (noteSelected) {
+                startNoteDetailFragment(R.id.primary_fragment_container, note!!, inode!!)
+            } else {
+                startNoteListFragment()
+            }
         }
     }
 
@@ -108,23 +115,25 @@ class MainActivity :
      * @param inode: inode from savedInstanceState
      */
     private fun selectDualScreenFragments(noteSelected: Boolean, note: Note?, inode: INode?) {
-        // If rotated, use extended canvas pattern, otherwise use list-detail pattern
-        if (isRotated(this)) {
-            // Remove fragment from second container if it exists
-            removeSecondFragment()
+        if (!supportFragmentManager.isDestroyed) {
+            // If rotated, use extended canvas pattern, otherwise use list-detail pattern
+            if (isRotated(this, dualScreenVM.isDualScreen)) {
+                // Remove fragment from second container if it exists
+                removeSecondFragment()
 
-            if (noteSelected) {
-                startNoteDetailFragment(R.id.primary_fragment_container, note!!, inode!!)
+                if (noteSelected) {
+                    startNoteDetailFragment(R.id.primary_fragment_container, note!!, inode!!)
+                } else {
+                    startNoteListFragment()
+                }
             } else {
+                if (noteSelected) {
+                    startNoteDetailFragment(R.id.secondary_fragment_container, note!!, inode!!)
+                } else {
+                    startGetStartedFragment()
+                }
                 startNoteListFragment()
             }
-        } else {
-            if (noteSelected) {
-                startNoteDetailFragment(R.id.secondary_fragment_container, note!!, inode!!)
-            } else {
-                startGetStartedFragment()
-            }
-            startNoteListFragment()
         }
     }
 
@@ -141,11 +150,9 @@ class MainActivity :
      * Start note list view fragment in first container
      */
     private fun startNoteListFragment() {
-        if (supportFragmentManager.findFragmentByTag(LIST_FRAGMENT) == null) {
-            supportFragmentManager.beginTransaction()
-                .replace(R.id.primary_fragment_container, NoteListFragment(), LIST_FRAGMENT)
-                .commit()
-        }
+        supportFragmentManager.beginTransaction()
+            .replace(R.id.primary_fragment_container, NoteListFragment(), LIST_FRAGMENT)
+            .commit()
     }
 
     /**
@@ -235,8 +242,7 @@ class MainActivity :
      * Add measurements here if additional status/toolbars are used
      */
     private fun upperToolbarSpacing(): Int {
-        val toolbar: Toolbar = findViewById(R.id.toolbar)
-        return toolbar.height
+        return Defines.DEFAULT_TOOLBAR_OFFSET
     }
 
     /**
@@ -264,6 +270,7 @@ class MainActivity :
 
         val rightFragment: FragmentContainerView = findViewById(R.id.secondary_fragment_container)
         rightFragment.setPadding(hingeWidth, 0, 0, 0)
+        rightFragment.visibility = View.VISIBLE
     }
 
     /**
@@ -287,6 +294,7 @@ class MainActivity :
 
         val bottomFragment: FragmentContainerView = findViewById(R.id.secondary_fragment_container)
         bottomFragment.setPadding(0, hingeHeight, 0, 0)
+        bottomFragment.visibility = View.VISIBLE
     }
 
     /**
@@ -327,7 +335,8 @@ class MainActivity :
                             if (foldingFeature.orientation == FoldingFeature.Orientation.VERTICAL) {
                                 setBoundsVerticalHinge(hingeBounds)
                             } else {
-                                setBoundsHorizontalHinge(hingeBounds)
+                                // we don't want a split screen in the horizontal orientation with this app
+                                setBoundsNoHinge()
                             }
                             selectDualScreenFragments(noteSelected, savedNote, savedINode)
                         }
