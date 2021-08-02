@@ -50,9 +50,11 @@ ext {
 
     //Microsoft dependencies version
     fluentVersion = "1.1.135"
+    inkViewVersion = "1.0.0-alpha4"
 
     microsoftDependencies = [
-            fluent: "com.microsoft.design:fluent-system-icons:$fluentVersion@aar"
+            fluent: "com.microsoft.design:fluent-system-icons:$fluentVersion@aar",
+            inkView: "com.microsoft.device:ink:$inkViewVersion"
     ]
 
     //Test dependencies version

@@ -26,6 +26,10 @@ android {
 
         testInstrumentationRunner config.testInstrumentationRunner
     }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
@@ -41,6 +45,7 @@ dependencies {
     implementation googleDependencies.material
 
     implementation microsoftDependencies.fluent
+    implementation microsoftDependencies.inkView
 
     testImplementation testDependencies.junit
     androidTestImplementation instrumentationTestDependencies.junit
