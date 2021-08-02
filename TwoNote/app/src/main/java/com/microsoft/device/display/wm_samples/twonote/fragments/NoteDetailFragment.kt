@@ -372,7 +372,7 @@ class NoteDetailFragment : Fragment() {
 
             // Update button description and turn off eraser mode if activating highlighting mode
             if (activate) {
-                toggleButtonColor(eraseButton, drawView.toggleEraserMode(false))
+                //TODO toggleButtonColor(eraseButton, drawView.toggleEraserMode(false))
                 it.contentDescription = resources.getString(R.string.action_highlight_off)
             } else {
                 it.contentDescription = resources.getString(R.string.action_highlight_on)
@@ -380,12 +380,20 @@ class NoteDetailFragment : Fragment() {
         }
 
         eraseButton.setOnClickListener {
-            val activate = drawView.toggleEraserMode()
+            val activate: Boolean
+            //TODO fix this logic for activate
+            if (drawView.dynamicPaintHandler != null) {
+                activate = true
+                drawView.dynamicPaintHandler = null
+            } else {
+                activate = false
+                drawView.dynamicPaintHandler = null
+            }
             toggleButtonColor(eraseButton, activate)
 
             // Update button description and turn off highlight button if activating eraser mode
             if (activate) {
-                toggleButtonColor(highlightButton, drawView.toggleHighlightMode(false))
+                toggleButtonColor(highlightButton, false)
                 it.contentDescription = resources.getString(R.string.action_erase_off)
             } else {
                 it.contentDescription = resources.getString(R.string.action_erase_on)
@@ -404,7 +412,7 @@ class NoteDetailFragment : Fragment() {
             AlertDialog.Builder(requireContext())
                 .setMessage(resources.getString(R.string.confirm_clear_message))
                 .setPositiveButton(resources.getString(android.R.string.ok)) { dialog, _ ->
-                    clickClear(view)
+                    clickClear()
                     dialog.dismiss()
                 }
                 .setNegativeButton(resources.getString(android.R.string.cancel)) { dialog, _ -> dialog.dismiss() }
@@ -424,8 +432,9 @@ class NoteDetailFragment : Fragment() {
                 strokeList.add(Stroke(s.xList, s.yList, s.pressureList, s.paintColor, s.thicknessMultiplier, s.rotated, s.highlightStroke))
             }
         }
-        drawView.setStrokeList(strokeList)
-        drawView.setRotation(MainActivity.isRotated(requireActivity(), dualScreenVM.isDualScreen))
+        //TODO fix this
+        //drawView.setStrokeList(strokeList)
+        //drawView.setRotation(MainActivity.isRotated(requireActivity(), dualScreenVM.isDualScreen))
     }
 
     /**
@@ -503,7 +512,8 @@ class NoteDetailFragment : Fragment() {
      * Undo last stroke made on the canvas
      */
     private fun undoStroke() {
-        drawView.undo()
+        // TODO implement this
+        //drawView.undo()
     }
 
     fun clickClear() {
@@ -579,9 +589,9 @@ class NoteDetailFragment : Fragment() {
 
             paint.color = Color.argb(
                 alpha,
-                Color.YELLOW.red,
-                Color.YELLOW.green,
-                Color.YELLOW.blue
+                drawView.color.red,
+                drawView.color.green,
+                drawView.color.blue
             )
             paint.isAntiAlias = true
             // Set stroke width based on display density.
@@ -622,7 +632,8 @@ class NoteDetailFragment : Fragment() {
             val title = noteTitle.text.toString()
 
             if (this::drawView.isInitialized) {
-                note?.drawings = drawView.getDrawingList()
+                // TODO implement this
+                //note?.drawings = drawView.getDrawingList()
             }
             if (this::dragHandler.isInitialized) {
                 note?.images = dragHandler.getImageList()
@@ -818,7 +829,8 @@ class NoteDetailFragment : Fragment() {
             view?.findViewById<ConstraintLayout>(R.id.ink_mode)?.bringToFront()
 
             // Enable drawing and show pen tools over canvas
-            drawView.enable()
+            //drawView.enable()
+            resetPaintHandler()
             penTools?.visibility = View.VISIBLE
             penTools?.bringToFront()
         } else {
@@ -826,14 +838,15 @@ class NoteDetailFragment : Fragment() {
             inkItem?.title = getString(R.string.action_ink_on)
 
             // Disable drawing, close pen tools, and reset button states
-            drawView.disable()
+            //drawView.disable()
+            drawView.dynamicPaintHandler = null
             penTools?.visibility = View.INVISIBLE
             toggleViewVisibility(view?.findViewById<SeekBar>(R.id.thickness_slider), true)
             toggleViewVisibility(view?.findViewById<LinearLayout>(R.id.color_buttons), true)
             toggleButtonColor(view?.findViewById(R.id.thickness), false)
             toggleButtonColor(view?.findViewById(R.id.color), false)
-            toggleButtonColor(view?.findViewById(R.id.highlight), drawView.toggleHighlightMode(false))
-            toggleButtonColor(view?.findViewById(R.id.erase), drawView.toggleEraserMode(false))
+            toggleButtonColor(view?.findViewById(R.id.highlight), false)
+            toggleButtonColor(view?.findViewById(R.id.erase), false)
         }
     }
 
