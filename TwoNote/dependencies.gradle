@@ -11,7 +11,9 @@ ext {
     compileSdkVersion = 30
     buildToolsVersion = '30.0.3'
     targetSdkVersion = compileSdkVersion
-    minSdkVersion = compileSdkVersion
+    minSdkVersion = 29
+
+    inkSDKVersionName = "1.0.1-alpha4"
 
     config = [
             gradlePlugin             : "com.android.tools.build:gradle:$gradlePluginVersion",
@@ -53,6 +55,18 @@ ext {
     microsoftDependencies = [
             fluent: "com.microsoft.design:fluent-system-icons:$fluentVersion@aar",
             inkView: "com.microsoft.device:ink:$inkViewVersion"
+    ]
+
+    googleTruthVersion = "1.1.2"
+    mockitoVersion = "3.3.3"
+    mockitoDexMakerVersion = "2.28.0"
+    screenManagerVersion = "wm:screenmanager-windowmanager"
+
+    commonDependencies = [
+            googleTruth    : "com.google.truth:truth:$googleTruthVersion",
+            mockitoCore    : "org.mockito:mockito-core:$mockitoVersion",
+            mockitoDexMaker: "com.linkedin.dexmaker:dexmaker-mockito:$mockitoDexMakerVersion",
+            screenManager  : ":screenmanager:$screenManagerVersion"
     ]
 
     //Test dependencies version

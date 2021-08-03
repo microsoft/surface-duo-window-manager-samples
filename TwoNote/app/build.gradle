@@ -51,7 +51,7 @@ dependencies {
     implementation googleDependencies.material
 
     implementation microsoftDependencies.fluent
-    implementation microsoftDependencies.inkView
+    implementation project(path: ':ink')
 
     testImplementation testDependencies.junit
     androidTestImplementation instrumentationTestDependencies.junit

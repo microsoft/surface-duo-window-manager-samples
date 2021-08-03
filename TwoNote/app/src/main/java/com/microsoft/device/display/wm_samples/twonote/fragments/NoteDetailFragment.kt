@@ -10,6 +10,7 @@ package com.microsoft.device.display.wm_samples.twonote.fragments
 import Defines.INODE
 import Defines.LIST_FRAGMENT
 import Defines.NOTE
+import Defines.TRANSPARENT
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -17,6 +18,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.os.Bundle
 import android.util.TypedValue
@@ -35,6 +37,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.graphics.ColorUtils
 import androidx.core.graphics.blue
 import androidx.core.graphics.green
 import androidx.core.graphics.red
@@ -366,7 +369,7 @@ class NoteDetailFragment : Fragment() {
                 drawView.dynamicPaintHandler = HighlighterPaintHandler()
             } else {
                 activate = false
-                drawView.dynamicPaintHandler = null
+                resetPaintHandler()
             }
             toggleButtonColor(highlightButton, activate)
 
@@ -382,12 +385,12 @@ class NoteDetailFragment : Fragment() {
         eraseButton.setOnClickListener {
             val activate: Boolean
             //TODO fix this logic for activate
-            if (drawView.dynamicPaintHandler != null) {
+            if (drawView.dynamicPaintHandler !is EraserPaintHandler) {
                 activate = true
-                drawView.dynamicPaintHandler = null
+                drawView.dynamicPaintHandler = EraserPaintHandler()
             } else {
                 activate = false
-                drawView.dynamicPaintHandler = null
+                resetPaintHandler()
             }
             toggleButtonColor(eraseButton, activate)
 
@@ -521,27 +524,27 @@ class NoteDetailFragment : Fragment() {
     }
 
     fun setRed() {
-        resetPaintHandler()
+        //setPaintHandler()
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.red)
     }
 
     fun setGreen() {
-        resetPaintHandler()
+        //resetPaintHandler()
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.green)
     }
 
     fun setBlue() {
-        resetPaintHandler()
+        //resetPaintHandler()
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.blue)
     }
 
     fun setPurple() {
-        resetPaintHandler()
+        //setPaintHandler()
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.purple)
     }
 
     fun setYellow() {
-        resetPaintHandler()
+        //resetPaintHandler()
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.yellow)
     }
 
@@ -587,12 +590,7 @@ class NoteDetailFragment : Fragment() {
             val paint = Paint()
             val alpha = 80
 
-            paint.color = Color.argb(
-                alpha,
-                drawView.color.red,
-                drawView.color.green,
-                drawView.color.blue
-            )
+            paint.color = ColorUtils.setAlphaComponent(drawView.color, alpha)
             paint.isAntiAlias = true
             // Set stroke width based on display density.
             paint.strokeWidth = TypedValue.applyDimension(
@@ -603,6 +601,28 @@ class NoteDetailFragment : Fragment() {
             paint.style = Paint.Style.STROKE
             paint.strokeJoin = Paint.Join.BEVEL
             paint.strokeCap = Paint.Cap.BUTT
+
+            return paint
+        }
+    }
+
+    /**
+     * Renders the ink as though from an eraser
+     */
+    inner class EraserPaintHandler : InkView.DynamicPaintHandler {
+        override fun generatePaintFromPenInfo(penInfo: InputManager.PenInfo): Paint {
+            val paint = Paint()
+            paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+            paint.isAntiAlias = true
+            // Set stroke width based on display density.
+            paint.strokeWidth = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
+                resources.displayMetrics
+            )
+            paint.style = Paint.Style.STROKE
+            paint.strokeJoin = Paint.Join.ROUND
+            paint.strokeCap = Paint.Cap.ROUND
 
             return paint
         }
