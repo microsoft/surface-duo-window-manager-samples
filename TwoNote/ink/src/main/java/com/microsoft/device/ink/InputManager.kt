@@ -6,16 +6,18 @@
 package com.microsoft.device.ink
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.MotionEvent
 import android.view.View
+import java.io.Serializable
 
 class InputManager(view: View, private val penInputHandler: PenInputHandler, private val penHoverHandler: PenHoverHandler? = null) {
 
-    val currentStroke = ExtendedStroke()
+    var currentStroke = ExtendedStroke()
 
     init {
         setupInputEvents(view)
-        currentStroke.reset()
+        currentStroke = ExtendedStroke()
     }
 
     interface PenInputHandler {
@@ -41,7 +43,7 @@ class InputManager(view: View, private val penInputHandler: PenInputHandler, pri
     class Point(
         val x: Float,
         val y: Float,
-    )
+    ) : Serializable
 
     data class PenInfo(
         val pointerType: PointerType,
@@ -52,7 +54,7 @@ class InputManager(view: View, private val penInputHandler: PenInputHandler, pri
         val tilt: Float,
         val primaryButtonState: Boolean,
         val secondaryButtonState: Boolean
-    ) {
+    ) : Serializable {
         companion object {
             fun createFromEvent(event: MotionEvent): PenInfo {
                 val pointerType: PointerType = when (event.getToolType(0)) {
@@ -102,7 +104,7 @@ class InputManager(view: View, private val penInputHandler: PenInputHandler, pri
         }
     }
 
-    class ExtendedStroke {
+    class ExtendedStroke : Serializable {
         private var builder = mutableListOf<Point>()
         private var penInfos = HashMap<Int, PenInfo>()
 
@@ -113,18 +115,20 @@ class InputManager(view: View, private val penInputHandler: PenInputHandler, pri
                 _lastPointReferenced = value
             }
 
+        var color: Int = Color.GRAY
+
         fun addPoint(penInfo: PenInfo) {
             val point = Point(penInfo.x, penInfo.y)
             builder.add(point)
-            penInfos[point.hashCode()] = penInfo
+            penInfos[builder.indexOf(point)] = penInfo
         }
 
         fun getPoints(): List<Point> {
             return builder
         }
 
-        fun getPenInfo(point: Point): PenInfo? {
-            return penInfos[point.hashCode()]
+        fun getPenInfo(pointIndex: Int): PenInfo? {
+            return penInfos[pointIndex]
         }
 
         fun reset() {
@@ -168,7 +172,7 @@ class InputManager(view: View, private val penInputHandler: PenInputHandler, pri
 
             when (event.actionMasked) {
                 MotionEvent.ACTION_DOWN -> {
-                    currentStroke.reset()
+                    currentStroke = ExtendedStroke()
                     currentStroke.addPoint(penInfo)
                     penInputHandler.strokeStarted(penInfo, currentStroke)
                 }

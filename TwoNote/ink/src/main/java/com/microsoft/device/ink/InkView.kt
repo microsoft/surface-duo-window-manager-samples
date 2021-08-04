@@ -34,7 +34,6 @@ class InkView constructor(
     private lateinit var canvasBitmap: Bitmap
     private lateinit var drawCanvas: Canvas
     private val currentStrokePaint = Paint()
-    private val strokeList = mutableListOf<InputManager.ExtendedStroke>()
     private val overridePaint: Paint
     private val clearPaint: Paint
     private val hoverPaint = Paint()
@@ -44,6 +43,8 @@ class InkView constructor(
     private var enablePressure = false
     private var minStrokeWidth = 1f
     private var maxStrokeWidth = 10f
+
+    val strokeList = mutableListOf<InputManager.ExtendedStroke>()
 
     // properties
     var color = Color.GRAY
@@ -128,6 +129,7 @@ class InkView constructor(
                     penInfo: InputManager.PenInfo,
                     stroke: InputManager.ExtendedStroke
                 ) {
+                    stroke.color = color
                     redrawTexture()
                 }
 
@@ -219,6 +221,15 @@ class InkView constructor(
         return bitmap
     }
 
+    fun loadDrawing() {
+        for (stroke in strokeList) {
+            stroke.lastPointReferenced = 0
+            inputManager.currentStroke = stroke
+            color = stroke.color
+            redrawTexture()
+        }
+    }
+
     private fun updateStrokeWidth(pressure: Float) {
         currentStrokePaint.strokeWidth = TypedValue.applyDimension(
             TypedValue.COMPLEX_UNIT_DIP,
@@ -231,7 +242,6 @@ class InkView constructor(
         super.onSizeChanged(w, h, oldw, oldh)
         canvasBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         drawCanvas = Canvas(canvasBitmap)
-        redrawTexture()
     }
 
     fun drawHover(cx: Float, cy: Float, radius: Float, pointerType: InputManager.PointerType = InputManager.PointerType.UNKNOWN) {
@@ -295,7 +305,7 @@ class InkView constructor(
         // update the drawCanvas with the latest stroke data
         var startPoint = points[stroke.lastPointReferenced]
         for (i in stroke.lastPointReferenced + 1 until points.size) {
-            val penInfo = stroke.getPenInfo(points[i])
+            val penInfo = stroke.getPenInfo(i)
             if (penInfo != null) {
                 when {
                     penInfo.pointerType == InputManager.PointerType.PEN_ERASER -> {
@@ -345,6 +355,7 @@ class InkView constructor(
      */
     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
         this.surface = Surface(surface)
+        loadDrawing()
     }
 
     /**

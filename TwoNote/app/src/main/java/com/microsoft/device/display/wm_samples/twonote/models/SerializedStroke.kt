@@ -8,6 +8,8 @@
 package com.microsoft.device.display.wm_samples.twonote.models
 
 import Defines.DEFAULT_THICKNESS
+import android.media.Image
+import com.microsoft.device.ink.InputManager
 import java.io.Serializable
 
 /**
@@ -23,10 +25,8 @@ import java.io.Serializable
  * @param highlightStroke: highlighter flag for stroke - true if transparent, false by default
  */
 data class SerializedStroke(
-    val xList: List<MutableList<Float>> = listOf(),
-    val yList: List<MutableList<Float>> = listOf(),
+    val pointList: InputManager.ExtendedStroke = InputManager.ExtendedStroke(),
     val pressureList: List<MutableList<Float>> = listOf(),
-    val paintColor: Int = 0,
     val thicknessMultiplier: Int = DEFAULT_THICKNESS,
     val rotated: Boolean = false,
     val highlightStroke: Boolean = false
