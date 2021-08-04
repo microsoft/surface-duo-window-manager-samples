@@ -40,6 +40,12 @@ class InputManager(view: View, private val penInputHandler: PenInputHandler, pri
         UNKNOWN
     }
 
+    enum class InkingType {
+        ERASING,
+        HIGHLIGHTING,
+        INKING
+    }
+
     class Point(
         val x: Float,
         val y: Float,
@@ -116,6 +122,8 @@ class InputManager(view: View, private val penInputHandler: PenInputHandler, pri
             }
 
         var color: Int = Color.GRAY
+        var thickness: Int = 1//todo fix this
+        var inkingMode = InkingType.INKING
 
         fun addPoint(penInfo: PenInfo) {
             val point = Point(penInfo.x, penInfo.y)
