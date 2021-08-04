@@ -428,12 +428,20 @@ class NoteDetailFragment : Fragment() {
      */
     private fun setUpDrawView() {
         note?.let { n ->
-            resetPaintHandler()
             drawView.strokeWidth = DEFAULT_THICKNESS.toFloat()
 
             drawView.strokeList.clear()
             for (stroke in n.drawings) {
-                drawView.strokeList.add(stroke.pointList)
+                drawView.strokeList.add(stroke.extendedStroke)
+                if (stroke.extendedStroke.inkingMode == InputManager.InkingType.INKING) {
+                    drawView.initInkingList.add(FancyPaintHandler())
+                }
+                else if (stroke.extendedStroke.inkingMode == InputManager.InkingType.HIGHLIGHTING) {
+                    drawView.initInkingList.add(HighlighterPaintHandler())
+                }
+                else {
+                    drawView.initInkingList.add(EraserPaintHandler())
+                }
             }
         }
     }
@@ -577,6 +585,10 @@ class NoteDetailFragment : Fragment() {
 
             return paint
         }
+
+        override fun selectInkingMode(): InputManager.InkingType {
+            return InputManager.InkingType.INKING
+        }
     }
 
     /**
@@ -602,6 +614,10 @@ class NoteDetailFragment : Fragment() {
 
             return paint
         }
+
+        override fun selectInkingMode(): InputManager.InkingType {
+            return InputManager.InkingType.HIGHLIGHTING
+        }
     }
 
     /**
@@ -623,6 +639,10 @@ class NoteDetailFragment : Fragment() {
             paint.strokeCap = Paint.Cap.ROUND
 
             return paint
+        }
+
+        override fun selectInkingMode(): InputManager.InkingType {
+            return InputManager.InkingType.ERASING
         }
     }
 

@@ -45,6 +45,7 @@ class InkView constructor(
     private var maxStrokeWidth = 10f
 
     val strokeList = mutableListOf<InputManager.ExtendedStroke>()
+    val initInkingList = mutableListOf<DynamicPaintHandler>()
 
     // properties
     var color = Color.GRAY
@@ -88,6 +89,7 @@ class InkView constructor(
 
     interface DynamicPaintHandler {
         fun generatePaintFromPenInfo(penInfo: InputManager.PenInfo): Paint
+        fun selectInkingMode(): InputManager.InkingType
     }
 
     init {
@@ -226,6 +228,9 @@ class InkView constructor(
             stroke.lastPointReferenced = 0
             inputManager.currentStroke = stroke
             color = stroke.color
+            if (initInkingList.isNotEmpty()) {
+                dynamicPaintHandler = initInkingList.removeAt(0)
+            }
             redrawTexture()
         }
     }
@@ -310,6 +315,7 @@ class InkView constructor(
                 when {
                     penInfo.pointerType == InputManager.PointerType.PEN_ERASER -> {
                         drawCanvas.drawCircle(penInfo.x, penInfo.y, 30f, clearPaint)
+                        stroke.inkingMode = InputManager.InkingType.ERASING
                     }
                     dynamicPaintHandler != null -> {
                         dynamicPaintHandler?.let { paintHandler ->
@@ -322,19 +328,22 @@ class InkView constructor(
                                 penInfo.y,
                                 paint
                             )
+                            inputManager.currentStroke.inkingMode = paintHandler.selectInkingMode()
                         }
                     }
                     enablePressure -> {
+                        val paint = if (stroke.inkingMode == InputManager.InkingType.ERASING) clearPaint else currentStrokePaint
                         updateStrokeWidth(penInfo.pressure)
                         drawCanvas.drawLine(
                             startPoint.x, startPoint.y, penInfo.x, penInfo.y,
-                            currentStrokePaint
+                            paint
                         )
                     }
                     else -> {
+                        val paint = if (stroke.inkingMode == InputManager.InkingType.ERASING) clearPaint else currentStrokePaint
                         drawCanvas.drawLine(
                             startPoint.x, startPoint.y, penInfo.x, penInfo.y,
-                            currentStrokePaint
+                            paint
                         )
                     }
                 }
