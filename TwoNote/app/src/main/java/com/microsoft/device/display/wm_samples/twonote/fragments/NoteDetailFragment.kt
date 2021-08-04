@@ -7,10 +7,10 @@
 
 package com.microsoft.device.display.wm_samples.twonote.fragments
 
+import Defines.DEFAULT_THICKNESS
 import Defines.INODE
 import Defines.LIST_FRAGMENT
 import Defines.NOTE
-import Defines.TRANSPARENT
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
@@ -51,11 +51,10 @@ import com.microsoft.device.display.wm_samples.twonote.R
 import com.microsoft.device.display.wm_samples.twonote.models.DualScreenViewModel
 import com.microsoft.device.display.wm_samples.twonote.models.INode
 import com.microsoft.device.display.wm_samples.twonote.models.Note
-import com.microsoft.device.display.wm_samples.twonote.models.Stroke
+import com.microsoft.device.display.wm_samples.twonote.models.SerializedStroke
 import com.microsoft.device.display.wm_samples.twonote.utils.DataProvider
 import com.microsoft.device.display.wm_samples.twonote.utils.DragHandler
 import com.microsoft.device.display.wm_samples.twonote.utils.FileSystem
-import com.microsoft.device.display.wm_samples.twonote.utils.PenDrawView
 import com.microsoft.device.ink.InkView
 import com.microsoft.device.ink.InputManager
 import java.io.File
@@ -74,7 +73,6 @@ class NoteDetailFragment : Fragment() {
     var deleted = false
     private var note: Note? = null
     private var inode: INode? = null
-    private val strokeList = mutableListOf<Stroke>()
 
     // Note view attributes
     private lateinit var drawView: InkView
@@ -375,7 +373,7 @@ class NoteDetailFragment : Fragment() {
 
             // Update button description and turn off eraser mode if activating highlighting mode
             if (activate) {
-                //TODO toggleButtonColor(eraseButton, drawView.toggleEraserMode(false))
+                toggleButtonColor(eraseButton, false)
                 it.contentDescription = resources.getString(R.string.action_highlight_off)
             } else {
                 it.contentDescription = resources.getString(R.string.action_highlight_on)
@@ -384,7 +382,7 @@ class NoteDetailFragment : Fragment() {
 
         eraseButton.setOnClickListener {
             val activate: Boolean
-            //TODO fix this logic for activate
+
             if (drawView.dynamicPaintHandler !is EraserPaintHandler) {
                 activate = true
                 drawView.dynamicPaintHandler = EraserPaintHandler()
@@ -429,15 +427,15 @@ class NoteDetailFragment : Fragment() {
      * Initialize the drawing canvas with any existing note drawings and the device's current rotation
      */
     private fun setUpDrawView() {
-        strokeList.clear()
         note?.let { n ->
-            for (s in n.drawings) {
-                strokeList.add(Stroke(s.xList, s.yList, s.pressureList, s.paintColor, s.thicknessMultiplier, s.rotated, s.highlightStroke))
+            resetPaintHandler()
+            drawView.strokeWidth = DEFAULT_THICKNESS.toFloat()
+
+            drawView.strokeList.clear()
+            for (stroke in n.drawings) {
+                drawView.strokeList.add(stroke.pointList)
             }
         }
-        //TODO fix this
-        //drawView.setStrokeList(strokeList)
-        //drawView.setRotation(MainActivity.isRotated(requireActivity(), dualScreenVM.isDualScreen))
     }
 
     /**
@@ -643,6 +641,14 @@ class NoteDetailFragment : Fragment() {
         save()
     }
 
+    private fun serializeExtendedStrokeList(strokes: MutableList<InputManager.ExtendedStroke>) : List<SerializedStroke> {
+        val strokeList: MutableList<SerializedStroke> = mutableListOf()
+        for (stroke in strokes) {
+            strokeList.add(SerializedStroke(stroke))
+        }
+        return strokeList
+    }
+
     /**
      * Save note changes in the view to note object
      */
@@ -653,7 +659,7 @@ class NoteDetailFragment : Fragment() {
 
             if (this::drawView.isInitialized) {
                 // TODO implement this
-                //note?.drawings = drawView.getDrawingList()
+                note?.drawings = serializeExtendedStrokeList(drawView.strokeList)
             }
             if (this::dragHandler.isInitialized) {
                 note?.images = dragHandler.getImageList()
