@@ -35,7 +35,7 @@ class DragHandler(private val fragment: NoteDetailFragment) {
     fun onDrag(event: DragEvent): Boolean {
         val isText = event.clipDescription?.getMimeType(0).toString().startsWith(TEXT_PREFIX)
         val isImage = event.clipDescription?.getMimeType(0).toString().startsWith(IMAGE_PREFIX)
-        val isRotated = MainActivity.isRotated(fragment.requireContext(), fragment.isRotated())
+        val isRotated = MainActivity.isRotated(fragment.requireContext(), fragment.isDualScreen())
 
         return when (event.action) {
             DragEvent.ACTION_DROP -> processDrop(event, isText, isImage, isRotated)

@@ -760,7 +760,7 @@ class NoteDetailFragment : Fragment() {
         }
     }
 
-    fun isRotated(): Boolean {
+    fun isDualScreen(): Boolean {
         return dualScreenVM.isDualScreen
     }
 }

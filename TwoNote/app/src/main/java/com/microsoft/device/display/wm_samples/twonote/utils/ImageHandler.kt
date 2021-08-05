@@ -169,7 +169,7 @@ class ImageHandler(private val fragment: NoteDetailFragment) {
             when (e.action and MotionEvent.ACTION_MASK) {
                 MotionEvent.ACTION_POINTER_DOWN -> {
                     // Initialize image resize
-                    initResize(e, imageView, MainActivity.isRotated(fragment.requireContext(), fragment.isRotated()))
+                    initResize(e, imageView, MainActivity.isRotated(fragment.requireContext(), fragment.isDualScreen()))
                     true
                 }
                 MotionEvent.ACTION_MOVE -> {
