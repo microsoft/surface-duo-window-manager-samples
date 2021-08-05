@@ -51,7 +51,6 @@ import com.microsoft.device.display.wm_samples.twonote.R
 import com.microsoft.device.display.wm_samples.twonote.models.DualScreenViewModel
 import com.microsoft.device.display.wm_samples.twonote.models.INode
 import com.microsoft.device.display.wm_samples.twonote.models.Note
-import com.microsoft.device.display.wm_samples.twonote.models.SerializedStroke
 import com.microsoft.device.display.wm_samples.twonote.utils.DataProvider
 import com.microsoft.device.display.wm_samples.twonote.utils.DragHandler
 import com.microsoft.device.display.wm_samples.twonote.utils.FileSystem
@@ -337,7 +336,6 @@ class NoteDetailFragment : Fragment() {
                     }
                 drawView.strokeWidth = newThickness.toFloat() / STROKE_MAX_MIN_RATIO
                 drawView.strokeWidthMax = newThickness.toFloat()
-
             }
 
             override fun onStartTrackingTouch(seek: SeekBar) {}
@@ -432,15 +430,15 @@ class NoteDetailFragment : Fragment() {
 
             drawView.strokeList.clear()
             for (stroke in n.drawings) {
-                drawView.strokeList.add(stroke.extendedStroke)
-                if (stroke.extendedStroke.inkingMode == InputManager.InkingType.INKING) {
+                drawView.strokeList.add(stroke)
+                if (stroke.inkingMode == InputManager.InkingType.INKING) {
                     drawView.initInkingList.add(FancyPaintHandler())
-                }
-                else if (stroke.extendedStroke.inkingMode == InputManager.InkingType.HIGHLIGHTING) {
+                } else if (stroke.inkingMode == InputManager.InkingType.HIGHLIGHTING) {
                     drawView.initInkingList.add(HighlighterPaintHandler())
-                }
-                else {
+                } else if (stroke.inkingMode == InputManager.InkingType.ERASING) {
                     drawView.initInkingList.add(EraserPaintHandler())
+                } else {
+                    drawView.initInkingList.add(null)
                 }
             }
         }
@@ -530,27 +528,22 @@ class NoteDetailFragment : Fragment() {
     }
 
     fun setRed() {
-        //setPaintHandler()
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.red)
     }
 
     fun setGreen() {
-        //resetPaintHandler()
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.green)
     }
 
     fun setBlue() {
-        //resetPaintHandler()
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.blue)
     }
 
     fun setPurple() {
-        //setPaintHandler()
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.purple)
     }
 
     fun setYellow() {
-        //resetPaintHandler()
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.yellow)
     }
 
@@ -661,14 +654,6 @@ class NoteDetailFragment : Fragment() {
         save()
     }
 
-    private fun serializeExtendedStrokeList(strokes: MutableList<InputManager.ExtendedStroke>) : List<SerializedStroke> {
-        val strokeList: MutableList<SerializedStroke> = mutableListOf()
-        for (stroke in strokes) {
-            strokeList.add(SerializedStroke(stroke))
-        }
-        return strokeList
-    }
-
     /**
      * Save note changes in the view to note object
      */
@@ -679,7 +664,7 @@ class NoteDetailFragment : Fragment() {
 
             if (this::drawView.isInitialized) {
                 // TODO implement this
-                note?.drawings = serializeExtendedStrokeList(drawView.strokeList)
+                note?.drawings = drawView.strokeList
             }
             if (this::dragHandler.isInitialized) {
                 note?.images = dragHandler.getImageList()
@@ -875,6 +860,7 @@ class NoteDetailFragment : Fragment() {
             view?.findViewById<ConstraintLayout>(R.id.ink_mode)?.bringToFront()
 
             // Enable drawing and show pen tools over canvas
+            //todo fix this
             //drawView.enable()
             resetPaintHandler()
             penTools?.visibility = View.VISIBLE
@@ -884,6 +870,7 @@ class NoteDetailFragment : Fragment() {
             inkItem?.title = getString(R.string.action_ink_on)
 
             // Disable drawing, close pen tools, and reset button states
+            //todo fix this
             //drawView.disable()
             drawView.dynamicPaintHandler = null
             penTools?.visibility = View.INVISIBLE
