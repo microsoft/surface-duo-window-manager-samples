@@ -45,7 +45,7 @@ class InkView constructor(
     private var maxStrokeWidth = 10f
 
     val strokeList = mutableListOf<InputManager.ExtendedStroke>()
-    val initInkingList = mutableListOf<DynamicPaintHandler>()
+    val initInkingList = mutableListOf<DynamicPaintHandler?>()
 
     // properties
     var color = Color.GRAY
@@ -132,6 +132,8 @@ class InkView constructor(
                     stroke: InputManager.ExtendedStroke
                 ) {
                     stroke.color = color
+                    stroke.width = strokeWidth
+                    stroke.widthMax = strokeWidthMax
                     redrawTexture()
                 }
 
@@ -228,6 +230,8 @@ class InkView constructor(
             stroke.lastPointReferenced = 0
             inputManager.currentStroke = stroke
             color = stroke.color
+            strokeWidth = stroke.width
+            strokeWidthMax = stroke.widthMax
             if (initInkingList.isNotEmpty()) {
                 dynamicPaintHandler = initInkingList.removeAt(0)
             }
@@ -328,7 +332,7 @@ class InkView constructor(
                                 penInfo.y,
                                 paint
                             )
-                            inputManager.currentStroke.inkingMode = paintHandler.selectInkingMode()
+                            stroke.inkingMode = paintHandler.selectInkingMode()
                         }
                     }
                     enablePressure -> {

@@ -7,6 +7,7 @@
 
 package com.microsoft.device.display.wm_samples.twonote.models
 
+import com.microsoft.device.ink.InputManager
 import java.io.Serializable
 
 /**
@@ -19,6 +20,6 @@ import java.io.Serializable
 class Note(var id: Int, localizedTitle: String) : Serializable {
     var title: String = "$localizedTitle $id"
     var text: String = ""
-    var drawings: List<SerializedStroke> = listOf()
+    var drawings: List<InputManager.ExtendedStroke> = listOf()
     var images: List<SerializedImage> = listOf()
 }
