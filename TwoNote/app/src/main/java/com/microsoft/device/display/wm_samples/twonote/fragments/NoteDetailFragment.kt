@@ -427,20 +427,20 @@ class NoteDetailFragment : Fragment() {
     private fun setUpDrawView() {
         note?.let { n ->
             drawView.strokeWidth = DEFAULT_THICKNESS.toFloat()
+            val inkingList: MutableList<InkView.DynamicPaintHandler?> = mutableListOf()
 
-            drawView.strokeList.clear()
             for (stroke in n.drawings) {
-                drawView.strokeList.add(stroke)
                 if (stroke.inkingMode == InputManager.InkingType.INKING) {
-                    drawView.initInkingList.add(FancyPaintHandler())
+                    inkingList.add(FancyPaintHandler())
                 } else if (stroke.inkingMode == InputManager.InkingType.HIGHLIGHTING) {
-                    drawView.initInkingList.add(HighlighterPaintHandler())
+                    inkingList.add(HighlighterPaintHandler())
                 } else if (stroke.inkingMode == InputManager.InkingType.ERASING) {
-                    drawView.initInkingList.add(EraserPaintHandler())
+                    inkingList.add(EraserPaintHandler())
                 } else {
-                    drawView.initInkingList.add(null)
+                    inkingList.add(null)
                 }
             }
+            drawView.loadDrawing(n.drawings, inkingList)
         }
     }
 
@@ -520,30 +520,30 @@ class NoteDetailFragment : Fragment() {
      */
     private fun undoStroke() {
         // TODO implement this
-        //drawView.undo()
+        drawView.undo()
     }
 
-    fun clickClear() {
+    private fun clickClear() {
         drawView.clearInk()
     }
 
-    fun setRed() {
+    private fun setRed() {
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.red)
     }
 
-    fun setGreen() {
+    private fun setGreen() {
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.green)
     }
 
-    fun setBlue() {
+    private fun setBlue() {
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.blue)
     }
 
-    fun setPurple() {
+    private fun setPurple() {
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.purple)
     }
 
-    fun setYellow() {
+    private fun setYellow() {
         drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.yellow)
     }
 
@@ -663,8 +663,7 @@ class NoteDetailFragment : Fragment() {
             val title = noteTitle.text.toString()
 
             if (this::drawView.isInitialized) {
-                // TODO implement this
-                note?.drawings = drawView.strokeList
+                note?.drawings = drawView.getDrawing()
             }
             if (this::dragHandler.isInitialized) {
                 note?.images = dragHandler.getImageList()
@@ -860,8 +859,7 @@ class NoteDetailFragment : Fragment() {
             view?.findViewById<ConstraintLayout>(R.id.ink_mode)?.bringToFront()
 
             // Enable drawing and show pen tools over canvas
-            //todo fix this
-            //drawView.enable()
+            drawView.inkingEnabled = true
             resetPaintHandler()
             penTools?.visibility = View.VISIBLE
             penTools?.bringToFront()
@@ -870,8 +868,7 @@ class NoteDetailFragment : Fragment() {
             inkItem?.title = getString(R.string.action_ink_on)
 
             // Disable drawing, close pen tools, and reset button states
-            //todo fix this
-            //drawView.disable()
+            drawView.inkingEnabled = false
             drawView.dynamicPaintHandler = null
             penTools?.visibility = View.INVISIBLE
             toggleViewVisibility(view?.findViewById<SeekBar>(R.id.thickness_slider), true)

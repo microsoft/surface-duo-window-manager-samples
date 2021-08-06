@@ -41,11 +41,12 @@ class InkView constructor(
 
     // attributes
     private var enablePressure = false
+    private var enableInking = true
     private var minStrokeWidth = 1f
     private var maxStrokeWidth = 10f
 
-    val strokeList = mutableListOf<InputManager.ExtendedStroke>()
-    val initInkingList = mutableListOf<DynamicPaintHandler?>()
+    private val strokeList = mutableListOf<InputManager.ExtendedStroke>()
+    private val inkingList = mutableListOf<DynamicPaintHandler?>()
 
     // properties
     var color = Color.GRAY
@@ -83,6 +84,14 @@ class InkView constructor(
         }
         set(value) {
             enablePressure = value
+        }
+
+    var inkingEnabled: Boolean
+        get() {
+            return enableInking
+        }
+        set(value) {
+            enableInking = value
         }
 
     var dynamicPaintHandler: DynamicPaintHandler? = null
@@ -131,25 +140,32 @@ class InkView constructor(
                     penInfo: InputManager.PenInfo,
                     stroke: InputManager.ExtendedStroke
                 ) {
-                    stroke.color = color
-                    stroke.width = strokeWidth
-                    stroke.widthMax = strokeWidthMax
-                    redrawTexture()
+                    if (enableInking) {
+                        stroke.color = color
+                        stroke.width = strokeWidth
+                        stroke.widthMax = strokeWidthMax
+                        redrawTexture()
+                    }
                 }
 
                 override fun strokeUpdated(
                     penInfo: InputManager.PenInfo,
                     stroke: InputManager.ExtendedStroke
                 ) {
-                    redrawTexture()
+                    if (enableInking) {
+                        redrawTexture()
+                    }
                 }
 
                 override fun strokeCompleted(
                     penInfo: InputManager.PenInfo,
                     stroke: InputManager.ExtendedStroke
                 ) {
-                    redrawTexture()
-                    strokeList += stroke
+                    if (enableInking) {
+                        redrawTexture()
+                        strokeList += stroke
+                        inkingList += dynamicPaintHandler
+                    }
                 }
             },
             object : InputManager.PenHoverHandler {
@@ -225,18 +241,53 @@ class InkView constructor(
         return bitmap
     }
 
-    fun loadDrawing() {
-        for (stroke in strokeList) {
+    fun getDrawing(): List<InputManager.ExtendedStroke> {
+        return strokeList
+    }
+
+    fun loadDrawing(strokes: List<InputManager.ExtendedStroke>, inks: List<DynamicPaintHandler?>) {
+        if (strokes.size != inks.size)
+            return
+
+        strokeList.clear()
+        inkingList.clear()
+
+        strokeList.addAll(strokes.toCollection(mutableListOf()))
+        inkingList.addAll(inks.toCollection(mutableListOf()))
+    }
+
+    private fun drawStrokeList() {
+        if (strokeList.size != inkingList.size)
+            return
+
+        val defaultStroke = createDefaultStroke()
+        val defaultPaintHandler = dynamicPaintHandler
+
+        for (i in strokeList.indices) {
+            val stroke = strokeList[i]
             stroke.lastPointReferenced = 0
+
             inputManager.currentStroke = stroke
-            color = stroke.color
-            strokeWidth = stroke.width
-            strokeWidthMax = stroke.widthMax
-            if (initInkingList.isNotEmpty()) {
-                dynamicPaintHandler = initInkingList.removeAt(0)
-            }
+            loadStrokeValues(stroke, inkingList[i])
             redrawTexture()
         }
+
+        loadStrokeValues(defaultStroke, defaultPaintHandler)
+    }
+
+    private fun createDefaultStroke(): InputManager.ExtendedStroke {
+        val defaultStroke = InputManager.ExtendedStroke()
+        defaultStroke.color = color
+        defaultStroke.width = strokeWidth
+        defaultStroke.widthMax = strokeWidthMax
+        return defaultStroke
+    }
+
+    private fun loadStrokeValues(stroke: InputManager.ExtendedStroke, paintHandler: DynamicPaintHandler?) {
+        color = stroke.color
+        strokeWidth = stroke.width
+        strokeWidthMax = stroke.widthMax
+        dynamicPaintHandler = paintHandler
     }
 
     private fun updateStrokeWidth(pressure: Float) {
@@ -359,6 +410,21 @@ class InkView constructor(
     }
 
     /**
+     * Erase last stroke and redraw all other strokes
+     */
+    fun undo() {
+        drawCanvas.drawColor(Color.TRANSPARENT, PorterDuff.Mode.CLEAR)
+        if (strokeList.isNotEmpty() && inkingList.isNotEmpty()) {
+            strokeList.removeLast()
+            inkingList.removeLast()
+        }
+        drawStrokeList()
+        if (strokeList.isEmpty()) {
+            redrawTexture()
+        }
+    }
+
+    /**
      * Invoked when a [TextureView]'s SurfaceTexture is ready for use.
      *
      * @param surface The surface returned by
@@ -368,7 +434,8 @@ class InkView constructor(
      */
     override fun onSurfaceTextureAvailable(surface: SurfaceTexture, width: Int, height: Int) {
         this.surface = Surface(surface)
-        loadDrawing()
+        redrawTexture()
+        drawStrokeList()
     }
 
     /**
