@@ -220,7 +220,7 @@ class NoteDetailFragment : Fragment() {
         drawView = view.findViewById(R.id.draw_view)
 
         // Set up pen tools buttons
-        view.findViewById<ImageButton>(R.id.undo).setOnClickListener { undoStroke() }
+        view.findViewById<ImageButton>(R.id.undo).setOnClickListener { drawView.undo() }
         setUpColorButtons(view)
         setUpThicknessBar(view)
         setUpErasingAndHighlighting(view)
@@ -285,11 +285,11 @@ class NoteDetailFragment : Fragment() {
         view?.findViewById<ImageButton>(R.id.button_choose)?.clearColorFilter()
 
         when (color) {
-            PaintColors.Red.name -> setRed()
-            PaintColors.Blue.name -> setBlue()
-            PaintColors.Green.name -> setGreen()
-            PaintColors.Yellow.name -> setYellow()
-            PaintColors.Purple.name -> setPurple()
+            PaintColors.Red.name -> drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.red)
+            PaintColors.Blue.name -> drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.blue)
+            PaintColors.Green.name -> drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.green)
+            PaintColors.Yellow.name -> drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.yellow)
+            PaintColors.Purple.name -> drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.purple)
             else -> if (colorInt != null) drawView.color = colorInt
         }
     }
@@ -365,7 +365,7 @@ class NoteDetailFragment : Fragment() {
                 drawView.dynamicPaintHandler = HighlighterPaintHandler()
             } else {
                 activate = false
-                resetPaintHandler()
+                drawView.dynamicPaintHandler = FancyPaintHandler()
             }
             toggleButtonColor(highlightButton, activate)
 
@@ -386,7 +386,7 @@ class NoteDetailFragment : Fragment() {
                 drawView.dynamicPaintHandler = EraserPaintHandler()
             } else {
                 activate = false
-                resetPaintHandler()
+                drawView.dynamicPaintHandler = FancyPaintHandler()
             }
             toggleButtonColor(eraseButton, activate)
 
@@ -411,7 +411,7 @@ class NoteDetailFragment : Fragment() {
             AlertDialog.Builder(requireContext())
                 .setMessage(resources.getString(R.string.confirm_clear_message))
                 .setPositiveButton(resources.getString(android.R.string.ok)) { dialog, _ ->
-                    clickClear()
+                    drawView.clearInk()
                     dialog.dismiss()
                 }
                 .setNegativeButton(resources.getString(android.R.string.cancel)) { dialog, _ -> dialog.dismiss() }
@@ -513,130 +513,6 @@ class NoteDetailFragment : Fragment() {
 
         // Tell drag handler that deletion is active so it won't move the image on touch
         dragHandler.setDeleteMode(deleteImageMode)
-    }
-
-    /**
-     * Undo last stroke made on the canvas
-     */
-    private fun undoStroke() {
-        // TODO implement this
-        drawView.undo()
-    }
-
-    private fun clickClear() {
-        drawView.clearInk()
-    }
-
-    private fun setRed() {
-        drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.red)
-    }
-
-    private fun setGreen() {
-        drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.green)
-    }
-
-    private fun setBlue() {
-        drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.blue)
-    }
-
-    private fun setPurple() {
-        drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.purple)
-    }
-
-    private fun setYellow() {
-        drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.yellow)
-    }
-
-    private fun resetPaintHandler() {
-        drawView.dynamicPaintHandler = FancyPaintHandler()
-    }
-
-    /**
-     * Renders the ink with transparency linked to the pressure on the pen.
-     */
-    inner class FancyPaintHandler : InkView.DynamicPaintHandler {
-        override fun generatePaintFromPenInfo(penInfo: InputManager.PenInfo): Paint {
-            val paint = Paint()
-            val alpha = penInfo.pressure * 255
-
-            paint.color = Color.argb(
-                alpha.toInt(),
-                drawView.color.red,
-                drawView.color.green,
-                drawView.color.blue
-            )
-            paint.isAntiAlias = true
-            // Set stroke width based on display density.
-            paint.strokeWidth = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
-                resources.displayMetrics
-            )
-            paint.style = Paint.Style.STROKE
-            paint.strokeJoin = Paint.Join.ROUND
-            paint.strokeCap = Paint.Cap.ROUND
-
-            return paint
-        }
-
-        override fun selectInkingMode(): InputManager.InkingType {
-            return InputManager.InkingType.INKING
-        }
-    }
-
-    /**
-     * Renders the ink as though from a highlighter: permanently transparent
-     * and yellow-colored.
-     */
-    inner class HighlighterPaintHandler : InkView.DynamicPaintHandler {
-        override fun generatePaintFromPenInfo(penInfo: InputManager.PenInfo): Paint {
-            val paint = Paint()
-            val alpha = 80
-
-            paint.color = ColorUtils.setAlphaComponent(drawView.color, alpha)
-            paint.isAntiAlias = true
-            // Set stroke width based on display density.
-            paint.strokeWidth = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
-                resources.displayMetrics
-            )
-            paint.style = Paint.Style.STROKE
-            paint.strokeJoin = Paint.Join.BEVEL
-            paint.strokeCap = Paint.Cap.BUTT
-
-            return paint
-        }
-
-        override fun selectInkingMode(): InputManager.InkingType {
-            return InputManager.InkingType.HIGHLIGHTING
-        }
-    }
-
-    /**
-     * Renders the ink as though from an eraser
-     */
-    inner class EraserPaintHandler : InkView.DynamicPaintHandler {
-        override fun generatePaintFromPenInfo(penInfo: InputManager.PenInfo): Paint {
-            val paint = Paint()
-            paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
-            paint.isAntiAlias = true
-            // Set stroke width based on display density.
-            paint.strokeWidth = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
-                resources.displayMetrics
-            )
-            paint.style = Paint.Style.STROKE
-            paint.strokeJoin = Paint.Join.ROUND
-            paint.strokeCap = Paint.Cap.ROUND
-
-            return paint
-        }
-
-        override fun selectInkingMode(): InputManager.InkingType {
-            return InputManager.InkingType.ERASING
-        }
     }
 
     override fun onResume() {
@@ -860,7 +736,7 @@ class NoteDetailFragment : Fragment() {
 
             // Enable drawing and show pen tools over canvas
             drawView.inkingEnabled = true
-            resetPaintHandler()
+            drawView.dynamicPaintHandler = FancyPaintHandler()
             penTools?.visibility = View.VISIBLE
             penTools?.bringToFront()
         } else {
@@ -878,6 +754,10 @@ class NoteDetailFragment : Fragment() {
             toggleButtonColor(view?.findViewById(R.id.highlight), false)
             toggleButtonColor(view?.findViewById(R.id.erase), false)
         }
+    }
+
+    fun isDualScreen(): Boolean {
+        return dualScreenVM.isDualScreen
     }
 
     /**
@@ -912,7 +792,92 @@ class NoteDetailFragment : Fragment() {
         }
     }
 
-    fun isDualScreen(): Boolean {
-        return dualScreenVM.isDualScreen
+    // ------------------------- Custom paint handler classes --------------------------- \\
+
+    /**
+     * Renders the ink with transparency linked to the pressure on the pen.
+     */
+    inner class FancyPaintHandler : InkView.DynamicPaintHandler {
+        override fun generatePaintFromPenInfo(penInfo: InputManager.PenInfo): Paint {
+            val paint = Paint()
+            val alpha = penInfo.pressure * 255
+
+            paint.color = Color.argb(
+                alpha.toInt(),
+                drawView.color.red,
+                drawView.color.green,
+                drawView.color.blue
+            )
+            paint.isAntiAlias = true
+            // Set stroke width based on display density.
+            paint.strokeWidth = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
+                resources.displayMetrics
+            )
+            paint.style = Paint.Style.STROKE
+            paint.strokeJoin = Paint.Join.ROUND
+            paint.strokeCap = Paint.Cap.ROUND
+
+            return paint
+        }
+
+        override fun selectInkingMode(): InputManager.InkingType {
+            return InputManager.InkingType.INKING
+        }
+    }
+
+    /**
+     * Renders the ink as though from a highlighter: permanently transparent
+     */
+    inner class HighlighterPaintHandler : InkView.DynamicPaintHandler {
+        override fun generatePaintFromPenInfo(penInfo: InputManager.PenInfo): Paint {
+            val paint = Paint()
+            val alpha = 80
+
+            paint.color = ColorUtils.setAlphaComponent(drawView.color, alpha)
+            paint.isAntiAlias = true
+            // Set stroke width based on display density.
+            paint.strokeWidth = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
+                resources.displayMetrics
+            )
+            paint.style = Paint.Style.STROKE
+            paint.strokeJoin = Paint.Join.BEVEL
+            paint.strokeCap = Paint.Cap.BUTT
+
+            return paint
+        }
+
+        override fun selectInkingMode(): InputManager.InkingType {
+            return InputManager.InkingType.HIGHLIGHTING
+        }
+    }
+
+    /**
+     * Renders the ink as though from an eraser
+     */
+    inner class EraserPaintHandler : InkView.DynamicPaintHandler {
+        override fun generatePaintFromPenInfo(penInfo: InputManager.PenInfo): Paint {
+            val paint = Paint()
+            paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+            paint.isAntiAlias = true
+            // Set stroke width based on display density.
+            paint.strokeWidth = TypedValue.applyDimension(
+                TypedValue.COMPLEX_UNIT_DIP,
+                penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
+                resources.displayMetrics
+            )
+            paint.style = Paint.Style.STROKE
+            paint.strokeJoin = Paint.Join.ROUND
+            paint.strokeCap = Paint.Cap.ROUND
+
+            return paint
+        }
+
+        override fun selectInkingMode(): InputManager.InkingType {
+            return InputManager.InkingType.ERASING
+        }
     }
 }
