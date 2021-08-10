@@ -13,31 +13,69 @@ import android.os.Looper
 import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.core.util.Consumer
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
-import androidx.window.DisplayFeature
-import androidx.window.FoldingFeature
-import androidx.window.WindowLayoutInfo
-import androidx.window.WindowManager
+import androidx.window.layout.DisplayFeature
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowLayoutInfo
+import androidx.window.layout.WindowInfoRepository
+import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.collect
 import java.util.concurrent.Executor
 import kotlin.math.max
 import kotlin.math.min
 
+
 class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListener {
     private lateinit var book: Book
+    var layoutMode = LayoutMode.NORMAL
+    var foldRect = Rect()
 
     private lateinit var bookPagerView: ViewPager2
-    private lateinit var windowManager: WindowManager
+    private lateinit var windowInfoRep: WindowInfoRepository
     private var pagePagerCallback = BookPagerCallback()
     private val handler = Handler(Looper.getMainLooper())
     private val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
-    private val layoutStateContainer = LayoutStateContainer()
+    //private val layoutStateContainer = LayoutStateContainer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         renderLoading()
 
-        windowManager = WindowManager(this)
+        windowInfoRep = windowInfoRepository()
+
+        // Create a new coroutine since repeatOnLifecycle is a suspend function
+        lifecycleScope.launch(Dispatchers.Main) {
+            // The block passed to repeatOnLifecycle is executed when the lifecycle
+            // is at least STARTED and is cancelled when the lifecycle is STOPPED.
+            // It automatically restarts the block when the lifecycle is STARTED again.
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Safely collect from windowInfoRepo when the lifecycle is STARTED
+                // and stops collection when the lifecycle is STOPPED
+                windowInfoRep.windowLayoutInfo
+                    .collect { newLayoutInfo ->
+                        layoutMode = LayoutMode.NORMAL
+                        foldRect = Rect()
+                        for (displayFeature : DisplayFeature in newLayoutInfo.displayFeatures) {
+                            if (displayFeature is FoldingFeature) {
+                                foldRect = displayFeature.bounds
+                                layoutMode = if (displayFeature.orientation == FoldingFeature.Orientation.HORIZONTAL) {
+                                    LayoutMode.SPLIT_VERTICAL
+                                } else {
+                                    LayoutMode.SPLIT_HORIZONTAL
+                                }
+                            }
+                        }
+                    }
+            }
+        }
+
 
         book = Book(intent.getStringExtra("BOOK_FILEPATH")!!, this)
         book.currentChapter = 0
@@ -79,18 +117,18 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
         val captionHeight = resources.getDimension(R.dimen.caption_height).toInt()
 
         val tempPageRects = ArrayList<Rect>()
-        when (layoutStateContainer.layoutMode) {
+        when (layoutMode) {
             LayoutMode.NORMAL -> {
                 tempPageRects.add(Rect(bookPagerRect.left, bookPagerRect.top, bookPagerRect.right, bookPagerRect.bottom - captionHeight))
             }
             //TODO Setting book to two-page layout
             LayoutMode.SPLIT_VERTICAL -> {
-                tempPageRects.add(Rect(bookPagerRect.left, bookPagerRect.top, bookPagerRect.right, layoutStateContainer.foldRect.top))
-                tempPageRects.add(Rect(bookPagerRect.left, layoutStateContainer.foldRect.bottom, bookPagerRect.right, bookPagerRect.bottom - captionHeight))
+                tempPageRects.add(Rect(bookPagerRect.left, bookPagerRect.top, bookPagerRect.right, foldRect.top))
+                tempPageRects.add(Rect(bookPagerRect.left, foldRect.bottom, bookPagerRect.right, bookPagerRect.bottom - captionHeight))
             }
             LayoutMode.SPLIT_HORIZONTAL -> {
-                tempPageRects.add(Rect(bookPagerRect.left, bookPagerRect.top, layoutStateContainer.foldRect.left, bookPagerRect.bottom - captionHeight))
-                tempPageRects.add(Rect(layoutStateContainer.foldRect.right, bookPagerRect.top, bookPagerRect.right, bookPagerRect.bottom - captionHeight))
+                tempPageRects.add(Rect(bookPagerRect.left, bookPagerRect.top, foldRect.left, bookPagerRect.bottom - captionHeight))
+                tempPageRects.add(Rect(foldRect.right, bookPagerRect.top, bookPagerRect.right, bookPagerRect.bottom - captionHeight))
             }
         }
 
@@ -105,9 +143,9 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
             bookPagerView.unregisterOnPageChangeCallback(pagePagerCallback)
         }
 
-        bookPagerView.adapter = BookPagerAdapter(book, layoutStateContainer)
+        bookPagerView.adapter = BookPagerAdapter(book, this)
         bookPagerView.setPageTransformer(PageTransformer())
-        val position = if (layoutStateContainer.layoutMode == LayoutMode.NORMAL) book.currentPage + 1 else (book.currentPage/2) + 1
+        val position = if (layoutMode == LayoutMode.NORMAL) book.currentPage + 1 else (book.currentPage/2) + 1
         bookPagerView.setCurrentItem(position, false)
         bookPagerView.registerOnPageChangeCallback(pagePagerCallback)
         bookPagerView.isUserInputEnabled = true
@@ -119,7 +157,7 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
                 0 -> jumpToPreviousChapter()
                 bookPagerView.adapter!!.itemCount - 1 -> jumpToNextChapter()
                 else -> {
-                    book.currentPage = if (layoutStateContainer.layoutMode == LayoutMode.NORMAL) {
+                    book.currentPage = if (layoutMode == LayoutMode.NORMAL) {
                         position - 1
                     } else {
                         (2 * (position - 1))
@@ -222,40 +260,40 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
         return super.onOptionsItemSelected(item)
     }
 
-    override fun onStart() {
-        super.onStart()
-        windowManager.registerLayoutChangeCallback(mainThreadExecutor, layoutStateContainer)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        windowManager.unregisterLayoutChangeCallback(layoutStateContainer)
-    }
+//    override fun onStart() {
+//        super.onStart()
+//        windowInfoRep.registerLayoutChangeCallback(mainThreadExecutor, layoutStateContainer)
+//    }
+//
+//    override fun onStop() {
+//        super.onStop()
+//        windowInfoRep.unregisterLayoutChangeCallback(layoutStateContainer)
+//    }
 
     enum class LayoutMode {
         NORMAL, SPLIT_VERTICAL, SPLIT_HORIZONTAL
     }
 
     //TODO Containers and callbacks for two-page layout information
-    inner class LayoutStateContainer : Consumer<WindowLayoutInfo> {
-        var layoutMode = LayoutMode.NORMAL
-        var foldRect = Rect()
-
-        override fun accept(newLayoutInfo: WindowLayoutInfo) {
-            layoutMode = LayoutMode.NORMAL
-            foldRect = Rect()
-            for (displayFeature : DisplayFeature in newLayoutInfo.displayFeatures) {
-                if (displayFeature is FoldingFeature) {
-                    foldRect = displayFeature.bounds
-                    layoutMode = if (displayFeature.orientation == FoldingFeature.ORIENTATION_HORIZONTAL) {
-                        LayoutMode.SPLIT_VERTICAL
-                    } else {
-                        LayoutMode.SPLIT_HORIZONTAL
-                    }
-                }
-            }
-            renderLoading()
-        }
-    }
+//    inner class LayoutStateContainer : Consumer<WindowLayoutInfo> {
+//        var layoutMode = LayoutMode.NORMAL
+//        var foldRect = Rect()
+//
+//        override fun accept(newLayoutInfo: WindowLayoutInfo) {
+//            layoutMode = LayoutMode.NORMAL
+//            foldRect = Rect()
+//            for (displayFeature : DisplayFeature in newLayoutInfo.displayFeatures) {
+//                if (displayFeature is FoldingFeature) {
+//                    foldRect = displayFeature.bounds
+//                    layoutMode = if (displayFeature.orientation == FoldingFeature.Orientation.HORIZONTAL) {
+//                        LayoutMode.SPLIT_VERTICAL
+//                    } else {
+//                        LayoutMode.SPLIT_HORIZONTAL
+//                    }
+//                }
+//            }
+//            renderLoading()
+//        }
+//    }
 
 }
