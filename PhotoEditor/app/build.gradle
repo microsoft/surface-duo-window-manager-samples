@@ -41,6 +41,8 @@ dependencies {
     implementation androidxDependencies.ktxFragment
     implementation androidxDependencies.windowManager
 
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha02'
+
     testImplementation testDependencies.junit
     androidTestImplementation instrumentationTestDependencies.junit
     androidTestImplementation instrumentationTestDependencies.espressoCore
