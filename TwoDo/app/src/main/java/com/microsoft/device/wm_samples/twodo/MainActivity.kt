@@ -5,29 +5,32 @@
 
 package com.microsoft.device.wm_samples.twodo
 
-import android.app.Activity
 import android.content.Intent
 import android.graphics.Rect
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.util.Consumer
-import androidx.window.DisplayFeature
-import androidx.window.FoldingFeature
-import androidx.window.WindowLayoutInfo
-import androidx.window.WindowManager
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.window.layout.DisplayFeature
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowInfoRepository
+import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
+import androidx.window.layout.WindowLayoutInfo
 import com.microsoft.device.wm_samples.twodo.databinding.ActivityMainBinding
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 import java.util.concurrent.Executor
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
 
-    // Jetpack WM
-    private lateinit var windowManager: WindowManager
-    private val handler = Handler(Looper.getMainLooper())
-    private val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
-    private val stateContainer = StateContainer()
+    // Jetpack Window Manager
+    private lateinit var windowInfoRep: WindowInfoRepository
 
     private lateinit var binding: ActivityMainBinding
 
@@ -36,21 +39,42 @@ class MainActivity : Activity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        windowManager = WindowManager(this)
-
         binding.doneButton.setOnClickListener {
             goToTwoDoActivity()
         }
-    }
 
-    override fun onStart() {
-        super.onStart()
-        windowManager.registerLayoutChangeCallback(mainThreadExecutor, stateContainer)
-    }
+        windowInfoRep = windowInfoRepository()
 
-    override fun onStop() {
-        super.onStop()
-        windowManager.unregisterLayoutChangeCallback(stateContainer)
+        // Create a new coroutine since repeatOnLifecycle is a suspend function
+        lifecycleScope.launch(Dispatchers.Main) {
+            // The block passed to repeatOnLifecycle is executed when the lifecycle
+            // is at least STARTED and is cancelled when the lifecycle is STOPPED.
+            // It automatically restarts the block when the lifecycle is STARTED again.
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Safely collect from windowInfoRepo when the lifecycle is STARTED
+                // and stops collection when the lifecycle is STOPPED
+                windowInfoRep.windowLayoutInfo
+                    .collect { newLayoutInfo ->
+                        // reset fold values
+                        ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, 0)
+                        ConstraintLayout.getSharedValues().fireNewValue(R.id.vert_fold, 0)
+
+                        // Add views that represent display features
+                        for (displayFeature in newLayoutInfo.displayFeatures) {
+                            val foldFeature = displayFeature as? FoldingFeature
+                            if (foldFeature != null) {
+                                if (foldFeature.orientation == FoldingFeature.Orientation.HORIZONTAL) {
+                                    var fold = horizontalFoldPosition(binding.root, foldFeature)
+                                    ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, fold)
+                                } else {
+                                    var fold = verticalFoldPosition(binding.root, foldFeature)
+                                    ConstraintLayout.getSharedValues().fireNewValue(R.id.vert_fold, fold)
+                                }
+                            }
+                        }
+                    }
+            }
+        }
     }
 
     fun goToTwoDoActivity() {
@@ -123,28 +147,5 @@ class MainActivity : Activity() {
         featureRectInView.offset(-viewLocationInWindow[0], -viewLocationInWindow[1])
 
         return featureRectInView
-    }
-
-    inner class StateContainer : Consumer<WindowLayoutInfo> {
-        override fun accept(newLayoutInfo: WindowLayoutInfo) {
-
-            // reset fold values
-            ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, 0)
-            ConstraintLayout.getSharedValues().fireNewValue(R.id.vert_fold, 0)
-
-            // Add views that represent display features
-            for (displayFeature in newLayoutInfo.displayFeatures) {
-                val foldFeature = displayFeature as? FoldingFeature
-                if (foldFeature != null) {
-                    if (foldFeature.orientation == FoldingFeature.ORIENTATION_HORIZONTAL) {
-                        var fold = horizontalFoldPosition(binding.root, foldFeature)
-                        ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, fold)
-                    } else {
-                        var fold = verticalFoldPosition(binding.root, foldFeature)
-                        ConstraintLayout.getSharedValues().fireNewValue(R.id.vert_fold, fold)
-                    }
-                }
-            }
-        }
     }
 }
