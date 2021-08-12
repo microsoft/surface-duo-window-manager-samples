@@ -12,7 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
-class BookPagerAdapter(inBook: Book, inLayoutStateContainer: BookActivity.LayoutStateContainer) : RecyclerView.Adapter<PageViewHolder>() {
+class BookPagerAdapter(inBook: Book, inLayoutStateContainer: BookActivity) : RecyclerView.Adapter<PageViewHolder>() {
     private val book = inBook
     private val layoutStateContainer = inLayoutStateContainer
 

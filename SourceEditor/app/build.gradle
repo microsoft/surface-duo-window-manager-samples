@@ -12,6 +12,10 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
     defaultConfig {
         applicationId 'com.microsoft.device.display.wm_samples.sourceeditor'
         minSdkVersion 29
@@ -33,6 +37,9 @@ dependencies {
     implementation androidxDependencies.ktxCore
     implementation androidxDependencies.ktxFragment
     implementation androidxDependencies.windowManager
+
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha02'
+
 
     testImplementation testDependencies.junit
 
