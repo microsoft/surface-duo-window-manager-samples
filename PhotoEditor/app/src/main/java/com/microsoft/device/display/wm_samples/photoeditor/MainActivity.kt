@@ -163,9 +163,9 @@ class MainActivity : AppCompatActivity() {
     /**
      * HACK just to help with testing on Surface Duo AND foldable emulators until WM is stable
      */
-    fun isDeviceSurfaceDuo(): Boolean {
-        val surfaceDuoSpecificFeature = "com.microsoft.device.display.displaymask"
-        val pm = this@MainActivity.packageManager
-        return pm.hasSystemFeature(surfaceDuoSpecificFeature)
-    }
+//    fun isDeviceSurfaceDuo(): Boolean {
+//        val surfaceDuoSpecificFeature = "com.microsoft.device.display.displaymask"
+//        val pm = this@MainActivity.packageManager
+//        return pm.hasSystemFeature(surfaceDuoSpecificFeature)
+//    }
 }

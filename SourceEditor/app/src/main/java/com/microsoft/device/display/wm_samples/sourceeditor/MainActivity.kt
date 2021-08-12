@@ -82,31 +82,27 @@ class MainActivity : AppCompatActivity() {
                 // and stops collection when the lifecycle is STOPPED
                 windowInfoRep.windowLayoutInfo
                     .collect { newLayoutInfo ->
-                        newLayoutInfo?.let {
-                            var isDualScreen = false
+                        var isDualScreen = false
 
-                            // Check display features for an active hinge/fold
-                            for (displayFeature in newLayoutInfo.displayFeatures) {
-                                val foldingFeature = displayFeature as? FoldingFeature
-                                if (foldingFeature != null) {
-                                    // hinge found, check to see if it should be split screen
-                                    if (isDeviceSurfaceDuo() || foldingFeature.state == FoldingFeature.State.HALF_OPENED) {
-                                        val hingeBounds = foldingFeature.bounds
-                                        isDualScreen = true
+                        // Check display features for an active hinge/fold
+                        for (displayFeature in newLayoutInfo.displayFeatures) {
+                            val foldingFeature = displayFeature as? FoldingFeature
+                            if (foldingFeature != null) {
+                                // hinge found, check to see if it should be split screen
+                                val hingeBounds = foldingFeature.bounds
+                                isDualScreen = true
 
-                                        if (foldingFeature.orientation == FoldingFeature.Orientation.VERTICAL) {
-                                            setBoundsVerticalHinge(hingeBounds)
-                                        } else {
-                                            setBoundsHorizontalHinge(hingeBounds)
-                                        }
-                                    }
+                                if (foldingFeature.orientation == FoldingFeature.Orientation.VERTICAL) {
+                                    setBoundsVerticalHinge(hingeBounds)
+                                } else {
+                                    setBoundsHorizontalHinge(hingeBounds)
                                 }
                             }
-                            if (!isDualScreen) {
-                                setBoundsNoHinge()
-                            }
-                            dualScreenVM.setIsDualScreen(isDualScreen)
                         }
+                        if (!isDualScreen) {
+                            setBoundsNoHinge()
+                        }
+                        dualScreenVM.setIsDualScreen(isDualScreen)
                     }
             }
         }
