@@ -30,7 +30,6 @@ import java.util.concurrent.Executor
 import kotlin.math.max
 import kotlin.math.min
 
-
 class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListener {
     private lateinit var book: Book
     var layoutMode = LayoutMode.NORMAL
@@ -41,7 +40,7 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
     private var pagePagerCallback = BookPagerCallback()
     private val handler = Handler(Looper.getMainLooper())
     private val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
-    //private val layoutStateContainer = LayoutStateContainer()
+    // private val layoutStateContainer = LayoutStateContainer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,7 +61,7 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
                     .collect { newLayoutInfo ->
                         layoutMode = LayoutMode.NORMAL
                         foldRect = Rect()
-                        for (displayFeature : DisplayFeature in newLayoutInfo.displayFeatures) {
+                        for (displayFeature: DisplayFeature in newLayoutInfo.displayFeatures) {
                             if (displayFeature is FoldingFeature) {
                                 foldRect = displayFeature.bounds
                                 layoutMode = if (displayFeature.orientation == FoldingFeature.Orientation.HORIZONTAL) {
@@ -75,7 +74,6 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
                     }
             }
         }
-
 
         book = Book(intent.getStringExtra("BOOK_FILEPATH")!!, this)
         book.currentChapter = 0
@@ -145,7 +143,7 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
 
         bookPagerView.adapter = BookPagerAdapter(book, this)
         bookPagerView.setPageTransformer(PageTransformer())
-        val position = if (layoutMode == LayoutMode.NORMAL) book.currentPage + 1 else (book.currentPage/2) + 1
+        val position = if (layoutMode == LayoutMode.NORMAL) book.currentPage + 1 else (book.currentPage / 2) + 1
         bookPagerView.setCurrentItem(position, false)
         bookPagerView.registerOnPageChangeCallback(pagePagerCallback)
         bookPagerView.isUserInputEnabled = true
@@ -299,5 +297,4 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
 //            renderLoading()
 //        }
 //    }
-
 }
