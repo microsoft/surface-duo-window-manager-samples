@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ Copyright (c) Microsoft Corporation. All rights reserved.
+  ~ Licensed under the MIT License.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/textViewStyle"
+        android:text="@string/rotate" />
+
+    <ImageButton
+        android:id="@+id/rotate_left"
+        style="@style/buttonStyle"
+        android:layout_marginTop="@dimen/med_padding"
+        android:layout_weight="1"
+        android:contentDescription="@string/rotate_left"
+        android:src="@drawable/ic_rotate_left" />
+
+    <ImageButton
+        android:id="@+id/rotate_right"
+        android:layout_width="@dimen/button_size"
+        android:layout_height="@dimen/button_size"
+        android:layout_marginTop="@dimen/large_padding"
+        android:layout_weight="1"
+        android:contentDescription="@string/rotate_right"
+        android:src="@drawable/ic_rotate_right" />
+
+    <TextView
+        style="@style/textViewStyle"
+        android:layout_marginTop="@dimen/xl_padding"
+        android:text="@string/save" />
+
+    <ImageButton
+        android:id="@+id/save"
+        style="@style/buttonStyle"
+        android:layout_marginTop="@dimen/med_padding"
+        android:layout_weight="1"
+        android:contentDescription="@string/save_button"
+        android:src="@drawable/ic_save" />
+
+</LinearLayout>

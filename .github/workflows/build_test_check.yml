@@ -21,7 +21,7 @@ jobs:
 
     strategy:
       matrix:
-        projects: [ FoldingVideo, FoldingVideoPlusChat, TwoPageEBookReader ]
+        projects: [ FoldingVideo, FoldingVideoPlusChat, TwoPageEBookReader, PhotoEditor, SourceEditor, TwoDo ]
       fail-fast: false
 
     steps:

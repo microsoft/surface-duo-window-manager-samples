@@ -1,0 +1,78 @@
+/*
+ * Copyright (c) Microsoft Corporation. All rights reserved.
+ * Licensed under the MIT License.
+ *
+ */
+
+ext {
+    gradlePluginVersion = "4.1.1"
+    kotlinVersion = "1.4.21"
+    compileSdkVersion = 31
+    buildToolsVersion = '30.0.3'
+    targetSdkVersion = compileSdkVersion
+    minSdkVersion = compileSdkVersion
+
+    config = [
+            gradlePlugin             : "com.android.tools.build:gradle:$gradlePluginVersion",
+            kotlinGradlePlugin       : "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion",
+            testInstrumentationRunner: "androidx.test.runner.AndroidJUnitRunner"
+    ]
+
+    kotlinDependencies = [
+            kotlinStdlib: "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlinVersion"
+    ]
+
+    //AndroidX versions
+    appCompatVersion = "1.2.0"
+    constraintLayoutVersion = "2.1.0-beta02"
+    lifecycleExtensionsVersion = "2.2.0"
+    recyclerViewVersion = "1.1.0"
+    cardViewVersion = "1.0.0"
+    ktxCoreVersion = "1.5.0"
+    ktxFragmentVersion = "1.3.6"
+    viewPager2Version = "1.0.0"
+    windowManagerVersion = "1.0.0-alpha10"
+
+    androidxDependencies = [
+            appCompat       : "androidx.appcompat:appcompat:$appCompatVersion",
+            constraintLayout: "androidx.constraintlayout:constraintlayout:$constraintLayoutVersion",
+            lifecycle       : "androidx.lifecycle:lifecycle-extensions:$lifecycleExtensionsVersion",
+            recyclerView    : "androidx.recyclerview:recyclerview:$recyclerViewVersion",
+            cardView        : "androidx.cardview:cardview:$cardViewVersion",
+            ktxCore         : "androidx.core:core-ktx:$ktxCoreVersion",
+            ktxFragment     : "androidx.fragment:fragment-ktx:$ktxFragmentVersion",
+            viewPager2      : "androidx.viewpager2:viewpager2:$viewPager2Version",
+            windowManager   : "androidx.window:window:$windowManagerVersion",
+    ]
+
+    //Google dependencies
+    materialVersion = "1.3.0"
+
+    googleDependencies = [
+            material: "com.google.android.material:material:$materialVersion"
+    ]
+
+    //Test dependencies version
+    junitVersion = "4.13"
+
+    testDependencies = [
+            junit: "junit:junit:$junitVersion"
+    ]
+
+    //Android test dependencies version
+    junitInstrumentationVersion = "1.1.1"
+    espressoCoreVersion = "3.2.0"
+    espressoWebVersion = "3.2.0"
+    testRulesVersion = "1.2.0"
+    testRunnerVersion = "1.2.0"
+    uiautomatorVersion = "2.2.0"
+
+    instrumentationTestDependencies = [
+            junit       : "androidx.test.ext:junit:$junitInstrumentationVersion",
+            espressoCore: "androidx.test.espresso:espresso-core:$espressoCoreVersion",
+            espressoWeb : "androidx.test.espresso:espresso-web:$espressoWebVersion",
+            testRunner  : "androidx.test:runner:$testRunnerVersion",
+            testRules   : "androidx.test:rules:$testRulesVersion",
+            uiautomator : "androidx.test.uiautomator:uiautomator:$uiautomatorVersion"
+    ]
+}

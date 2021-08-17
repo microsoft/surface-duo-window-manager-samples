@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) Microsoft Corporation. All rights reserved.
+  ~ Licensed under the MIT License.
+  -->
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:baselineAligned="false"
+    android:orientation="vertical"
+    android:paddingHorizontal="@dimen/large_padding"
+    android:paddingTop="@dimen/large_padding"
+    tools:ignore="MissingDefaultResource">
+
+    <TextView
+        style="@style/textViewStyle"
+        android:layout_marginTop="@dimen/large_padding"
+        android:text="@string/saturation" />
+
+    <SeekBar
+        android:id="@+id/saturation"
+        style="@style/seekBarStyle" />
+
+    <TextView
+        style="@style/textViewStyle"
+        android:layout_marginTop="@dimen/xl_padding"
+        android:text="@string/brightness" />
+
+    <SeekBar
+        android:id="@+id/brightness"
+        style="@style/seekBarStyle" />
+
+    <TextView
+        style="@style/textViewStyle"
+        android:layout_marginTop="@dimen/xl_padding"
+        android:text="@string/warmth" />
+
+    <SeekBar
+        android:id="@+id/warmth"
+        style="@style/seekBarStyle" />
+
+    <include
+        layout="@layout/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="@dimen/xl_padding" />
+
+</LinearLayout>

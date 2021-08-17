@@ -1,0 +1,29 @@
+<!--
+  ~ Copyright (c) Microsoft Corporation. All rights reserved.
+  ~ Licensed under the MIT License.
+  -->
+
+<resources>
+    <string name="app_name">Photo Editor</string>
+    <string name="rotate">Rotate</string>
+    <string name="brightness">Brightness</string>
+    <string name="saturation">Saturation</string>
+    <string name="save">Save</string>
+    <string name="warmth">Warmth</string>
+    <string name="rotate_left">Rotate image 90 degrees counter-clockwise</string>
+    <string name="rotate_right">Rotate image 90 degrees clockwise</string>
+    <string name="save_button">Save image to photo gallery</string>
+    <string name="image">Image that is currently being edited</string>
+    <string-array name="controls_array">
+        <item>Saturation</item>
+        <item>Brightness</item>
+        <item>Warmth</item>
+    </string-array>
+    <string name="photo_name">Edited photo</string>
+    <string name="photo_description">Made with Surface Duo Photo Editor sample on</string>
+    <string name="pictures_folder">Pictures</string>
+    <string name="null_uri">Uri is null</string>
+    <string name="null_stream">Output stream is null</string>
+    <string name="bitmap_error">Bitmap could not be compressed</string>
+    <string name="image_save_error">Unable to save image</string>
+</resources>

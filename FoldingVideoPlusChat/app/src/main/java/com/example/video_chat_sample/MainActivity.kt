@@ -14,26 +14,28 @@ import android.view.WindowInsets
 import android.widget.ImageButton
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.core.util.Consumer
-import androidx.window.DisplayFeature
-import androidx.window.FoldingFeature
-import androidx.window.WindowLayoutInfo
-import androidx.window.WindowManager
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.window.layout.DisplayFeature
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowInfoRepository
+import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerControlView
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
-import java.util.concurrent.Executor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var rootView: MotionLayout
-    private lateinit var windowManager: WindowManager
+    private lateinit var windowInfoRep: WindowInfoRepository
     private lateinit var endChatView: View
     private lateinit var bottomChatView: View
     private val handler = Handler(Looper.getMainLooper())
-    private val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
-    private val stateContainer = StateContainer()
 
     private lateinit var playerControlView: StyledPlayerControlView
     private lateinit var playerView: StyledPlayerView
@@ -43,7 +45,7 @@ class MainActivity : AppCompatActivity() {
     private var keyboardToggle: Boolean = false
     private var chatToggle: Boolean = true
     private var spanToggle: Boolean = false
-    private var spanOrientation: Int = FoldingFeature.ORIENTATION_VERTICAL
+    private var spanOrientation: FoldingFeature.Orientation = FoldingFeature.Orientation.VERTICAL
     private var guidePosition: Int = 0
     private var chatPadding: Int = 0
 
@@ -51,7 +53,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         // Initialize Window Manager
-        windowManager = WindowManager(this)
+        windowInfoRep = windowInfoRepository()
         setContentView(R.layout.activity_main)
 
         rootView = findViewById(R.id.root)
@@ -66,6 +68,36 @@ class MainActivity : AppCompatActivity() {
         player = SimpleExoPlayer.Builder(this).build()
         playerView.player = player
         playerControlView.player = player
+
+        // Create a new coroutine since repeatOnLifecycle is a suspend function
+        lifecycleScope.launch(Dispatchers.Main) {
+            // The block passed to repeatOnLifecycle is executed when the lifecycle
+            // is at least STARTED and is cancelled when the lifecycle is STOPPED.
+            // It automatically restarts the block when the lifecycle is STARTED again.
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Safely collect from windowInfoRepo when the lifecycle is STARTED
+                // and stops collection when the lifecycle is STOPPED
+                windowInfoRep.windowLayoutInfo
+                    .collect { newLayoutInfo ->
+                        spanToggle = false
+
+                        for (displayFeature: DisplayFeature in newLayoutInfo.displayFeatures) {
+                            if (displayFeature is FoldingFeature) {
+                                spanToggle = true
+                                spanOrientation = displayFeature.orientation
+                                if (spanOrientation == FoldingFeature.Orientation.HORIZONTAL) {
+                                    guidePosition = rootView.height - rootView.paddingBottom - displayFeature.bounds.top
+                                    chatPadding = displayFeature.bounds.height()
+                                } else {
+                                    guidePosition = rootView.width - rootView.paddingEnd - displayFeature.bounds.left
+                                    chatPadding = displayFeature.bounds.width()
+                                }
+                            }
+                        }
+                        changeLayout()
+                    }
+            }
+        }
     }
 
     override fun onStart() {
@@ -73,9 +105,6 @@ class MainActivity : AppCompatActivity() {
 
         // Start MotionLayout in full screen state
         rootView.setState(R.id.fullscreen_constraints, -1, -1)
-
-        // Register callback with window manager
-        windowManager.registerLayoutChangeCallback(mainThreadExecutor, stateContainer)
 
         // Start exoplayer
         val mediaItem = MediaItem.fromUri("https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4")
@@ -103,28 +132,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // Callback for layout changing
-    inner class StateContainer : Consumer<WindowLayoutInfo> {
-        override fun accept(newLayoutInfo: WindowLayoutInfo) {
-            spanToggle = false
-
-            for (displayFeature: DisplayFeature in newLayoutInfo.displayFeatures) {
-                if (displayFeature is FoldingFeature) {
-                    spanToggle = true
-                    spanOrientation = displayFeature.orientation
-                    if (spanOrientation == FoldingFeature.ORIENTATION_HORIZONTAL) {
-                        guidePosition = rootView.height - rootView.paddingBottom - displayFeature.bounds.top
-                        chatPadding = displayFeature.bounds.height()
-                    } else {
-                        guidePosition = rootView.width - rootView.paddingEnd - displayFeature.bounds.left
-                        chatPadding = displayFeature.bounds.width()
-                    }
-                }
-            }
-            changeLayout()
-        }
-    }
-
     companion object {
         const val STATE_CHAT = "chatToggle"
         const val STATE_SPAN = "spanToggle"
@@ -146,7 +153,6 @@ class MainActivity : AppCompatActivity() {
     override fun onStop() {
         super.onStop()
         player.stop()
-        windowManager.unregisterLayoutChangeCallback(stateContainer)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -187,7 +193,7 @@ class MainActivity : AppCompatActivity() {
     // logic tree that decides layout
     fun changeLayout() {
         if (spanToggle) { // if app is spanned across a fold
-            if (spanOrientation == FoldingFeature.ORIENTATION_HORIZONTAL) { // if fold is horizontal
+            if (spanOrientation == FoldingFeature.Orientation.HORIZONTAL) { // if fold is horizontal
                 if (keyboardToggle) { // if keyboard is enabled
                     setGuides(0, 0, rootView.width / 3, 0)
                 } else if (chatToggle || this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) { // if chat is enabled or device is taller than wider
