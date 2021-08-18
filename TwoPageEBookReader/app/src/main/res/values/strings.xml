@@ -4,5 +4,8 @@
     <string name="attribution_label">Attribution</string>
     <string name="chapter_start">Chapter Start</string>
     <string name="chapter_end">Chapter End</string>
+    <string name="decrease_font_size">Decrease font size</string>
+    <string name="increase_font_size">Increase font size</string>
+    <string name="select_chapter">Select chapter</string>
 
 </resources>

@@ -5,35 +5,34 @@
 
 package com.example.foldingvideo
 
-import android.app.Activity
 import android.graphics.Rect
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.view.ViewGroup.MarginLayoutParams
+import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.util.Consumer
-import androidx.window.DisplayFeature
-import androidx.window.FoldingFeature
-import androidx.window.WindowLayoutInfo
-import androidx.window.WindowManager
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.window.layout.DisplayFeature
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowInfoRepository
+import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerControlView
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import java.util.concurrent.Executor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
-class MainActivity : Activity() {
+class MainActivity : AppCompatActivity() {
 
     // WM
     private lateinit var motionLayout: MotionLayout
-    private lateinit var windowManager: WindowManager
-    private val handler = Handler(Looper.getMainLooper())
-    private val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
-    private val stateContainer = StateContainer()
+    private lateinit var windowInfoRep: WindowInfoRepository
 
     // ExoPlayer
     private lateinit var playerView: StyledPlayerView
@@ -56,7 +55,6 @@ class MainActivity : Activity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        windowManager = WindowManager(this)
         setContentView(R.layout.activity_main)
         motionLayout = findViewById<MotionLayout>(R.id.root)
 
@@ -81,12 +79,75 @@ class MainActivity : Activity() {
             isSplit = !isSplit
             updateSplitControl(lastFoldingFeature)
         }
+
+        windowInfoRep = windowInfoRepository()
+        // Create a new coroutine since repeatOnLifecycle is a suspend function
+        lifecycleScope.launch(Dispatchers.Main) {
+            // The block passed to repeatOnLifecycle is executed when the lifecycle
+            // is at least STARTED and is cancelled when the lifecycle is STOPPED.
+            // It automatically restarts the block when the lifecycle is STARTED again.
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Safely collect from windowInfoRepo when the lifecycle is STARTED
+                // and stops collection when the lifecycle is STOPPED
+                windowInfoRep.windowLayoutInfo
+                    .collect { newLayoutInfo ->
+                        fab.hide()
+
+                        // Add views that represent display features
+                        for (displayFeature in newLayoutInfo.displayFeatures) {
+                            val foldFeature = displayFeature as? FoldingFeature
+                            if (foldFeature != null) {
+
+                                lastFoldingFeature = foldFeature
+
+                                // isSeparating isn't currently working - it always returns true
+                                // We can use this workaround by checking if the device is a surface duo
+                                // and checking the foldFeature state if it isn't
+                                if (foldFeature.isSeparating) {
+
+                                    if (foldFeature.orientation == FoldingFeature.Orientation.HORIZONTAL) {
+
+                                        if (isDeviceSurfaceDuo()) {
+                                            // if the device is a duo, it will always use a separate video controller
+                                            var fold = horizontalFoldPosition(motionLayout, foldFeature)
+                                            ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, fold)
+                                            playerView.useController = false
+                                        } else {
+
+                                            // for other devices, it will only separate controls if isSeparating is true
+                                            // Since isSeparating is not working, we will just check the fold state
+                                            if (foldFeature.state == FoldingFeature.State.HALF_OPENED) {
+                                                var fold = horizontalFoldPosition(motionLayout, foldFeature)
+                                                ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, fold)
+                                                playerView.useController = false
+                                            } else {
+                                                ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, 0)
+                                                playerView.useController = true // use on-video controls
+                                            }
+                                        }
+                                    } else {
+                                        // move over on-video controls so it's not cut off by hinge
+                                        setMargins(connectedControls, connectedControls.width / 2, 0, 0, 0)
+
+                                        // make split control fab visible
+                                        fab.show()
+                                        updateSplitControl(lastFoldingFeature)
+                                    }
+                                } else {
+                                    // reset fold values
+                                    ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, 0)
+                                    ConstraintLayout.getSharedValues().fireNewValue(R.id.vert_fold, 0)
+                                    playerView.useController = true // use on-video controls
+                                }
+                            }
+                        }
+                    }
+            }
+        }
     }
 
     override fun onStart() {
         super.onStart()
-
-        windowManager.registerLayoutChangeCallback(mainThreadExecutor, stateContainer)
 
         var videoUrl = "https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4"
         var mediaItem = MediaItem.fromUri(videoUrl)
@@ -97,7 +158,6 @@ class MainActivity : Activity() {
     override fun onStop() {
         super.onStop()
         player.stop()
-        windowManager.unregisterLayoutChangeCallback(stateContainer)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -219,71 +279,11 @@ class MainActivity : Activity() {
             }
         }
     }
-
     /**
-     * Jetpack WM callback
-     */
-    inner class StateContainer : Consumer<WindowLayoutInfo> {
-
-        override fun accept(newLayoutInfo: WindowLayoutInfo) {
-
-            fab.hide()
-
-            // Add views that represent display features
-            for (displayFeature in newLayoutInfo.displayFeatures) {
-                val foldFeature = displayFeature as? FoldingFeature
-                if (foldFeature != null) {
-
-                    lastFoldingFeature = foldFeature
-
-                    // isSeparating isn't currently working - it always returns true
-                    // We can use this workaround by checking if the device is a surface duo
-                    // and checking the foldFeature state if it isn't
-                    if (foldFeature.isSeparating) {
-
-                        if (foldFeature.orientation == FoldingFeature.ORIENTATION_HORIZONTAL) {
-
-                            if (isDeviceSurfaceDuo()) {
-                                // if the device is a duo, it will always use a separate video controller
-                                var fold = horizontalFoldPosition(motionLayout, foldFeature)
-                                ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, fold)
-                                playerView.useController = false
-                            } else {
-
-                                // for other devices, it will only separate controls if isSeparating is true
-                                // Since isSeparating is not working, we will just check the fold state
-                                if (foldFeature.state == FoldingFeature.STATE_HALF_OPENED) {
-                                    var fold = horizontalFoldPosition(motionLayout, foldFeature)
-                                    ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, fold)
-                                    playerView.useController = false
-                                } else {
-                                    ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, 0)
-                                    playerView.useController = true // use on-video controls
-                                }
-                            }
-                        } else {
-                            // move over on-video controls so it's not cut off by hinge
-                            setMargins(connectedControls, connectedControls.width / 2, 0, 0, 0)
-
-                            // make split control fab visible
-                            fab.show()
-                            updateSplitControl(lastFoldingFeature)
-                        }
-                    } else {
-                        // reset fold values
-                        ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, 0)
-                        ConstraintLayout.getSharedValues().fireNewValue(R.id.vert_fold, 0)
-                        playerView.useController = true // use on-video controls
-                    }
-                }
-            }
-        }
-        /**
-         * HACK just to help with testing on Surface Duo AND foldable emulators until WM is stable */
-        fun isDeviceSurfaceDuo(): Boolean {
-            val surfaceDuoSpecificFeature = "com.microsoft.device.display.displaymask"
-            val pm = this@MainActivity.packageManager
-            return pm.hasSystemFeature(surfaceDuoSpecificFeature)
-        }
+     * HACK just to help with testing on Surface Duo AND foldable emulators until WM is stable */
+    fun isDeviceSurfaceDuo(): Boolean {
+        val surfaceDuoSpecificFeature = "com.microsoft.device.display.displaymask"
+        val pm = this@MainActivity.packageManager
+        return pm.hasSystemFeature(surfaceDuoSpecificFeature)
     }
 }

@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 31
     buildToolsVersion "30.0.3"
 
     defaultConfig {
@@ -34,13 +34,18 @@ android {
 
 dependencies {
 
+    def slidingpanelayout_version = '1.2.0-SNAPSHOT'
+    implementation "androidx.slidingpanelayout:slidingpanelayout:$slidingpanelayout_version"
+
+    //implementation "androidx.slidingpanelayout:slidingpanelayout:1.2.0-alpha03"
+
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.5.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha02'
     implementation 'androidx.appcompat:appcompat:1.3.0'
-    implementation 'com.google.android.material:material:1.3.0'
+    implementation 'com.google.android.material:material:1.4.0'
     implementation "androidx.viewpager2:viewpager2:1.0.0"
-    implementation 'androidx.window:window:1.0.0-alpha08'
-    implementation "androidx.slidingpanelayout:slidingpanelayout:1.2.0-alpha02"
+    implementation 'androidx.window:window:1.0.0-alpha10'
     implementation 'com.microsoft.design:fluent-system-icons:1.1.135'
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

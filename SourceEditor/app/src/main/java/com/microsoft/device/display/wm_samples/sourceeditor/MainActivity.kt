@@ -11,8 +11,6 @@ import android.content.Intent
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -20,22 +18,23 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ReactiveGuide
-import androidx.core.util.Consumer
 import androidx.fragment.app.FragmentContainerView
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
-import androidx.window.FoldingFeature
-import androidx.window.WindowLayoutInfo
-import androidx.window.WindowManager
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowInfoRepository
+import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
 import com.microsoft.device.display.wm_samples.sourceeditor.includes.FileHandler
 import com.microsoft.device.display.wm_samples.sourceeditor.viewmodel.DualScreenViewModel
 import com.microsoft.device.display.wm_samples.sourceeditor.viewmodel.WebViewModel
-import java.util.concurrent.Executor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var windowManager: WindowManager
-    private val mainHandler = Handler(Looper.getMainLooper())
-    private val mainThreadExecutor = Executor { r: Runnable -> mainHandler.post(r) }
-    private val wmCallback = WMCallback()
+    private lateinit var windowInfoRep: WindowInfoRepository
 
     private lateinit var fileBtn: ImageView
     private lateinit var saveBtn: ImageView
@@ -53,7 +52,7 @@ class MainActivity : AppCompatActivity() {
         fileHandler = FileHandler(this, webVM, contentResolver)
 
         // Layout based setup
-        windowManager = WindowManager(this)
+        windowInfoRep = windowInfoRepository()
         dualScreenVM = ViewModelProvider(this).get(DualScreenViewModel::class.java)
         dualScreenVM.setIsDualScreen(false) // assume single screen on startup
 
@@ -72,6 +71,41 @@ class MainActivity : AppCompatActivity() {
         saveBtn.setOnClickListener {
             fileHandler.createFile(Uri.EMPTY)
         }
+
+        // Create a new coroutine since repeatOnLifecycle is a suspend function
+        lifecycleScope.launch(Dispatchers.Main) {
+            // The block passed to repeatOnLifecycle is executed when the lifecycle
+            // is at least STARTED and is cancelled when the lifecycle is STOPPED.
+            // It automatically restarts the block when the lifecycle is STARTED again.
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Safely collect from windowInfoRepo when the lifecycle is STARTED
+                // and stops collection when the lifecycle is STOPPED
+                windowInfoRep.windowLayoutInfo
+                    .collect { newLayoutInfo ->
+                        var isDualScreen = false
+
+                        // Check display features for an active hinge/fold
+                        for (displayFeature in newLayoutInfo.displayFeatures) {
+                            val foldingFeature = displayFeature as? FoldingFeature
+                            if (foldingFeature != null) {
+                                // hinge found, check to see if it should be split screen
+                                val hingeBounds = foldingFeature.bounds
+                                isDualScreen = true
+
+                                if (foldingFeature.orientation == FoldingFeature.Orientation.VERTICAL) {
+                                    setBoundsVerticalHinge(hingeBounds)
+                                } else {
+                                    setBoundsHorizontalHinge(hingeBounds)
+                                }
+                            }
+                        }
+                        if (!isDualScreen) {
+                            setBoundsNoHinge()
+                        }
+                        dualScreenVM.setIsDualScreen(isDualScreen)
+                    }
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, resultData: Intent?) {
@@ -89,16 +123,6 @@ class MainActivity : AppCompatActivity() {
                 fileHandler.processFileData(uri, null)
             }
         }
-    }
-
-    override fun onStart() {
-        super.onStart()
-        windowManager.registerLayoutChangeCallback(mainThreadExecutor, wmCallback)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        windowManager.unregisterLayoutChangeCallback(wmCallback)
     }
 
     /**
@@ -174,40 +198,6 @@ class MainActivity : AppCompatActivity() {
 
         val guide: ReactiveGuide = findViewById(R.id.horiz_guide)
         guide.setGuidelineEnd(0)
-    }
-
-    /**
-     * Jetpack Window Manager callback
-     * This callback gets triggered whenever there is a layout change (rotated, spanned, etc)
-     */
-    inner class WMCallback : Consumer<WindowLayoutInfo> {
-        override fun accept(newLayoutInfo: WindowLayoutInfo?) {
-            newLayoutInfo?.let {
-                var isDualScreen = false
-
-                // Check display features for an active hinge/fold
-                for (displayFeature in it.displayFeatures) {
-                    val foldingFeature = displayFeature as? FoldingFeature
-                    if (foldingFeature != null) {
-                        // hinge found, check to see if it should be split screen
-                        if (isDeviceSurfaceDuo() || foldingFeature.state == FoldingFeature.State.HALF_OPENED) {
-                            val hingeBounds = foldingFeature.bounds
-                            isDualScreen = true
-
-                            if (foldingFeature.orientation == FoldingFeature.Orientation.VERTICAL) {
-                                setBoundsVerticalHinge(hingeBounds)
-                            } else {
-                                setBoundsHorizontalHinge(hingeBounds)
-                            }
-                        }
-                    }
-                }
-                if (!isDualScreen) {
-                    setBoundsNoHinge()
-                }
-                dualScreenVM.setIsDualScreen(isDualScreen)
-            }
-        }
     }
 
     /**
