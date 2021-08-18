@@ -10,7 +10,7 @@ android {
     defaultConfig {
         applicationId "com.microsoft.device.wm_samples.ebook_reader_sample"
         minSdkVersion 21
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 1
         versionName "1.0"
 
@@ -34,10 +34,10 @@ android {
 
 dependencies {
 
-    def slidingpanelayout_version = '1.2.0-SNAPSHOT'
-    implementation "androidx.slidingpanelayout:slidingpanelayout:$slidingpanelayout_version"
+//    def slidingpanelayout_version = '1.2.0-SNAPSHOT'
+//    implementation "androidx.slidingpanelayout:slidingpanelayout:$slidingpanelayout_version"
 
-    //implementation "androidx.slidingpanelayout:slidingpanelayout:1.2.0-alpha03"
+    implementation "androidx.slidingpanelayout:slidingpanelayout:1.2.0-alpha04"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.5.0'

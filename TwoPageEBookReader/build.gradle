@@ -20,9 +20,9 @@ allprojects {
         mavenCentral()
 
         //This repo is used to define a specific snapshot version of the library you want to use
-        maven {
-            url 'https://androidx.dev/snapshots/builds/7633395/artifacts/repository'
-        }
+//        maven {
+//            url 'https://androidx.dev/snapshots/builds/7633395/artifacts/repository'
+//        }
     }
     apply from: "$rootDir/ktlint.gradle"
 }
