@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TwoNote</string>
+    <string name="exception_message">debe implementar OnFragmentInteractionListener</string>
+    <string name="action_delete">Eliminar</string>
+    <string name="action_share">Compartir</string>
+    <string name="action_select">Seleccionar todas notas</string>
+    <string name="selected">seleccionada(s)</string>
+    <string name="default_category_name">Categoría</string>
+    <string name="default_note_name">Nota</string>
+    <string name="load_error_note">Error: el archivo cargado no es de tipo Note</string>
+    <string name="load_error_dir">Error: el archivo cargado no es de tipo DirEntry</string>
+    <string name="welcome">Bienvenidos a TwoNote</string>
+    <string name="get_started">Seleccionar o crear una nota para comenzar.</string>
+    <string name="tap_here">Pulsa aquí para agregar contenido a la nota</string>
+    <string name="action_add_category">Agregar categoría</string>
+    <string name="action_delete_category">Eliminar categoría</string>
+    <string name="action_ink_on">Activar tinta</string>
+    <string name="action_ink_off">Desactivar tinta</string>
+    <string name="action_text_on">Activar edición de texto</string>
+    <string name="action_text_off">Desactivar edición de texto</string>
+    <string name="action_image_on">Activar edición de imagen</string>
+    <string name="action_image_off">Desactivar edición de imagen</string>
+    <string name="action_undo">Deshacer trazo previo</string>
+    <string name="action_clear">Borrar todos trazos</string>
+    <string name="action_color">Cambiar color de tinta</string>
+    <string name="action_thickness">Cambiar grosor de tinta</string>
+    <string name="choose_color">Elegir color</string>
+    <string name="choose_color_message">Pone el nombre del color o su valor hexadecimal (con #).</string>
+    <string name="share_intent">Compartir nota</string>
+    <string name="choose_color_button_description">Elegir color de tinta personalizado</string>
+    <string name="action_highlight_on">Resaltar</string>
+    <string name="action_highlight_off">Dejar de resaltar</string>
+    <string name="action_erase_on">Borrar</string>
+    <string name="action_erase_off">Dejar de borrar</string>
+    <string name="confirm_clear_message">¿Seguro que quiere borrar todos trazos?</string>
+    <string name="confirm_clear">Confirmar borradura</string>
+    <string name="remove_image">Eliminar imagenes</string>
+</resources>

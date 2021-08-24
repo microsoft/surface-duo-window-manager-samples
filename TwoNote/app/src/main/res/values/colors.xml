@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~
+  ~  Copyright (c) Microsoft Corporation. All rights reserved.
+  ~  Licensed under the MIT License.
+  ~
+  -->
+<resources>
+    <color name="colorPrimary">#BB28C6</color>
+    <color name="colorPrimaryVariant">#85008E</color>
+    <color name="colorSecondary">#90A4AE</color>
+    <color name="colorSecondaryVariant">#62757F</color>
+    <color name="colorBackground">#F5F5F5</color>
+    <color name="colorOnPrimary">#FFFFFF</color>
+    <color name="colorOnSecondary">#000000</color>
+    <color name="colorOnBackground">#000000</color>
+    <color name="colorOnBackgroundVariant">#4D4D4D</color>
+    <color name="yellow">#FFD54F</color>
+    <color name="blue">#03DAC5</color>
+    <color name="red">#FFFF0000</color>
+    <color name="green">#FF00FF00</color>
+    <color name="purple">#800080</color>
+</resources>

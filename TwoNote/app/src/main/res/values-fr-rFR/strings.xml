@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) Microsoft Corporation. All rights reserved.
+  ~ Licensed under the MIT License.
+  ~
+  6-Jan-21 MACHINE-GENERATED FRENCH TRANSLATION (for testing)
+  -->
+<resources>
+    <string name="app_name">TwoNote</string>
+    <string name="exception_message">doit mettre en œuvre OnFragmentInteractionListener</string>
+    <string name="action_delete">Supprimer</string>
+    <string name="action_share">Partager</string>
+    <string name="action_select">Sélectionnez toutes les notes</string>
+    <string name="selected">sélectionné</string>
+    <string name="default_category_name">Catégorie</string>
+    <string name="default_note_name">Note</string>
+    <string name="load_error_note">Erreur: le fichier chargé n’est pas de type Note</string>
+    <string name="load_error_dir">Erreur: le fichier chargé n’est pas de type DirEntry</string>
+    <string name="welcome">Bienvenue sur TwoNote</string>
+    <string name="get_started">Sélectionnez ou créez une note pour démarrer.</string>
+    <string name="tap_here">Appuyez ici pour ajouter le contenu de la note</string>
+    <string name="action_add_category">Ajouter la catégorie</string>
+    <string name="action_delete_category">Supprimer la catégorie</string>
+    <string name="action_ink_on">Activer l’en-cas</string>
+    <string name="action_ink_off">Désactiver l’encrage</string>
+    <string name="action_text_on">Activer l’édition de texte</string>
+    <string name="action_text_off">Désactiver l’édition de texte</string>
+    <string name="action_image_on">Activer l’édition d’images</string>
+    <string name="action_image_off">Désactiver l’édition d’images</string>
+    <string name="action_undo">Annuler le dernier coup d’encre</string>
+    <string name="action_clear">Effacer tous les coups d’encre</string>
+    <string name="action_color">Changer la couleur de l’encre</string>
+    <string name="action_thickness">Changer l’épaisseur de l’encre</string>
+    <string name="choose_color">Choisissez la couleur</string>
+    <string name="choose_color_message">Entrez le nom de couleur ou la valeur hexadecimal (avec #).</string>
+    <string name="share_intent">Note de partage</string>
+    <string name="choose_color_button_description">Choisissez la couleur d’encre personnalisée</string>
+    <string name="action_highlight_on">Activer la mise en surbrillance</string>
+    <string name="action_highlight_off">Désactiver la mise en évidence</string>
+    <string name="action_erase_on">Activer l’effacement</string>
+    <string name="action_erase_off">Désactiver l’effacement</string>
+    <string name="confirm_clear_message">Tu es sûr de vouloir effacer toute l’encre?</string>
+    <string name="confirm_clear">Confirmer clairement</string>
+    <string name="remove_image">Supprimer les images</string>
+</resources>
