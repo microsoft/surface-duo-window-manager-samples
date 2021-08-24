@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) Microsoft Corporation. All rights reserved.
+  ~ Licensed under the MIT License.
+  ~
+  -->
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryVariant</item>
+        <item name="colorSecondary">@color/colorSecondary</item>
+        <item name="colorSecondaryVariant">@color/colorSecondaryVariant</item>
+        <item name="colorSurface">@color/colorBackground</item>
+        <item name="colorOnPrimary">@color/colorOnPrimary</item>
+        <item name="colorOnSecondary">@color/colorOnSecondary</item>
+        <item name="colorOnBackground">@color/colorOnBackground</item>
+        <item name="colorOnSurface">@color/colorOnBackground</item>
+        <item name="actionOverflowButtonStyle">@style/overflowStyle</item>
+        <item name="actionModeStyle">@style/actionModeStyle</item>
+        <item name="windowActionModeOverlay">true</item>
+        <item name="actionModeCloseDrawable">@drawable/ic_close</item>
+    </style>
+
+    <!-- overflow menu button style (set default tint to colorOnSecondary for action mode toolbar) -->
+    <style name="overflowStyle" parent="Widget.AppCompat.Light.ActionButton.Overflow">
+        <item name="android:tint">@color/colorOnSecondary</item>
+    </style>
+
+    <!-- action mode (contextual toolbar) style -->
+    <style name="actionModeStyle" parent="Widget.AppCompat.ActionMode">
+        <item name="background">@color/colorSecondary</item>
+        <item name="titleTextStyle">@style/actionModeTextStyle</item>
+        <item name="actionOverflowButtonStyle">@color/colorOnSecondary</item>
+    </style>
+
+    <!-- action mode (contextual toolbar) text style -->
+    <style name="actionModeTextStyle" parent="TextAppearance.AppCompat.Widget.ActionMode.Title">
+        <item name="android:textColor">@color/colorOnSecondary</item>"
+    </style>
+
+    <!-- pen tools button style -->
+    <style name="penToolsButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">@dimen/button_height</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:minWidth">@dimen/button_width</item>
+        <item name="android:tint">?attr/colorOnBackground</item>
+    </style>
+
+    <!-- pen tools button spacer style -->
+    <style name="spacerStyle">
+        <item name="android:layout_width">@dimen/spacing</item>
+        <item name="android:layout_height">match_parent</item>
+    </style>
+
+</resources>

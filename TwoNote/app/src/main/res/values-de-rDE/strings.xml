@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">TwoNote</string>
+    <string name="exception_message">muss OnFragmentListener implementieren</string>
+    <string name="action_delete">Löschen</string>
+    <string name="action_share">Teilen</string>
+    <string name="action_select">Alles auswählen</string>
+    <string name="selected">ausgewählt</string>
+    <string name="default_category_name">Kategorie</string>
+    <string name="default_note_name">Notiz</string>
+    <string name="load_error_note">Fehler: Die geladene Datei ist nicht vom Typ Note</string>
+    <string name="load_error_dir">Fehler: Die geladene Datei ist nicht vom Typ DirEntry</string>
+    <string name="welcome">Willkommen bei TwoNote</string>
+    <string name="get_started">Wählen Sie eine Notiz aus oder erstellen Sie sie, um loszulegen.</string>
+    <string name="tap_here">Tippen Sie hier, um Notizeninhalte hinzuzufügen</string>
+    <string name="action_add_category">Kategorie hinzufügen</string>
+    <string name="action_delete_category">Kategorie löschen</string>
+    <string name="action_ink_on">Tinte aktivieren</string>
+    <string name="action_ink_off">Tinte deaktivieren</string>
+    <string name="action_text_on">Aktivieren Sie die Textbearbeitung</string>
+    <string name="action_text_off">Deaktivieren Sie die Textbearbeitung</string>
+    <string name="action_image_on">Aktivieren Sie die Bildbearbeitung</string>
+    <string name="action_image_off">Deaktivieren Sie die Bildbearbeitung</string>
+    <string name="action_undo">Lösen Sie den letzten Tintenstrich</string>
+    <string name="action_clear">Löschen Sie alle Tintenstriche</string>
+    <string name="action_color">Ändern Sie die Tintenfarbe</string>
+    <string name="action_thickness">Ändern Sie die Tintendicke</string>
+    <string name="choose_color">Wähle eine Farbe</string>
+    <string name="choose_color_message">Geben Sie den Farbnamen oder den Hexadezimalwert ein (mit #).</string>
+    <string name="share_intent">Notiz teilen</string>
+    <string name="choose_color_button_description">Wählen Sie eine benutzerdefinierte Tintenfarbe</string>
+    <string name="action_highlight_on">Markierung aktivieren</string>
+    <string name="action_highlight_off">Markierung deaktivieren</string>
+    <string name="action_erase_on">Löschen aktivieren</string>
+    <string name="action_erase_off">Löschen deaktivieren</string>
+    <string name="confirm_clear_message">Möchten Sie wirklich die gesamte Tinte löschen?</string>
+    <string name="confirm_clear">Bestätigen Sie löschen</string>
+    <string name="remove_image">Bilder entfernen</string>
+</resources>

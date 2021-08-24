@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ Copyright (c) Microsoft Corporation. All rights reserved.
+  ~ Licensed under the MIT License.
+  ~
+  -->
+<resources>
+    <string name="app_name">TwoNote</string>
+    <string name="exception_message">must implement OnFragmentInteractionListener</string>
+    <string name="action_delete">Delete</string>
+    <string name="action_share">Share</string>
+    <string name="action_select">Select all notes</string>
+    <string name="selected">selected</string>
+    <string name="default_category_name">Category</string>
+    <string name="default_note_name">Note</string>
+    <string name="load_error_note">Error: loaded file is not of type Note</string>
+    <string name="load_error_dir">Error: loaded file is not of type DirEntry</string>
+    <string name="welcome">Welcome to TwoNote</string>
+    <string name="get_started">Select or create a note to get started.</string>
+    <string name="tap_here">Tap here to add note contents</string>
+    <string name="action_add_category">Add category</string>
+    <string name="action_delete_category">Delete category</string>
+    <string name="action_ink_on">Activate inking</string>
+    <string name="action_ink_off">Deactivate inking</string>
+    <string name="action_text_on">Activate text editing</string>
+    <string name="action_text_off">Deactivate text editing</string>
+    <string name="action_image_on">Activate image editing</string>
+    <string name="action_image_off">Deactivate image editing</string>
+    <string name="action_undo">Undo last ink stroke</string>
+    <string name="action_clear">Clear all ink strokes</string>
+    <string name="action_color">Change ink color</string>
+    <string name="action_thickness">Change ink thickness</string>
+    <string name="choose_color">Choose color</string>
+    <string name="choose_color_message">Enter color name or hexadecimal value (with #).</string>
+    <string name="share_intent">Share Note</string>
+    <string name="choose_color_button_description">Choose custom ink color</string>
+    <string name="action_highlight_on">Activate highlighting</string>
+    <string name="action_highlight_off">Deactivate highlighting</string>
+    <string name="action_erase_on">Activate erasing</string>
+    <string name="action_erase_off">Deactivate erasing</string>
+    <string name="confirm_clear_message">Are you sure you want to erase all ink?</string>
+    <string name="confirm_clear">Confirm clear</string>
+    <string name="remove_image">Remove images</string>
+</resources>
