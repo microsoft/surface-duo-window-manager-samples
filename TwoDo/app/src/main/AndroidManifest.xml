@@ -13,10 +13,13 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.TwoDo">
-        <activity android:name=".TwoDoActivity">
+        <activity
+            android:name=".TwoDoActivity"
+            android:exported="false">
         </activity>
         <activity android:name=".MainActivity"
-                  android:noHistory="true">
+                  android:noHistory="true"
+                  android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -13,12 +13,16 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
+    kotlinOptions {
+        jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
     defaultConfig {
         applicationId "com.microsoft.device.display.wm_samples.twonote"
         minSdkVersion 29
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "2.0"
 
         testInstrumentationRunner config.testInstrumentationRunner
     }
@@ -31,6 +35,7 @@ dependencies {
     implementation androidxDependencies.constraintLayout
     implementation androidxDependencies.ktxCore
     implementation androidxDependencies.ktxFragment
+    implementation androidxDependencies.ktxLifecycle
     implementation androidxDependencies.windowManager
 
     implementation googleDependencies.material

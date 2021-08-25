@@ -15,8 +15,10 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Test3">
-        <activity android:name="com.example.video_chat_sample.MainActivity"
-            android:windowSoftInputMode="adjustResize">
+        <activity
+            android:name="com.example.video_chat_sample.MainActivity"
+            android:windowSoftInputMode="adjustResize"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

@@ -7,6 +7,7 @@
 
 package com.microsoft.device.display.wm_samples.twonote
 
+import Defines
 import Defines.GET_STARTED_FRAGMENT
 import Defines.INODE
 import Defines.LIST_FRAGMENT
@@ -15,18 +16,18 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ReactiveGuide
-import androidx.core.util.Consumer
 import androidx.fragment.app.FragmentContainerView
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
-import androidx.window.FoldingFeature
-import androidx.window.WindowLayoutInfo
-import androidx.window.WindowManager
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
+import androidx.window.layout.FoldingFeature
+import androidx.window.layout.WindowInfoRepository
+import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
 import com.microsoft.device.display.wm_samples.twonote.fragments.GetStartedFragment
 import com.microsoft.device.display.wm_samples.twonote.fragments.NoteDetailFragment
 import com.microsoft.device.display.wm_samples.twonote.fragments.NoteListFragment
@@ -37,7 +38,9 @@ import com.microsoft.device.display.wm_samples.twonote.models.Note
 import com.microsoft.device.display.wm_samples.twonote.utils.DataProvider
 import com.microsoft.device.display.wm_samples.twonote.utils.FileSystem
 import com.microsoft.device.display.wm_samples.twonote.utils.buildDetailTag
-import java.util.concurrent.Executor
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.launch
 
 /**
  * Activity that manages fragments and preservation of data through the app's lifecycle
@@ -62,10 +65,8 @@ class MainActivity :
         }
     }
 
-    private lateinit var windowManager: WindowManager
-    private val mainHandler = Handler(Looper.getMainLooper())
-    private val mainThreadExecutor = Executor { r: Runnable -> mainHandler.post(r) }
-    private val wmCallback = WMCallback()
+    // Jetpack Window Manager
+    private lateinit var windowInfoRep: WindowInfoRepository
 
     private var savedNote: Note? = null
     private var savedINode: INode? = null
@@ -75,14 +76,56 @@ class MainActivity :
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Layout based setup
-        windowManager = WindowManager(this)
         dualScreenVM = ViewModelProvider(this).get(DualScreenViewModel::class.java)
         dualScreenVM.isDualScreen = false
 
         // Get data from previously selected note (if available)
         savedNote = savedInstanceState?.getSerializable(NOTE) as? Note
         savedINode = savedInstanceState?.getSerializable(INODE) as? INode
+
+        // Layout based setup
+        windowInfoRep = windowInfoRepository()
+        // Create a new coroutine since repeatOnLifecycle is a suspend function
+        lifecycleScope.launch(Dispatchers.Main) {
+            // The block passed to repeatOnLifecycle is executed when the lifecycle
+            // is at least STARTED and is cancelled when the lifecycle is STOPPED.
+            // It automatically restarts the block when the lifecycle is STARTED again.
+            lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                // Safely collect from windowInfoRepo when the lifecycle is STARTED
+                // and stops collection when the lifecycle is STOPPED
+                windowInfoRep.windowLayoutInfo
+                    .collect { newLayoutInfo ->
+                        dualScreenVM.isDualScreen = false
+                        val noteSelected = savedNote != null && savedINode != null
+
+                        // Check display features for an active hinge/fold
+                        for (displayFeature in newLayoutInfo.displayFeatures) {
+                            val foldingFeature = displayFeature as? FoldingFeature
+                            if (foldingFeature != null) {
+                                // hinge found, check to see if it should be split screen
+                                if (isDeviceSurfaceDuo() || foldingFeature.state == FoldingFeature.State.HALF_OPENED) {
+                                    val hingeBounds = foldingFeature.bounds
+                                    dualScreenVM.isDualScreen = true
+
+                                    if (foldingFeature.orientation == FoldingFeature.Orientation.VERTICAL) {
+                                        setBoundsVerticalHinge(hingeBounds)
+                                    } else {
+                                        // we don't want a split screen in the horizontal orientation with this app
+                                        setBoundsNoHinge()
+                                    }
+                                    selectDualScreenFragments(noteSelected, savedNote, savedINode)
+                                }
+                            }
+                        }
+                        if (!dualScreenVM.isDualScreen) {
+                            selectSingleScreenFragment(noteSelected, savedNote, savedINode)
+                            setBoundsNoHinge()
+                        }
+                        savedNote = null
+                        savedINode = null
+                    }
+            }
+        }
     }
 
     /**
@@ -225,15 +268,6 @@ class MainActivity :
     }
 
     // -------------------------- Window Manager Section --------------------------- \\
-    override fun onStart() {
-        super.onStart()
-        windowManager.registerLayoutChangeCallback(mainThreadExecutor, wmCallback)
-    }
-
-    override fun onStop() {
-        super.onStop()
-        windowManager.unregisterLayoutChangeCallback(wmCallback)
-    }
 
     /**
      * Calculate total height taken up by upper toolbars
@@ -309,45 +343,6 @@ class MainActivity :
 
         val guide: ReactiveGuide = findViewById(R.id.horiz_guide)
         guide.setGuidelineEnd(0)
-    }
-
-    /**
-     * Jetpack Window Manager callback
-     * This callback gets triggered whenever there is a layout change (rotated, spanned, etc)
-     */
-    inner class WMCallback : Consumer<WindowLayoutInfo> {
-        override fun accept(newLayoutInfo: WindowLayoutInfo?) {
-            newLayoutInfo?.let {
-                dualScreenVM.isDualScreen = false
-                val noteSelected = savedNote != null && savedINode != null
-
-                // Check display features for an active hinge/fold
-                for (displayFeature in it.displayFeatures) {
-                    val foldingFeature = displayFeature as? FoldingFeature
-                    if (foldingFeature != null) {
-                        // hinge found, check to see if it should be split screen
-                        if (isDeviceSurfaceDuo() || foldingFeature.state == FoldingFeature.State.HALF_OPENED) {
-                            val hingeBounds = foldingFeature.bounds
-                            dualScreenVM.isDualScreen = true
-
-                            if (foldingFeature.orientation == FoldingFeature.Orientation.VERTICAL) {
-                                setBoundsVerticalHinge(hingeBounds)
-                            } else {
-                                // we don't want a split screen in the horizontal orientation with this app
-                                setBoundsNoHinge()
-                            }
-                            selectDualScreenFragments(noteSelected, savedNote, savedINode)
-                        }
-                    }
-                }
-                if (!dualScreenVM.isDualScreen) {
-                    selectSingleScreenFragment(noteSelected, savedNote, savedINode)
-                    setBoundsNoHinge()
-                }
-                savedNote = null
-                savedINode = null
-            }
-        }
     }
 
     /**
