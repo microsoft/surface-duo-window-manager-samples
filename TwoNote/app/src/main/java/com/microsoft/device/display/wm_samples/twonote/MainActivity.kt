@@ -7,6 +7,7 @@
 
 package com.microsoft.device.display.wm_samples.twonote
 
+import Defines
 import Defines.GET_STARTED_FRAGMENT
 import Defines.INODE
 import Defines.LIST_FRAGMENT
@@ -15,19 +16,15 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ReactiveGuide
-import androidx.core.util.Consumer
 import androidx.fragment.app.FragmentContainerView
-import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
-import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoRepository
 import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
@@ -98,36 +95,34 @@ class MainActivity :
                 // and stops collection when the lifecycle is STOPPED
                 windowInfoRep.windowLayoutInfo
                     .collect { newLayoutInfo ->
-                        newLayoutInfo?.let {
-                            dualScreenVM.isDualScreen = false
-                            val noteSelected = savedNote != null && savedINode != null
+                        dualScreenVM.isDualScreen = false
+                        val noteSelected = savedNote != null && savedINode != null
 
-                            // Check display features for an active hinge/fold
-                            for (displayFeature in it.displayFeatures) {
-                                val foldingFeature = displayFeature as? FoldingFeature
-                                if (foldingFeature != null) {
-                                    // hinge found, check to see if it should be split screen
-                                    if (isDeviceSurfaceDuo() || foldingFeature.state == FoldingFeature.State.HALF_OPENED) {
-                                        val hingeBounds = foldingFeature.bounds
-                                        dualScreenVM.isDualScreen = true
+                        // Check display features for an active hinge/fold
+                        for (displayFeature in newLayoutInfo.displayFeatures) {
+                            val foldingFeature = displayFeature as? FoldingFeature
+                            if (foldingFeature != null) {
+                                // hinge found, check to see if it should be split screen
+                                if (isDeviceSurfaceDuo() || foldingFeature.state == FoldingFeature.State.HALF_OPENED) {
+                                    val hingeBounds = foldingFeature.bounds
+                                    dualScreenVM.isDualScreen = true
 
-                                        if (foldingFeature.orientation == FoldingFeature.Orientation.VERTICAL) {
-                                            setBoundsVerticalHinge(hingeBounds)
-                                        } else {
-                                            // we don't want a split screen in the horizontal orientation with this app
-                                            setBoundsNoHinge()
-                                        }
-                                        selectDualScreenFragments(noteSelected, savedNote, savedINode)
+                                    if (foldingFeature.orientation == FoldingFeature.Orientation.VERTICAL) {
+                                        setBoundsVerticalHinge(hingeBounds)
+                                    } else {
+                                        // we don't want a split screen in the horizontal orientation with this app
+                                        setBoundsNoHinge()
                                     }
+                                    selectDualScreenFragments(noteSelected, savedNote, savedINode)
                                 }
                             }
-                            if (!dualScreenVM.isDualScreen) {
-                                selectSingleScreenFragment(noteSelected, savedNote, savedINode)
-                                setBoundsNoHinge()
-                            }
-                            savedNote = null
-                            savedINode = null
                         }
+                        if (!dualScreenVM.isDualScreen) {
+                            selectSingleScreenFragment(noteSelected, savedNote, savedINode)
+                            setBoundsNoHinge()
+                        }
+                        savedNote = null
+                        savedINode = null
                     }
             }
         }
