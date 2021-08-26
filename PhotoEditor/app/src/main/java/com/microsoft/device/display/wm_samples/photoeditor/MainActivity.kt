@@ -70,6 +70,8 @@ class MainActivity : AppCompatActivity() {
                         if (!viewModel.isDualScreen) {
                             setBoundsNoHinge()
                         }
+
+                        updateVisibility(viewModel.isDualScreen)
                     }
             }
         }
@@ -157,6 +159,22 @@ class MainActivity : AppCompatActivity() {
 
             val guide: ReactiveGuide = findViewById(R.id.horiz_guide)
             guide.setGuidelineEnd(0)
+        }
+    }
+
+    private fun updateVisibility(isDualScreen: Boolean) {
+        val dualScreenPic: View = findViewById(R.id.picture_dual_screen)
+        val singleScreenLayout: View = findViewById(R.id.single_screen_layout)
+        val dualScreenTools: View = findViewById(R.id.tools_dual_screen)
+
+        if (isDualScreen) {
+            dualScreenPic.visibility = View.VISIBLE
+            singleScreenLayout.visibility = View.INVISIBLE
+            dualScreenTools.visibility = View.VISIBLE
+        } else {
+            dualScreenPic.visibility = View.INVISIBLE
+            singleScreenLayout.visibility = View.VISIBLE
+            dualScreenTools.visibility = View.INVISIBLE
         }
     }
 

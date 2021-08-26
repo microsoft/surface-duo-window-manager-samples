@@ -6,48 +6,56 @@
   ~
 -->
 
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/dual_screen_layout">
+    android:layout_height="match_parent">
 
     <!-- secondary child -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/secondary_fragment_container"
-        android:layout_height="0dp"
         android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="@id/bounding_rect"
-        app:layout_constraintTop_toTopOf="@id/bounding_rect"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent">
+        app:layout_constraintTop_toTopOf="@id/bounding_rect">
 
         <include
+            android:id="@+id/tools_dual_screen"
             layout="@layout/tools_dual_screen"
-            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- top child -->
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/primary_fragment_container"
-        android:layout_height="0dp"
         android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/bounding_rect"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintRight_toRightOf="@id/bounding_rect"
-        app:layout_constraintBottom_toBottomOf="@id/bounding_rect">
+        app:layout_constraintTop_toTopOf="parent">
 
         <include
-            layout="@layout/picture_dual_screen"
-            app:layout_constraintStart_toStartOf="parent"
+            android:id="@+id/single_screen_layout"
+            layout="@layout/single_screen_layout"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintBottom_toBottomOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <include
+            android:id="@+id/picture_dual_screen"
+            layout="@layout/picture_dual_screen"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -55,9 +63,9 @@
         android:id="@+id/bounding_rect"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="@id/horiz_guide"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintBottom_toBottomOf="@id/horiz_guide"/>
+        app:layout_constraintRight_toRightOf="parent" />
 
     <androidx.constraintlayout.widget.ReactiveGuide
         android:id="@+id/horiz_guide"
@@ -66,6 +74,7 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_end="0dp"
         app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
+

@@ -65,11 +65,7 @@ class ActivityFragment : Fragment() {
     ): View? {
         viewModel = ViewModelProvider(requireActivity()).get(PhotoEditorViewModel::class.java)
 
-        // Check the spanned status and choose which layout to inflate
-        val view = (
-            if (!viewModel.isDualScreen) inflater.inflate(R.layout.fragment_single_screen, container, false)
-            else inflater.inflate(R.layout.fragment_dual_screen, container, false)
-            )
+        val view = inflater.inflate(R.layout.activity_fragment, container, false)
 
         initializeViews(view)
         setupLayout()
