@@ -162,11 +162,8 @@ class MainActivity : AppCompatActivity() {
 
             // left fragment is aligned with the right side of the hinge and vice-versa
             // add padding to ensure fragments do not overlap the hinge
-            val leftFragment: ConstraintLayout = findViewById(R.id.primary_fragment_container)
-            leftFragment.setPadding(0, 0, hingeWidth, 0)
-
-            val rightFragment: ConstraintLayout = findViewById(R.id.secondary_fragment_container)
-            rightFragment.setPadding(hingeWidth, 0, 0, 0)
+            primaryContainer.setPadding(0, 0, hingeWidth, 0)
+            secondaryContainer.setPadding(hingeWidth, 0, 0, 0)
         }
     }
 
@@ -185,11 +182,8 @@ class MainActivity : AppCompatActivity() {
 
             // top fragment is aligned with the bottom side of the hinge and vice-versa
             // add padding to ensure fragments do not overlap the hinge
-            val topFragment: ConstraintLayout = findViewById(R.id.primary_fragment_container)
-            topFragment.setPadding(0, 0, 0, hingeHeight)
-
-            val bottomFragment: ConstraintLayout = findViewById(R.id.secondary_fragment_container)
-            bottomFragment.setPadding(0, hingeHeight, 0, 0)
+            primaryContainer.setPadding(0, 0, 0, hingeHeight)
+            secondaryContainer.setPadding(0, hingeHeight, 0, 0)
         }
     }
 
@@ -268,6 +262,7 @@ class MainActivity : AppCompatActivity() {
             )
 
             resetControls(image)
+            viewModel.updateImage(image.drawable)
         }
     }
 
@@ -398,6 +393,7 @@ class MainActivity : AppCompatActivity() {
         }
 
         resetControls(image)
+        viewModel.updateImage(image.drawable)
     }
 
     /**
@@ -563,6 +559,7 @@ class MainActivity : AppCompatActivity() {
 
         // Update ImageFilterView object with rotated bitmap
         image.setImageBitmap(bm)
+        viewModel.updateImage(image.drawable)
     }
 
     private fun setUpSave(image: ImageFilterView) {
