@@ -10,15 +10,23 @@ import android.content.ClipData
 import android.content.ContentResolver
 import android.content.ContentValues
 import android.content.Intent
-import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
+import android.graphics.Color
+import android.graphics.Matrix
+import android.graphics.Rect
+import android.graphics.RectF
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
 import android.view.DragEvent
 import android.view.View
 import android.view.ViewGroup
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.SeekBar
+import android.widget.Spinner
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.AppCompatImageButton
 import androidx.constraintlayout.utils.widget.ImageFilterView
@@ -28,6 +36,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.graphics.drawable.toBitmap
 import androidx.core.view.drawToBitmap
 import androidx.fragment.app.FragmentContainerView
+import androidx.fragment.app.commit
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
@@ -35,7 +44,6 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoRepository
 import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
-import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -63,8 +71,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var rotate_right: AppCompatImageButton
     private lateinit var save: AppCompatImageButton
     private var controls: Spinner? = null
-    private lateinit var primaryContainer: ConstraintLayout
-    private lateinit var secondaryContainer: ConstraintLayout
+    private lateinit var primaryContainer: FragmentContainerView
+    private lateinit var secondaryContainer: FragmentContainerView
     private lateinit var mainContainer: ConstraintLayout
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -105,21 +113,32 @@ class MainActivity : AppCompatActivity() {
                                     setBoundsHorizontalHinge(hingeBounds)
                                 }
 
-                                primaryContainer.removeAllViews()
-                                secondaryContainer.removeAllViews()
-                                layoutInflater.inflate(R.layout.picture_dual_screen,primaryContainer)
-                                layoutInflater.inflate(R.layout.tools_dual_screen,secondaryContainer)
+                                supportFragmentManager.commit {
+                                    setReorderingAllowed(true)
+                                    replace(
+                                        R.id.primary_fragment_container,
+                                        DualScreenPictureFragment(),
+                                    )
+                                    replace(
+                                        R.id.secondary_fragment_container,
+                                        DualScreenToolsFragment(),
+                                        "secondary fragment"
+                                    )
+                                }
                             }
                         }
                         if (!viewModel.isDualScreen) {
                             setBoundsNoHinge()
-                            primaryContainer.removeAllViews()
-                            secondaryContainer.removeAllViews()
-                            layoutInflater.inflate(R.layout.single_screen_layout, primaryContainer)
+                            val secondaryFragment =
+                                supportFragmentManager.findFragmentByTag("secondary fragment")
+                            supportFragmentManager.commit {
+                                setReorderingAllowed(true)
+                                secondaryFragment?.let {
+                                    remove(secondaryFragment)
+                                }
+                                replace(R.id.primary_fragment_container, SingleScreenFragment())
+                            }
                         }
-
-                        initializeViews(mainContainer)
-                        setupLayout()
                     }
             }
         }
@@ -217,15 +236,19 @@ class MainActivity : AppCompatActivity() {
      * Finds all the views in the current layout
      * @param v: view group that contains all the necessary controls
      */
-    private fun initializeViews(v: View) {
-        image = v.findViewById(R.id.image)
-        saturation = v.findViewById(R.id.saturation)
-        brightness = v.findViewById(R.id.brightness)
-        warmth = v.findViewById(R.id.warmth)
-        controls = v.findViewById(R.id.controls)
-        rotate_left = v.findViewById(R.id.rotate_left)
-        rotate_right = v.findViewById(R.id.rotate_right)
-        save = v.findViewById(R.id.save)
+    fun initializeViews(v: View, doImage: Boolean = true, doTools: Boolean = true) {
+        if (doImage) {
+            image = v.findViewById(R.id.image)
+        }
+        if (doTools) {
+            saturation = v.findViewById(R.id.saturation)
+            brightness = v.findViewById(R.id.brightness)
+            warmth = v.findViewById(R.id.warmth)
+            controls = v.findViewById(R.id.controls)
+            rotate_left = v.findViewById(R.id.rotate_left)
+            rotate_right = v.findViewById(R.id.rotate_right)
+            save = v.findViewById(R.id.save)
+        }
     }
 
     /**
@@ -300,8 +323,8 @@ class MainActivity : AppCompatActivity() {
     /**
      * Initialize aspects of the app that users can interact with
      */
-    private fun setupLayout() {
-        image.let {
+    fun setupLayout(doImage: Boolean = true, doTools: Boolean = true) {
+        if (doImage) {
             // Set up click handling for importing images from photo gallery
             image.setOnClickListener {
                 val intent =
@@ -331,6 +354,10 @@ class MainActivity : AppCompatActivity() {
                 true
             }
 
+            restoreImage()
+        }
+
+        if (doTools) {
             // Set up all controls
             setUpSaturation(image, viewModel.saturation)
             setUpBrightness(image, viewModel.brightness)
@@ -339,7 +366,6 @@ class MainActivity : AppCompatActivity() {
             setUpSave(image)
 
             prepareToggle()
-            restoreImage()
         }
     }
 
