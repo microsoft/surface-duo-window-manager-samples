@@ -6,11 +6,51 @@
   ~
 -->
 
-<androidx.fragment.app.FragmentContainerView
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/main_fragment"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main_container"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:name="com.microsoft.device.display.wm_samples.photoeditor.ActivityFragment">
+    android:layout_height="match_parent">
 
-</androidx.fragment.app.FragmentContainerView>
+    <!-- secondary child -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/secondary_fragment_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="@id/bounding_rect"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="@id/bounding_rect">
+
+    </androidx.fragment.app.FragmentContainerView>
+
+    <!-- top child -->
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/primary_fragment_container"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="@id/bounding_rect"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="@id/bounding_rect"
+        app:layout_constraintTop_toTopOf="parent">
+
+    </androidx.fragment.app.FragmentContainerView>
+
+    <View
+        android:id="@+id/bounding_rect"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="@id/horiz_guide"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent" />
+
+    <androidx.constraintlayout.widget.ReactiveGuide
+        android:id="@+id/horiz_guide"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_end="0dp"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>
