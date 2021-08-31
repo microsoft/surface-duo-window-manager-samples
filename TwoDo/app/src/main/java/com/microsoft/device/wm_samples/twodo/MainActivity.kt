@@ -11,6 +11,7 @@ import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.view.updatePadding
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -54,6 +55,8 @@ class MainActivity : AppCompatActivity() {
                         // reset fold values
                         ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, 0)
                         ConstraintLayout.getSharedValues().fireNewValue(R.id.vert_fold, 0)
+                        binding.horizLogoImg.updatePadding(0,0,0,0);
+                        binding.logoImg.updatePadding(0,0,0,0);
 
                         // Add views that represent display features
                         for (displayFeature in newLayoutInfo.displayFeatures) {
@@ -62,9 +65,11 @@ class MainActivity : AppCompatActivity() {
                                 if (foldFeature.orientation == FoldingFeature.Orientation.HORIZONTAL) {
                                     var fold = horizontalFoldPosition(binding.root, foldFeature)
                                     ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, fold)
+                                    binding.horizLogoImg.updatePadding(0,foldFeature.bounds.height(),0,0);
                                 } else {
                                     var fold = verticalFoldPosition(binding.root, foldFeature)
                                     ConstraintLayout.getSharedValues().fireNewValue(R.id.vert_fold, fold)
+                                    binding.logoImg.updatePadding(foldFeature.bounds.width(), 0, 0,0);
                                 }
                             }
                         }
