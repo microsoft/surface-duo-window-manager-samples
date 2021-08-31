@@ -96,7 +96,7 @@ class MainActivity : AppCompatActivity() {
     fun verticalFoldPosition(view: View, foldingFeature: FoldingFeature): Int {
         val splitRect = getFeatureBoundsInWindow(foldingFeature, view)
         splitRect?.let {
-            return view.width.minus(splitRect.right)
+            return view.width.minus(splitRect.left)
         }
 
         return 0
