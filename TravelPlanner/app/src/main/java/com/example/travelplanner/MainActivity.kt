@@ -177,7 +177,8 @@ class MainActivity : AppCompatActivity(), TravelPlannerInterface, TabLayout.OnTa
             TravelPlannerMode.TRIP, TravelPlannerMode.DEST -> true
             else -> false
         }
-        supportActionBar?.invalidateOptionsMenu()
+        //supportActionBar?.invalidateOptionsMenu() // HACK: build warning raised
+        this.invalidateOptionsMenu() // TODO: fix?
         supportActionBar?.setDisplayHomeAsUpEnabled(tpMode != TravelPlannerMode.HOME)
     }
 
