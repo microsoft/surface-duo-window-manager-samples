@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/travel_mode_menu"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/input_travel_mode">
+
+            <AutoCompleteTextView
+                android:id="@+id/travel_mode_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:imeOptions="actionDone" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/input_frame"
+            android:hint="@string/input_travel_notes">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/travel_notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"
+                android:imeOptions="actionDone"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/travel_start_date_layout"
+                style="@style/input_frame"
+                android:layout_weight="1"
+                android:hint="@string/input_date_start">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/travel_start_date"
+                    android:focusableInTouchMode="false"
+                    style="@style/input_date"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/travel_end_date_layout"
+                style="@style/input_frame"
+                android:layout_weight="1"
+                android:hint="@string/input_date_end">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/travel_end_date"
+                    android:focusableInTouchMode="false"
+                    style="@style/input_date"/>
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_save_travel"
+            style="@style/button_save"
+            android:text="@string/button_save"/>
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:theme="@style/Theme.TravelPlanner"
+    android:id="@+id/root"
+    style="@style/root"
+    tools:context=".detail_fragments.DestFragment">
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        style="@style/toolbar"
+        app:title="@string/activity_title_dest"
+        app:menu="@menu/toolbar_menu"/>
+
+    <FrameLayout
+        style="@style/frame_vertical_stretch">
+
+        <androidx.slidingpanelayout.widget.SlidingPaneLayout
+            android:id="@+id/sliding_pane"
+            style="@style/sliding_pane_invisible">
+
+            <androidx.fragment.app.FragmentContainerView
+                android:id="@+id/detail"
+                style="@style/frame_horizontal_minimum"/>
+
+            <FrameLayout
+                style="@style/frame_horizontal_minimum">
+
+                <fragment
+                    android:id="@+id/map"
+                    android:name="com.example.travelplanner.MapFragment"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    app:cardElevation="2dp"
+                    android:layout_gravity="center_horizontal|bottom">
+
+                    <include layout="@layout/layout_card"
+                        android:id="@+id/flyout"/>
+
+                </com.google.android.material.card.MaterialCardView>
+
+            </FrameLayout>
+
+        </androidx.slidingpanelayout.widget.SlidingPaneLayout>
+
+        <include layout="@layout/tab_trick"/>
+
+    </FrameLayout>
+
+</LinearLayout>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/recycler_item_root"
+        android:layout_margin="8dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:strokeWidth="1dp"
+        app:strokeColor="@color/material_on_surface_stroke"
+        app:cardElevation="0dp"
+        android:checkable="true"
+        app:checkedIcon="@android:color/transparent">
+
+        <include
+            android:id="@+id/recycler_item_card"
+            layout="@layout/layout_card" />
+
+    </com.google.android.material.card.MaterialCardView>
+</RelativeLayout>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.slidingpanelayout.widget.SlidingPaneLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    style="@style/sliding_pane_invisible">
+
+    <LinearLayout
+        android:id="@+id/tab_trick_tab_root"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:background="?attr/colorSurface"
+        android:orientation="vertical">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/text_header_notes"
+            android:textAlignment="center"
+            android:textColor="?attr/colorPrimary"
+            android:textAppearance="?attr/textAppearanceHeadline6"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/header_notes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:textAppearance="?android:textAppearanceSmall"/>
+
+        <com.google.android.material.divider.MaterialDivider
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/header_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:textAlignment="center"
+            android:textColor="?attr/colorPrimary"
+            android:textAppearance="?attr/textAppearanceHeadline6"/>
+
+        <com.google.android.material.tabs.TabLayout
+            android:id="@+id/tab_trick_tab_dynamic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+
+    <View
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_weight="0"/>
+
+</androidx.slidingpanelayout.widget.SlidingPaneLayout>
