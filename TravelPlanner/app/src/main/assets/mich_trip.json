@@ -1,0 +1,60 @@
+{
+    "trip": {
+        "tripName": "Michigan",
+        "tripNotes": "that one state with the lakes",
+        "tripStartDay": 1625443200000,
+        "tripEndDay": 1626480000000
+    },
+    "destinations": [
+        {
+            "destination": {
+                "destName": "Ann Arbor ",
+                "destNotes": "Umich",
+                "destStartDay": 1625443200000,
+                "destEndDay": 1625702400000,
+                "destLocation": "{\"lat\":42.28141784667969,\"long\":-83.74847412109375,\"alt\":0.0,\"formattedAddress\":\"Ann Arbor, MI\"}",
+                "accomLocation": "{\"lat\":42.28141784667969,\"long\":-83.74847412109375,\"alt\":0.0,\"formattedAddress\":\"Ann Arbor, MI\"}"
+            },
+            "stops": [
+                {
+                    "stopName": "The Arb",
+                    "stopNotes": "Trees n stuff ",
+                    "stopLocation": "{\"lat\":42.2804767,\"long\":-83.7264633,\"alt\":0.0,\"formattedAddress\":\"1610 Washington Heights, Ann Arbor, MI 48104\"}",
+                    "stopDay": 1625443200000,
+                    "stopAnyDay": false
+                }
+            ],
+            "travel": {
+                "travelMode": "Vehicle",
+                "travelNotes": "Cars are neat",
+                "travelStartDay": 1625443200000,
+                "travelEndDay": 1625443200000
+            }
+        },
+        {
+            "destination": {
+                "destName": "Detroit",
+                "destNotes": "Car city",
+                "destStartDay": 1625788800000,
+                "destEndDay": 1626134400000,
+                "destLocation": "{\"lat\":42.33293914794922,\"long\":-83.04783630371094,\"alt\":0.0,\"formattedAddress\":\"Detroit, MI\"}",
+                "accomLocation": ""
+            },
+            "stops": [
+                {
+                    "stopName": "Detroit Zoo",
+                    "stopNotes": "Animals n stuff ",
+                    "stopLocation": "{\"lat\":42.475149,\"long\":-83.158829,\"alt\":0.0,\"formattedAddress\":\"8450 W 10 Mile Rd, Royal Oak, MI 48067\"}",
+                    "stopDay": 1625788800000,
+                    "stopAnyDay": false
+                }
+            ],
+            "travel": {
+                "travelMode": "Train",
+                "travelNotes": "I like trains",
+                "travelStartDay": 1625788800000,
+                "travelEndDay": 1625788800000
+            }
+        }
+    ]
+}

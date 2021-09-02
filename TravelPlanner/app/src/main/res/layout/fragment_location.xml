@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="8dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="@color/mtrl_outlined_stroke_color"
+    app:cardElevation="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="8dp">
+
+        <ImageView
+            android:id="@+id/location_icon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:src="@drawable/ic_fluent_location_24_filled"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="?attr/colorPrimary" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/location_text_label"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textAppearance="?attr/textAppearanceCaption"
+            android:textColor="?attr/colorPrimary"
+            app:layout_constraintStart_toEndOf="@id/location_icon"
+            app:layout_constraintTop_toTopOf="@id/location_icon" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/location_text_address"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/text_no_address"
+            android:textAppearance="?attr/textAppearanceBody1"
+            app:layout_constraintTop_toBottomOf="@id/location_text_label"
+            app:layout_constraintStart_toEndOf="@id/location_icon" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/location_input_address_frame"
+            style="@style/Widget.MaterialComponents.TextInputLayout.FilledBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginBottom="8dp"
+            android:hint="@string/input_location_search"
+            app:layout_constraintBottom_toTopOf="@id/location_text_counter"
+            app:layout_constraintEnd_toStartOf="@id/location_button_search"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/location_text_address">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/location_query_input"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPostalAddress"
+                android:imeOptions="actionDone"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/location_button_search"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:drawableEnd="@drawable/ic_fluent_search_24_filled"
+            android:drawableTint="@color/design_default_color_primary"
+            android:text="@string/button_search"
+            app:layout_constraintBottom_toBottomOf="@id/location_input_address_frame"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/location_input_address_frame" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/location_button_previous"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="24dp"
+            android:drawableLeft="@drawable/ic_fluent_chevron_left_24_filled"
+            android:drawableTint="@color/design_default_color_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/location_text_counter"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:padding="8dp"
+            android:text="@string/text_no_map_results"
+            android:textAlignment="center"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/location_box_next"
+            app:layout_constraintStart_toEndOf="@id/location_button_previous" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/location_box_next"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="24dp"
+            android:drawableEnd="@drawable/ic_fluent_chevron_right_24_filled"
+            android:drawableTint="@color/design_default_color_primary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</com.google.android.material.card.MaterialCardView>

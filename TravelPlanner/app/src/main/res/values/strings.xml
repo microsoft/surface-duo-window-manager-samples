@@ -1,0 +1,105 @@
+<resources>
+    <string name="app_name">TravelPlanner</string>
+    <string name="activity_title_home">Your Trips</string>
+    <string name="activity_title_trip">Trip: %s</string>
+    <string name="activity_title_trip_edit">Edit Trip: %s</string>
+    <string name="activity_title_trip_new">New Trip</string>
+    <string name="activity_title_dest">Destination: %s</string>
+    <string name="activity_title_dest_edit">Edit Destination: %s</string>
+    <string name="activity_title_dest_new">New Destination</string>
+    <string name="activity_title_stop">Stop: %s</string>
+    <string name="activity_title_stop_new">New Stop</string>
+    <string name="activity_title_travel">Travel Info: %s</string>
+
+    <string name="button_stop_add">Add a stop</string>
+    <string name="button_trip_add">Add a trip</string>
+    <string name="button_dest_add">Add a destination</string>
+    <string name="button_picture_add">Add Picture</string>
+    <string name="button_trip_open">Open Trip</string>
+    <string name="button_dest_open">See Stops</string>
+    <string name="button_stop_open">Edit Stop</string>
+    <string name="button_search">search</string>
+    <string name="button_save">SAVE</string>
+
+    <string name="input_date_start">Start Date</string>
+    <string name="input_date_end">End Date</string>
+    <string name="input_day">Day</string>
+    <string name="input_dest_name">Destination Name</string>
+    <string name="input_dest_notes">Destination Notes</string>
+    <string name="input_stop_name">Stop Name</string>
+    <string name="input_stop_notes">Stop Notes</string>
+    <string name="input_trip_name">Trip Name</string>
+    <string name="input_trip_notes">Trip Notes</string>
+    <string name="input_travel_mode">Travel Mode</string>
+    <string name="input_travel_notes">Travel Notes</string>
+    <string name="input_location_search">Search for a location</string>
+
+    <string name="text_dest_address">Destination Address</string>
+    <string name="text_accom_address">Accommodation Address</string>
+    <string name="text_stop_address">Stop Address</string>
+    <string name="text_no_address">No Address</string>
+    <string name="text_no_map_results">No\nResults</string>
+    <string name="text_header_notes">Notes</string>
+    <string name="text_header_stops">Stops</string>
+    <string name="text_header_dests">Destinations</string>
+    <string name="text_any_day">Any Day</string>
+    <string name="text_all_stops">All Stops</string>
+    <string name="text_date_range">%s - %s</string>
+    <string name="text_map_search_results">Result\n%d of %d</string>
+    <string name="text_datepicker_range">Select start and end date</string>
+    <string name="text_datepicker_day">Select Day</string>
+    <string name="text_empty_trips">No trips have been created</string>
+    <string name="text_empty_dests">No destinations have been added to this trip</string>
+    <string name="text_empty_stops">No stops for this day</string>
+    <string name="text_required_field">Required</string>
+    <string name="text_launching">Waiting for internet connectivity</string>
+    <string name="text_no_internet_title">Please connect to the internet</string>
+    <string name="text_no_internet_message">Please connect to the internet</string>
+
+    <string name="chip_delete">Delete</string>
+    <string name="chip_copy_address">Copy Address</string>
+    <string name="chip_travel_info">Travel Info</string>
+    <string name="chip_open_maps">Open in Maps</string>
+
+    <string name="card_placeholder_title">No Item Selected</string>
+    <string name="card_placeholder_subtitle">Select an item to view more details</string>
+    <string name="card_placeholder_open">Open</string>
+    <string name="card_placeholder_content">No details to show</string>
+
+    <string name="toast_invalid_dest">Invalid destination entry</string>
+    <string name="toast_invalid_stop">Invalid stop entry</string>
+    <string name="toast_invalid_travel">Invalid travel entry</string>
+    <string name="toast_invalid_trip">Invalid trip entry</string>
+    <string name="toast_address_copied">Address copied to clipboard</string>
+    <string name="toast_address_copy_fail">Unable to copy address to clipboard</string>
+    <string name="toast_maps_fail">Unable to open in maps</string>
+    <string name="toast_import_trip_error">Error importing trip</string>
+    <string name="toast_import_trip">Imported trip %s</string>
+    <string name="toast_export_trip_error">Error exporting trip</string>
+    <string name="toast_export_trip">Exported trip to %s</string>
+    <string name="toast_bingmaps_searching">Searching…</string>
+    <string name="toast_bingmaps_invalid">Invalid Query</string>
+    <string name="toast_delete_trip">Deleted trip: %s</string>
+    <string name="toast_delete_dest">Deleted destination: %s</string>
+    <string name="toast_delete_stop">Deleted stop: %s</string>
+    <string name="toast_add_map_dest">Adding destination through map…</string>
+    <string name="toast_add_map_stop">Adding stop through map…</string>
+
+    <string name="dialog_delete_trip_title">Are you sure you want to delete trip: %s?</string>
+    <string name="dialog_delete_trip_subtitle">This action will permanently delete this trip and all associated destinations and stops.</string>
+    <string name="dialog_yes">YES</string>
+    <string name="dialog_no">NO</string>
+
+    <string name="dd_notes">Notes: </string>
+    <string name="dd_location">Location: </string>
+    <string name="dd_accommodation">Accommodation: </string>
+    <string name="dd_day">Day: </string>
+
+    <string-array name="travel_modes">
+        <item>Airplane</item>
+        <item>Train</item>
+        <item>Vehicle</item>
+        <item>Bike</item>
+        <item>Walking</item>
+    </string-array>
+</resources>

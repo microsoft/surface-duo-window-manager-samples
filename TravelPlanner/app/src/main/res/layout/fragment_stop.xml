@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="8dp">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/stop_name_layout"
+            style="@style/input_frame"
+            android:hint="@string/input_stop_name">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/stop_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textCapWords"
+                android:imeOptions="actionDone"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/input_frame"
+            android:hint="@string/input_stop_notes">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/stop_notes"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:imeOptions="actionDone"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/stop_day_layout"
+            style="@style/input_frame"
+            android:layout_weight="1"
+            android:hint="@string/input_day">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/stop_day"
+                android:focusableInTouchMode="false"
+                style="@style/input_date"/>
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.checkbox.MaterialCheckBox
+            android:id="@+id/stop_any_day"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/text_any_day" />
+
+        <fragment
+            android:id="@+id/input_stop_addr_loc"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:name="com.example.travelplanner.utils.LocationFragment"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_picture"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            style="@style/Widget.MaterialComponents.Button.OutlinedButton.Icon"
+            app:icon="@drawable/ic_fluent_camera_24_filled"
+            android:text="@string/button_picture_add"/>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_save_stop"
+            style="@style/button_save"
+            android:text="@string/button_save"/>
+
+
+
+    </LinearLayout>
+</ScrollView>
