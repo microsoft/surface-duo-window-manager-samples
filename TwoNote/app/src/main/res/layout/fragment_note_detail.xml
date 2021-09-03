@@ -58,22 +58,12 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/toolbar_layout">
 
-        <!--<com.microsoft.device.display.wm_samples.twonote.utils.PenDrawView
-            android:id="@+id/draw_view"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />-->
         <com.microsoft.device.ink.InkView
             android:id="@+id/draw_view"
             android:layout_width="0dp"
             android:layout_height="0dp"
             InkView:enable_pressure="true"
             InkView:ink_color="@color/red"
-            InkView:max_stroke_width="25"
-            InkView:min_stroke_width="10"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

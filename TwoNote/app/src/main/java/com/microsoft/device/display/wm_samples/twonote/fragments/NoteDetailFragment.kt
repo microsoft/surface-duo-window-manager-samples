@@ -426,7 +426,8 @@ class NoteDetailFragment : Fragment() {
      */
     private fun setUpDrawView() {
         note?.let { n ->
-            drawView.strokeWidth = DEFAULT_THICKNESS.toFloat()
+            drawView.strokeWidth = DEFAULT_THICKNESS.toFloat() / STROKE_MAX_MIN_RATIO
+            drawView.strokeWidthMax = DEFAULT_THICKNESS.toFloat()
             val inkingList: MutableList<InkView.DynamicPaintHandler?> = mutableListOf()
 
             for (stroke in n.drawings) {
@@ -810,11 +811,14 @@ class NoteDetailFragment : Fragment() {
             )
             paint.isAntiAlias = true
             // Set stroke width based on display density.
-            paint.strokeWidth = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
-                resources.displayMetrics
-            )
+            paint.strokeWidth = when (penInfo.pointerType) {
+                InputManager.PointerType.FINGER -> drawView.strokeWidthMax
+                else -> TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
+                    resources.displayMetrics
+                )
+            }
             paint.style = Paint.Style.STROKE
             paint.strokeJoin = Paint.Join.ROUND
             paint.strokeCap = Paint.Cap.ROUND
@@ -838,11 +842,14 @@ class NoteDetailFragment : Fragment() {
             paint.color = ColorUtils.setAlphaComponent(drawView.color, alpha)
             paint.isAntiAlias = true
             // Set stroke width based on display density.
-            paint.strokeWidth = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
-                resources.displayMetrics
-            )
+            paint.strokeWidth = when (penInfo.pointerType) {
+                InputManager.PointerType.FINGER -> drawView.strokeWidthMax
+                else -> TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
+                    resources.displayMetrics
+                )
+            }
             paint.style = Paint.Style.STROKE
             paint.strokeJoin = Paint.Join.BEVEL
             paint.strokeCap = Paint.Cap.BUTT
@@ -864,11 +871,14 @@ class NoteDetailFragment : Fragment() {
             paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
             paint.isAntiAlias = true
             // Set stroke width based on display density.
-            paint.strokeWidth = TypedValue.applyDimension(
-                TypedValue.COMPLEX_UNIT_DIP,
-                penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
-                resources.displayMetrics
-            )
+            paint.strokeWidth = when (penInfo.pointerType) {
+                InputManager.PointerType.FINGER -> drawView.strokeWidthMax
+                else -> TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
+                    resources.displayMetrics
+                )
+            }
             paint.style = Paint.Style.STROKE
             paint.strokeJoin = Paint.Join.ROUND
             paint.strokeCap = Paint.Cap.ROUND
