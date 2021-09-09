@@ -259,7 +259,7 @@ class NoteDetailFragment : Fragment() {
                 .setView(textInput)
                 .setPositiveButton(resources.getString(android.R.string.ok)) { dialog, _ ->
                     val result = stringToColor(textInput.text.toString())
-                    if (result != -1) {
+                    if (result != null) {
                         chooseColor("", result)
                         toggleButtonColor(chooseButton, true, result)
                     } else {
@@ -306,11 +306,11 @@ class NoteDetailFragment : Fragment() {
      * @param string: string to try to parse into a color
      * @return int value of color or -1 if parse was unsuccessful
      */
-    private fun stringToColor(string: String): Int {
+    private fun stringToColor(string: String): Int? {
         return try {
             Color.parseColor(string.trim())
-        } catch (e: Exception) {
-            -1
+        } catch (e: IllegalArgumentException) {
+            null
         }
     }
 
