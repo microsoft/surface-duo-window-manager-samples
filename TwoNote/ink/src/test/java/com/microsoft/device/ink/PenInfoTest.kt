@@ -59,7 +59,7 @@ class PenInfoTest {
         assertEquals(x, point.x)
         assertEquals(y, point.y)
 
-        val penInfo = stroke.getPenInfo(point)
+        val penInfo = stroke.getPenInfo(points.indexOf(point))
         assertNotNull(penInfo)
         assertEquals(x, penInfo?.x)
         assertEquals(y, penInfo?.y)
@@ -74,7 +74,7 @@ class PenInfoTest {
         assertEquals(0, points.count())
 
         val point = InputManager.Point(x, y)
-        val penInfo = stroke.getPenInfo(point)
+        val penInfo = stroke.getPenInfo(points.indexOf(point))
         assertNull(penInfo)
     }
 
