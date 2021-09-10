@@ -43,7 +43,7 @@ class InkView constructor(
     // attributes
     private var enablePressure = false
     private var enableInking = false
-    private var renderGPU = false
+    private var renderGPU = true
     private var minStrokeWidth = 1f
     private var maxStrokeWidth = 10f
 
@@ -116,6 +116,7 @@ class InkView constructor(
                 color = getColor(R.styleable.InkView_ink_color, color)
                 minStrokeWidth = getFloat(R.styleable.InkView_min_stroke_width, minStrokeWidth)
                 maxStrokeWidth = getFloat(R.styleable.InkView_max_stroke_width, maxStrokeWidth)
+                renderGPU = getBoolean(R.styleable.InkView_render_gpu, renderGPU)
             } finally {
                 recycle()
             }
