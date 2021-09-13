@@ -356,27 +356,28 @@ class NoteDetailFragment : Fragment() {
      */
     private fun setUpErasingAndHighlighting(view: View) {
         val eraseButton = view.findViewById<ImageButton>(R.id.erase)
-        val highlightButton = view.findViewById<ImageButton>(R.id.highlight)
 
-        highlightButton.setOnClickListener {
-            val activate: Boolean
-            if (drawView.dynamicPaintHandler !is HighlighterPaintHandler) {
-                activate = true
-                drawView.dynamicPaintHandler = HighlighterPaintHandler()
-            } else {
-                activate = false
-                drawView.dynamicPaintHandler = FancyPaintHandler()
-            }
-            toggleButtonColor(highlightButton, activate)
-
-            // Update button description and turn off eraser mode if activating highlighting mode
-            if (activate) {
-                toggleButtonColor(eraseButton, false)
-                it.contentDescription = resources.getString(R.string.action_highlight_off)
-            } else {
-                it.contentDescription = resources.getString(R.string.action_highlight_on)
-            }
-        }
+        // Uncomment to enable highlighter (2/4)
+//        val highlightButton = view.findViewById<ImageButton>(R.id.highlight)
+//        highlightButton.setOnClickListener {
+//            val activate: Boolean
+//            if (drawView.dynamicPaintHandler !is HighlighterPaintHandler) {
+//                activate = true
+//                drawView.dynamicPaintHandler = HighlighterPaintHandler()
+//            } else {
+//                activate = false
+//                drawView.dynamicPaintHandler = FancyPaintHandler()
+//            }
+//            toggleButtonColor(highlightButton, activate)
+//
+//            // Update button description and turn off eraser mode if activating highlighting mode
+//            if (activate) {
+//                toggleButtonColor(eraseButton, false)
+//                it.contentDescription = resources.getString(R.string.action_highlight_off)
+//            } else {
+//                it.contentDescription = resources.getString(R.string.action_highlight_on)
+//            }
+//        }
 
         eraseButton.setOnClickListener {
             val activate: Boolean
@@ -392,7 +393,8 @@ class NoteDetailFragment : Fragment() {
 
             // Update button description and turn off highlight button if activating eraser mode
             if (activate) {
-                toggleButtonColor(highlightButton, false)
+                // Uncomment to enable highlighter (3/4)
+                // toggleButtonColor(highlightButton, false)
                 it.contentDescription = resources.getString(R.string.action_erase_off)
             } else {
                 it.contentDescription = resources.getString(R.string.action_erase_on)
@@ -752,7 +754,8 @@ class NoteDetailFragment : Fragment() {
             toggleViewVisibility(view?.findViewById<LinearLayout>(R.id.color_buttons), true)
             toggleButtonColor(view?.findViewById(R.id.thickness), false)
             toggleButtonColor(view?.findViewById(R.id.color), false)
-            toggleButtonColor(view?.findViewById(R.id.highlight), false)
+            // Uncomment to enable highlighter (4/4)
+            // toggleButtonColor(view?.findViewById(R.id.highlight), false)
             toggleButtonColor(view?.findViewById(R.id.erase), false)
         }
     }

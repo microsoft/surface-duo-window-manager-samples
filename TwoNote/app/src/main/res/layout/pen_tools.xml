@@ -35,13 +35,14 @@
 
     <View style="@style/spacerStyle" />
 
-    <ImageButton
-        android:id="@+id/highlight"
-        style="@style/penToolsButtonStyle"
-        android:contentDescription="@string/action_highlight_on"
-        android:src="@drawable/ic_fluent_highlight_20_filled" />
+<!-- Uncomment to enable highlighter (1/4) -->
+<!--    <ImageButton-->
+<!--        android:id="@+id/highlight"-->
+<!--        style="@style/penToolsButtonStyle"-->
+<!--        android:contentDescription="@string/action_highlight_on"-->
+<!--        android:src="@drawable/ic_fluent_highlight_20_filled" />-->
 
-    <View style="@style/spacerStyle" />
+<!--    <View style="@style/spacerStyle" />-->
 
     <ImageButton
         android:id="@+id/erase"
