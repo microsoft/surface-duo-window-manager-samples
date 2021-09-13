@@ -165,10 +165,12 @@ class GalleryAdapter(val rootView: View, val activity: AppCompatActivity) : View
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.Q)
     private fun addImage(uri: Uri) {
         val image: ImageView = LayoutInflater.from(activity).inflate(R.layout.layout_image, linearLayout, false) as ImageView
 
         try {
+            // activity.contentResolver.loadThumbnail requires API 29
             val thumbnail = activity.contentResolver.loadThumbnail(uri, Size(128, 128), null)
             image.setImageBitmap(thumbnail)
         } catch (e: Exception) {

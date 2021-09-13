@@ -127,7 +127,7 @@ class MainActivity : AppCompatActivity(), TravelPlannerInterface, TabLayout.OnTa
         }
 
         if (BuildConfig.BUILD_KEY == "") {
-            //TODO: You need to register for a Bing Maps key
+            // TODO: You need to register for a Bing Maps key
             // https://docs.microsoft.com/bingmaps/sdk-native/getting-started-android/
             Log.d("MAP", "ext.credentialsKey in secrets.gradle is empty. Please register for a Bing Maps key.")
         } else {
@@ -177,7 +177,8 @@ class MainActivity : AppCompatActivity(), TravelPlannerInterface, TabLayout.OnTa
             TravelPlannerMode.TRIP, TravelPlannerMode.DEST -> true
             else -> false
         }
-        supportActionBar?.invalidateOptionsMenu()
+        // supportActionBar?.invalidateOptionsMenu() // HACK: build warning raised
+        this.invalidateOptionsMenu() // TODO: fix?
         supportActionBar?.setDisplayHomeAsUpEnabled(tpMode != TravelPlannerMode.HOME)
     }
 
