@@ -15,6 +15,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -106,7 +107,9 @@ class MainActivity :
                                 savedNote = detailFragment.arguments?.getSerializable(NOTE) as? Note
                                 savedINode = detailFragment.arguments?.getSerializable(INODE) as? INode
                                 noteSelected = true
-                            } catch (e: NoSuchElementException) {}
+                            } catch (e: NoSuchElementException) {
+                                Log.e(this::class.java.toString(), e.message.toString())
+                            }
                         }
 
                         // Check display features for an active hinge/fold
