@@ -26,6 +26,21 @@ android {
 
         testInstrumentationRunner config.testInstrumentationRunner
     }
+
+    buildTypes {
+
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
 }
 
 dependencies {
@@ -41,6 +56,10 @@ dependencies {
     implementation googleDependencies.material
 
     implementation microsoftDependencies.fluent
+    // To use maven central version:
+    // implementation microsoftDependencies.inkView
+    // To use locally modified version:
+    implementation project(path: ':ink')
 
     testImplementation testDependencies.junit
     androidTestImplementation instrumentationTestDependencies.junit

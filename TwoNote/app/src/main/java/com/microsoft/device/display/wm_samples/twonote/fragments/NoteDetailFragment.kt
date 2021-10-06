@@ -7,6 +7,7 @@
 
 package com.microsoft.device.display.wm_samples.twonote.fragments
 
+import Defines.DEFAULT_THICKNESS
 import Defines.INODE
 import Defines.LIST_FRAGMENT
 import Defines.NOTE
@@ -14,10 +15,13 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
+import android.graphics.Paint
 import android.graphics.PorterDuff
 import android.graphics.PorterDuffColorFilter
+import android.graphics.PorterDuffXfermode
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.TypedValue
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.PixelCopy
@@ -33,6 +37,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.graphics.ColorUtils
+import androidx.core.graphics.blue
+import androidx.core.graphics.green
+import androidx.core.graphics.red
 import androidx.core.view.iterator
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
@@ -43,11 +51,11 @@ import com.microsoft.device.display.wm_samples.twonote.R
 import com.microsoft.device.display.wm_samples.twonote.models.DualScreenViewModel
 import com.microsoft.device.display.wm_samples.twonote.models.INode
 import com.microsoft.device.display.wm_samples.twonote.models.Note
-import com.microsoft.device.display.wm_samples.twonote.models.Stroke
 import com.microsoft.device.display.wm_samples.twonote.utils.DataProvider
 import com.microsoft.device.display.wm_samples.twonote.utils.DragHandler
 import com.microsoft.device.display.wm_samples.twonote.utils.FileSystem
-import com.microsoft.device.display.wm_samples.twonote.utils.PenDrawView
+import com.microsoft.device.ink.InkView
+import com.microsoft.device.ink.InputManager
 import java.io.File
 import java.io.FileOutputStream
 import java.time.LocalDateTime
@@ -64,10 +72,9 @@ class NoteDetailFragment : Fragment() {
     var deleted = false
     private var note: Note? = null
     private var inode: INode? = null
-    private val strokeList = mutableListOf<Stroke>()
 
     // Note view attributes
-    private lateinit var drawView: PenDrawView
+    private lateinit var drawView: InkView
     private lateinit var dragHandler: DragHandler
     lateinit var noteText: TextInputEditText
     private lateinit var noteTitle: TextInputEditText
@@ -106,6 +113,7 @@ class NoteDetailFragment : Fragment() {
         const val THICKNESS_4 = 50
         const val THICKNESS_5 = 75
         const val THICKNESS_6 = 100
+        const val STROKE_MAX_MIN_RATIO = 10f
     }
 
     override fun onAttach(context: Context) {
@@ -212,7 +220,7 @@ class NoteDetailFragment : Fragment() {
         drawView = view.findViewById(R.id.draw_view)
 
         // Set up pen tools buttons
-        view.findViewById<ImageButton>(R.id.undo).setOnClickListener { undoStroke() }
+        view.findViewById<ImageButton>(R.id.undo).setOnClickListener { drawView.undo() }
         setUpColorButtons(view)
         setUpThicknessBar(view)
         setUpErasingAndHighlighting(view)
@@ -251,7 +259,7 @@ class NoteDetailFragment : Fragment() {
                 .setView(textInput)
                 .setPositiveButton(resources.getString(android.R.string.ok)) { dialog, _ ->
                     val result = stringToColor(textInput.text.toString())
-                    if (result != -1) {
+                    if (result != null) {
                         chooseColor("", result)
                         toggleButtonColor(chooseButton, true, result)
                     } else {
@@ -277,12 +285,12 @@ class NoteDetailFragment : Fragment() {
         view?.findViewById<ImageButton>(R.id.button_choose)?.clearColorFilter()
 
         when (color) {
-            PaintColors.Red.name -> drawView.changePaintColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.red))
-            PaintColors.Blue.name -> drawView.changePaintColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.blue))
-            PaintColors.Green.name -> drawView.changePaintColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.green))
-            PaintColors.Yellow.name -> drawView.changePaintColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.yellow))
-            PaintColors.Purple.name -> drawView.changePaintColor(ContextCompat.getColor(requireActivity().applicationContext, R.color.purple))
-            else -> if (colorInt != null) drawView.changePaintColor(colorInt)
+            PaintColors.Red.name -> drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.red)
+            PaintColors.Blue.name -> drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.blue)
+            PaintColors.Green.name -> drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.green)
+            PaintColors.Yellow.name -> drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.yellow)
+            PaintColors.Purple.name -> drawView.color = ContextCompat.getColor(requireActivity().applicationContext, R.color.purple)
+            else -> if (colorInt != null) drawView.color = colorInt
         }
     }
 
@@ -298,11 +306,11 @@ class NoteDetailFragment : Fragment() {
      * @param string: string to try to parse into a color
      * @return int value of color or -1 if parse was unsuccessful
      */
-    private fun stringToColor(string: String): Int {
+    private fun stringToColor(string: String): Int? {
         return try {
             Color.parseColor(string.trim())
-        } catch (e: Exception) {
-            -1
+        } catch (e: IllegalArgumentException) {
+            null
         }
     }
 
@@ -326,7 +334,8 @@ class NoteDetailFragment : Fragment() {
                         6 -> THICKNESS_6
                         else -> THICKNESS_DEFAULT
                     }
-                drawView.changeThickness(newThickness)
+                drawView.strokeWidth = newThickness.toFloat() / STROKE_MAX_MIN_RATIO
+                drawView.strokeWidthMax = newThickness.toFloat()
             }
 
             override fun onStartTrackingTouch(seek: SeekBar) {}
@@ -347,28 +356,45 @@ class NoteDetailFragment : Fragment() {
      */
     private fun setUpErasingAndHighlighting(view: View) {
         val eraseButton = view.findViewById<ImageButton>(R.id.erase)
-        val highlightButton = view.findViewById<ImageButton>(R.id.highlight)
 
-        highlightButton.setOnClickListener {
-            val activate = drawView.toggleHighlightMode()
-            toggleButtonColor(highlightButton, activate)
-
-            // Update button description and turn off eraser mode if activating highlighting mode
-            if (activate) {
-                toggleButtonColor(eraseButton, drawView.toggleEraserMode(false))
-                it.contentDescription = resources.getString(R.string.action_highlight_off)
-            } else {
-                it.contentDescription = resources.getString(R.string.action_highlight_on)
-            }
-        }
+        // Uncomment to enable highlighter (2/4)
+//        val highlightButton = view.findViewById<ImageButton>(R.id.highlight)
+//        highlightButton.setOnClickListener {
+//            val activate: Boolean
+//            if (drawView.dynamicPaintHandler !is HighlighterPaintHandler) {
+//                activate = true
+//                drawView.dynamicPaintHandler = HighlighterPaintHandler()
+//            } else {
+//                activate = false
+//                drawView.dynamicPaintHandler = FancyPaintHandler()
+//            }
+//            toggleButtonColor(highlightButton, activate)
+//
+//            // Update button description and turn off eraser mode if activating highlighting mode
+//            if (activate) {
+//                toggleButtonColor(eraseButton, false)
+//                it.contentDescription = resources.getString(R.string.action_highlight_off)
+//            } else {
+//                it.contentDescription = resources.getString(R.string.action_highlight_on)
+//            }
+//        }
 
         eraseButton.setOnClickListener {
-            val activate = drawView.toggleEraserMode()
+            val activate: Boolean
+
+            if (drawView.dynamicPaintHandler !is EraserPaintHandler) {
+                activate = true
+                drawView.dynamicPaintHandler = EraserPaintHandler()
+            } else {
+                activate = false
+                drawView.dynamicPaintHandler = FancyPaintHandler()
+            }
             toggleButtonColor(eraseButton, activate)
 
             // Update button description and turn off highlight button if activating eraser mode
             if (activate) {
-                toggleButtonColor(highlightButton, drawView.toggleHighlightMode(false))
+                // Uncomment to enable highlighter (3/4)
+                // toggleButtonColor(highlightButton, false)
                 it.contentDescription = resources.getString(R.string.action_erase_off)
             } else {
                 it.contentDescription = resources.getString(R.string.action_erase_on)
@@ -387,7 +413,7 @@ class NoteDetailFragment : Fragment() {
             AlertDialog.Builder(requireContext())
                 .setMessage(resources.getString(R.string.confirm_clear_message))
                 .setPositiveButton(resources.getString(android.R.string.ok)) { dialog, _ ->
-                    drawView.clearDrawing()
+                    drawView.clearInk()
                     dialog.dismiss()
                 }
                 .setNegativeButton(resources.getString(android.R.string.cancel)) { dialog, _ -> dialog.dismiss() }
@@ -401,14 +427,24 @@ class NoteDetailFragment : Fragment() {
      * Initialize the drawing canvas with any existing note drawings and the device's current rotation
      */
     private fun setUpDrawView() {
-        strokeList.clear()
         note?.let { n ->
-            for (s in n.drawings) {
-                strokeList.add(Stroke(s.xList, s.yList, s.pressureList, s.paintColor, s.thicknessMultiplier, s.rotated, s.highlightStroke))
+            drawView.strokeWidth = DEFAULT_THICKNESS.toFloat() / STROKE_MAX_MIN_RATIO
+            drawView.strokeWidthMax = DEFAULT_THICKNESS.toFloat()
+            val inkingList: MutableList<InkView.DynamicPaintHandler?> = mutableListOf()
+
+            for (stroke in n.drawings) {
+                if (stroke.inkingMode == InputManager.InkingType.INKING) {
+                    inkingList.add(FancyPaintHandler())
+                } else if (stroke.inkingMode == InputManager.InkingType.HIGHLIGHTING) {
+                    inkingList.add(HighlighterPaintHandler())
+                } else if (stroke.inkingMode == InputManager.InkingType.ERASING) {
+                    inkingList.add(EraserPaintHandler())
+                } else {
+                    inkingList.add(null)
+                }
             }
+            drawView.loadDrawing(n.drawings, inkingList)
         }
-        drawView.setStrokeList(strokeList)
-        drawView.setRotation(MainActivity.isRotated(requireActivity(), dualScreenVM.isDualScreen))
     }
 
     /**
@@ -482,13 +518,6 @@ class NoteDetailFragment : Fragment() {
         dragHandler.setDeleteMode(deleteImageMode)
     }
 
-    /**
-     * Undo last stroke made on the canvas
-     */
-    private fun undoStroke() {
-        drawView.undo()
-    }
-
     override fun onResume() {
         super.onResume()
         // Update image list in drag handler
@@ -513,7 +542,7 @@ class NoteDetailFragment : Fragment() {
             val title = noteTitle.text.toString()
 
             if (this::drawView.isInitialized) {
-                note?.drawings = drawView.getDrawingList()
+                note?.drawings = drawView.getDrawing()
             }
             if (this::dragHandler.isInitialized) {
                 note?.images = dragHandler.getImageList()
@@ -709,7 +738,8 @@ class NoteDetailFragment : Fragment() {
             view?.findViewById<ConstraintLayout>(R.id.ink_mode)?.bringToFront()
 
             // Enable drawing and show pen tools over canvas
-            drawView.enable()
+            drawView.inkingEnabled = true
+            drawView.dynamicPaintHandler = FancyPaintHandler()
             penTools?.visibility = View.VISIBLE
             penTools?.bringToFront()
         } else {
@@ -717,15 +747,21 @@ class NoteDetailFragment : Fragment() {
             inkItem?.title = getString(R.string.action_ink_on)
 
             // Disable drawing, close pen tools, and reset button states
-            drawView.disable()
+            drawView.inkingEnabled = false
+            drawView.dynamicPaintHandler = null
             penTools?.visibility = View.INVISIBLE
             toggleViewVisibility(view?.findViewById<SeekBar>(R.id.thickness_slider), true)
             toggleViewVisibility(view?.findViewById<LinearLayout>(R.id.color_buttons), true)
             toggleButtonColor(view?.findViewById(R.id.thickness), false)
             toggleButtonColor(view?.findViewById(R.id.color), false)
-            toggleButtonColor(view?.findViewById(R.id.highlight), drawView.toggleHighlightMode(false))
-            toggleButtonColor(view?.findViewById(R.id.erase), drawView.toggleEraserMode(false))
+            // Uncomment to enable highlighter (4/4)
+            // toggleButtonColor(view?.findViewById(R.id.highlight), false)
+            toggleButtonColor(view?.findViewById(R.id.erase), false)
         }
+    }
+
+    fun isDualScreen(): Boolean {
+        return dualScreenVM.isDualScreen
     }
 
     /**
@@ -760,7 +796,101 @@ class NoteDetailFragment : Fragment() {
         }
     }
 
-    fun isDualScreen(): Boolean {
-        return dualScreenVM.isDualScreen
+    // ------------------------- Custom paint handler classes --------------------------- \\
+
+    /**
+     * Renders the ink with transparency linked to the pressure on the pen.
+     */
+    inner class FancyPaintHandler : InkView.DynamicPaintHandler {
+        override fun generatePaintFromPenInfo(penInfo: InputManager.PenInfo): Paint {
+            val paint = Paint()
+            val alpha = penInfo.pressure * 255
+
+            paint.color = Color.argb(
+                alpha.toInt(),
+                drawView.color.red,
+                drawView.color.green,
+                drawView.color.blue
+            )
+            paint.isAntiAlias = true
+            // Set stroke width based on display density.
+            paint.strokeWidth = when (penInfo.pointerType) {
+                InputManager.PointerType.FINGER -> drawView.strokeWidthMax
+                else -> TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
+                    resources.displayMetrics
+                )
+            }
+            paint.style = Paint.Style.STROKE
+            paint.strokeJoin = Paint.Join.ROUND
+            paint.strokeCap = Paint.Cap.ROUND
+
+            return paint
+        }
+
+        override fun selectInkingMode(): InputManager.InkingType {
+            return InputManager.InkingType.INKING
+        }
+    }
+
+    /**
+     * Renders the ink as though from a highlighter: permanently transparent
+     */
+    inner class HighlighterPaintHandler : InkView.DynamicPaintHandler {
+        override fun generatePaintFromPenInfo(penInfo: InputManager.PenInfo): Paint {
+            val paint = Paint()
+            val alpha = 80
+
+            paint.color = ColorUtils.setAlphaComponent(drawView.color, alpha)
+            paint.isAntiAlias = true
+            // Set stroke width based on display density.
+            paint.strokeWidth = when (penInfo.pointerType) {
+                InputManager.PointerType.FINGER -> drawView.strokeWidthMax
+                else -> TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
+                    resources.displayMetrics
+                )
+            }
+            paint.style = Paint.Style.STROKE
+            paint.strokeJoin = Paint.Join.BEVEL
+            paint.strokeCap = Paint.Cap.BUTT
+
+            return paint
+        }
+
+        override fun selectInkingMode(): InputManager.InkingType {
+            return InputManager.InkingType.HIGHLIGHTING
+        }
+    }
+
+    /**
+     * Renders the ink as though from an eraser
+     */
+    inner class EraserPaintHandler : InkView.DynamicPaintHandler {
+        override fun generatePaintFromPenInfo(penInfo: InputManager.PenInfo): Paint {
+            val paint = Paint()
+            paint.xfermode = PorterDuffXfermode(PorterDuff.Mode.CLEAR)
+            paint.isAntiAlias = true
+            // Set stroke width based on display density.
+            paint.strokeWidth = when (penInfo.pointerType) {
+                InputManager.PointerType.FINGER -> drawView.strokeWidthMax
+                else -> TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    penInfo.pressure * (drawView.strokeWidthMax - drawView.strokeWidth) + drawView.strokeWidth,
+                    resources.displayMetrics
+                )
+            }
+            paint.style = Paint.Style.STROKE
+            paint.strokeJoin = Paint.Join.ROUND
+            paint.strokeCap = Paint.Cap.ROUND
+
+            return paint
+        }
+
+        override fun selectInkingMode(): InputManager.InkingType {
+            return InputManager.InkingType.ERASING
+        }
     }
 }

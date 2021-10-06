@@ -7,7 +7,6 @@
 
 package com.microsoft.device.display.wm_samples.twonote
 
-import Defines
 import Defines.GET_STARTED_FRAGMENT
 import Defines.INODE
 import Defines.LIST_FRAGMENT
@@ -16,6 +15,7 @@ import android.content.Context
 import android.content.res.Configuration
 import android.graphics.Rect
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AppCompatActivity
@@ -96,7 +96,21 @@ class MainActivity :
                 windowInfoRep.windowLayoutInfo
                     .collect { newLayoutInfo ->
                         dualScreenVM.isDualScreen = false
-                        val noteSelected = savedNote != null && savedINode != null
+                        var noteSelected = savedNote != null && savedINode != null
+
+                        // If no note/inode were passed through the saved instance, check if a
+                        // NoteDetailFragment exists and extract its note/inode
+                        if (!noteSelected) {
+                            try {
+                                val detailFragment =
+                                    supportFragmentManager.fragments.first { fragment -> fragment as? NoteDetailFragment != null }
+                                savedNote = detailFragment.arguments?.getSerializable(NOTE) as? Note
+                                savedINode = detailFragment.arguments?.getSerializable(INODE) as? INode
+                                noteSelected = true
+                            } catch (e: NoSuchElementException) {
+                                Log.e(this::class.java.toString(), e.message.toString())
+                            }
+                        }
 
                         // Check display features for an active hinge/fold
                         for (displayFeature in newLayoutInfo.displayFeatures) {
@@ -118,11 +132,12 @@ class MainActivity :
                             }
                         }
                         if (!dualScreenVM.isDualScreen) {
-                            selectSingleScreenFragment(noteSelected, savedNote, savedINode)
                             setBoundsNoHinge()
+                            selectSingleScreenFragment(noteSelected, savedNote, savedINode)
                         }
                         savedNote = null
                         savedINode = null
+                        supportFragmentManager.executePendingTransactions()
                     }
             }
         }
@@ -191,9 +206,12 @@ class MainActivity :
      * Start note list view fragment in first container
      */
     private fun startNoteListFragment() {
-        supportFragmentManager.beginTransaction()
-            .replace(R.id.primary_fragment_container, NoteListFragment(), LIST_FRAGMENT)
-            .commit()
+        val listFragment = supportFragmentManager.findFragmentByTag(LIST_FRAGMENT)
+        if (listFragment == null || !listFragment.isAdded) {
+            supportFragmentManager.beginTransaction()
+                .replace(R.id.primary_fragment_container, NoteListFragment(), LIST_FRAGMENT)
+                .commit()
+        }
     }
 
     /**
@@ -205,7 +223,8 @@ class MainActivity :
      */
     private fun startNoteDetailFragment(container: Int, note: Note, inode: INode) {
         val tag = buildDetailTag(container, inode.id, note.id)
-        if (supportFragmentManager.findFragmentByTag(tag) == null) {
+        val detailFragment = supportFragmentManager.findFragmentByTag(tag)
+        if (detailFragment == null || !detailFragment.isAdded) {
             supportFragmentManager.beginTransaction()
                 .replace(container, NoteDetailFragment.newInstance(inode, note), tag)
                 .commit()
@@ -227,7 +246,7 @@ class MainActivity :
         super.onSaveInstanceState(outState)
 
         val firstFrag = supportFragmentManager.findFragmentById(R.id.primary_fragment_container)
-        val secondFrag = supportFragmentManager.findFragmentById(R.id.primary_fragment_container)
+        val secondFrag = supportFragmentManager.findFragmentById(R.id.secondary_fragment_container)
 
         // Save data from note detail view for configuration changes
         if (secondFrag is NoteDetailFragment) {
