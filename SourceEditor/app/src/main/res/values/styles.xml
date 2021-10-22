@@ -12,4 +12,9 @@
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
     </style>
+
+    <style name="Theme.Splash" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowBackground">@drawable/splash</item>
+        <item name="android:windowDrawsSystemBarBackgrounds">false</item>
+    </style>
 </resources>
