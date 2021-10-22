@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item>
+        <shape android:shape="rectangle">
+            <solid android:color="@color/colorPrimaryDark"></solid>
+        </shape>
+    </item>
+    <item
+        android:left="150dp"
+        android:top="20dp"
+        android:gravity="top|start"
+        android:width="250dp"
+        android:height="250dp"
+        android:drawable="@mipmap/ic_launcher"
+        />
+</layer-list>
