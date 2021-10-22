@@ -13,7 +13,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
-    <style name="Theme.Splash" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.Splash" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="android:windowBackground">@drawable/splash</item>
         <item name="android:windowDrawsSystemBarBackgrounds">false</item>
     </style>
