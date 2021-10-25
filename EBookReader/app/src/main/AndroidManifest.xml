@@ -10,7 +10,8 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Test4">
         <activity
-            android:name="com.microsoft.device.wm_samples.ebook_reader_sample.StartActivity"
+            android:name=".SplashActivity"
+            android:theme="@style/Theme.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -18,7 +19,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.microsoft.device.wm_samples.ebook_reader_sample.BookActivity"
+            android:name=".StartActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".BookActivity"
             android:configChanges="screenLayout|screenSize|smallestScreenSize|orientation|keyboardHidden"
             android:exported="false">
             <intent-filter>
