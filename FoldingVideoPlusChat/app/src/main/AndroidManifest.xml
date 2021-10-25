@@ -16,13 +16,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Test3">
         <activity
-            android:name="com.example.video_chat_sample.MainActivity"
+            android:name=".SplashActivity"
             android:windowSoftInputMode="adjustResize"
+            android:theme="@style/Theme.Splash"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
         </activity>
     </application>
 

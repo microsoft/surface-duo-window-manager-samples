@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.video_chat_sample"
-        minSdkVersion 24
+        minSdkVersion 29
         targetSdkVersion 31
         versionCode 2
         versionName "2.0"
