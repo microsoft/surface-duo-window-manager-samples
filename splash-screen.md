@@ -30,9 +30,31 @@ Complete these steps to create a dual-screen friendly splash-screen that uses re
     </layer-list>
     ```
 
-  - Dual-screen versions using resource qualifiers that match the Surface Duo and Surface Duo 2:
+  - Create dual-screen versions using resource qualifiers that match the Surface Duo and Surface Duo 2:
     - `drawable-sw720dp-2754x1800` - dual-landscape mode, align the elements above & below the hinge
     - `drawable-sw720dp-land-2754x1800` - dual-portrait mode, align the elements onto a single (left?) screen, or position them either side of the hinge
+
+    Example of the landscape layout, using `gravity` and `start` attributes to 'center' on one of the screens:
+
+    ```xml
+    <?xml version="1.0" encoding="utf-8"?>
+    <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+        <item android:drawable="?android:colorBackground" />
+        <item
+            android:start="140dp"
+            android:top="200dp"
+            android:gravity="top|start"
+            android:width="250dp"
+            android:height="250dp"
+            android:drawable="@mipmap/ic_launcher"
+            />
+        <item android:bottom="84.0dip"
+            android:start="220dp"
+            android:gravity="bottom|start"
+            android:drawable="@drawable/splash_logo" />
+        />
+    </layer-list>
+    ```
 
   - These examples also use a `splash_logo.xml` drawable.
 
