@@ -24,8 +24,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.FoldingFeature
-import androidx.window.layout.WindowInfoRepository
-import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
+import androidx.window.layout.WindowInfoTracker
 import com.microsoft.device.display.wm_samples.sourceeditor.includes.FileHandler
 import com.microsoft.device.display.wm_samples.sourceeditor.viewmodel.DualScreenViewModel
 import com.microsoft.device.display.wm_samples.sourceeditor.viewmodel.WebViewModel
@@ -34,8 +33,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var windowInfoRep: WindowInfoRepository
-
+    
     private lateinit var fileBtn: ImageView
     private lateinit var saveBtn: ImageView
 
@@ -52,7 +50,6 @@ class MainActivity : AppCompatActivity() {
         fileHandler = FileHandler(this, webVM, contentResolver)
 
         // Layout based setup
-        windowInfoRep = windowInfoRepository()
         dualScreenVM = ViewModelProvider(this).get(DualScreenViewModel::class.java)
         dualScreenVM.setIsDualScreen(false) // assume single screen on startup
 
@@ -78,9 +75,10 @@ class MainActivity : AppCompatActivity() {
             // is at least STARTED and is cancelled when the lifecycle is STOPPED.
             // It automatically restarts the block when the lifecycle is STARTED again.
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Safely collect from windowInfoRepo when the lifecycle is STARTED
+                // Safely collect from windowInfoTracker when the lifecycle is STARTED
                 // and stops collection when the lifecycle is STOPPED
-                windowInfoRep.windowLayoutInfo
+                WindowInfoTracker.getOrCreate(this@MainActivity)
+                    .windowLayoutInfo(this@MainActivity)
                     .collect { newLayoutInfo ->
                         var isDualScreen = false
 
