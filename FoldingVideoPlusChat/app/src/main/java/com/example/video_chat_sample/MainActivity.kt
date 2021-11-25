@@ -19,8 +19,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
-import androidx.window.layout.WindowInfoRepository
-import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
+import androidx.window.layout.WindowInfoTracker
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerControlView
@@ -32,7 +31,6 @@ import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var rootView: MotionLayout
-    private lateinit var windowInfoRep: WindowInfoRepository
     private lateinit var endChatView: View
     private lateinit var bottomChatView: View
     private val handler = Handler(Looper.getMainLooper())
@@ -52,8 +50,6 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Initialize Window Manager
-        windowInfoRep = windowInfoRepository()
         setContentView(R.layout.activity_main)
 
         rootView = findViewById(R.id.root)
@@ -77,7 +73,8 @@ class MainActivity : AppCompatActivity() {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 // Safely collect from windowInfoRepo when the lifecycle is STARTED
                 // and stops collection when the lifecycle is STOPPED
-                windowInfoRep.windowLayoutInfo
+                WindowInfoTracker.getOrCreate(this@MainActivity)
+                    .windowLayoutInfo(this@MainActivity)
                     .collect { newLayoutInfo ->
                         spanToggle = false
 
