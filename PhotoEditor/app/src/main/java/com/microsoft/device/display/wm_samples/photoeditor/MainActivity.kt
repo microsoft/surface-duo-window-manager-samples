@@ -42,8 +42,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.FoldingFeature
-import androidx.window.layout.WindowInfoRepository
-import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
+import androidx.window.layout.WindowInfoTracker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -61,7 +60,6 @@ private const val DEFAULT_PROGRESS = 50
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var windowInfoRep: WindowInfoRepository
     private lateinit var viewModel: PhotoEditorViewModel
     private lateinit var image: ImageFilterView
     private lateinit var saturation: SeekBar
@@ -81,9 +79,6 @@ class MainActivity : AppCompatActivity() {
 
         viewModel = ViewModelProvider(this).get(PhotoEditorViewModel::class.java)
 
-        // Layout based setup
-        windowInfoRep = windowInfoRepository()
-
         primaryContainer = findViewById(R.id.primary_fragment_container)
         secondaryContainer = findViewById(R.id.secondary_fragment_container)
         mainContainer = findViewById(R.id.main_container)
@@ -94,9 +89,10 @@ class MainActivity : AppCompatActivity() {
             // is at least STARTED and is cancelled when the lifecycle is STOPPED.
             // It automatically restarts the block when the lifecycle is STARTED again.
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Safely collect from windowInfoRepo when the lifecycle is STARTED
+                // Safely collect from windowInfoTracker when the lifecycle is STARTED
                 // and stops collection when the lifecycle is STOPPED
-                windowInfoRep.windowLayoutInfo
+                WindowInfoTracker.getOrCreate(this@MainActivity)
+                .windowLayoutInfo(this@MainActivity)
                     .collect { newLayoutInfo ->
                         viewModel.isDualScreen = false
 
