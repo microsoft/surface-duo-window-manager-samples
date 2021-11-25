@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    
+
     private lateinit var fileBtn: ImageView
     private lateinit var saveBtn: ImageView
 
