@@ -13,16 +13,12 @@ android {
     compileSdkVersion rootProject.ext.compileSdkVersion
     buildToolsVersion rootProject.ext.buildToolsVersion
 
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
-
     defaultConfig {
         applicationId "com.microsoft.device.display.wm_samples.twonote"
         minSdkVersion 29
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 2
-        versionName "2.0"
+        versionCode 3
+        versionName "3.0"
 
         testInstrumentationRunner config.testInstrumentationRunner
     }
