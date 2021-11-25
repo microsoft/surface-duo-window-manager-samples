@@ -26,8 +26,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.FoldingFeature
-import androidx.window.layout.WindowInfoRepository
-import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
+import androidx.window.layout.WindowInfoTracker
 import com.microsoft.device.display.wm_samples.twonote.fragments.GetStartedFragment
 import com.microsoft.device.display.wm_samples.twonote.fragments.NoteDetailFragment
 import com.microsoft.device.display.wm_samples.twonote.fragments.NoteListFragment
@@ -65,9 +64,6 @@ class MainActivity :
         }
     }
 
-    // Jetpack Window Manager
-    private lateinit var windowInfoRep: WindowInfoRepository
-
     private var savedNote: Note? = null
     private var savedINode: INode? = null
     private var dualScreenVM = DualScreenViewModel()
@@ -83,17 +79,16 @@ class MainActivity :
         savedNote = savedInstanceState?.getSerializable(NOTE) as? Note
         savedINode = savedInstanceState?.getSerializable(INODE) as? INode
 
-        // Layout based setup
-        windowInfoRep = windowInfoRepository()
         // Create a new coroutine since repeatOnLifecycle is a suspend function
         lifecycleScope.launch(Dispatchers.Main) {
             // The block passed to repeatOnLifecycle is executed when the lifecycle
             // is at least STARTED and is cancelled when the lifecycle is STOPPED.
             // It automatically restarts the block when the lifecycle is STARTED again.
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Safely collect from windowInfoRepo when the lifecycle is STARTED
+                // Safely collect from WindowInfoTracker when the lifecycle is STARTED
                 // and stops collection when the lifecycle is STOPPED
-                windowInfoRep.windowLayoutInfo
+                WindowInfoTracker.getOrCreate(this@MainActivity)
+                    .windowLayoutInfo(this@MainActivity)
                     .collect { newLayoutInfo ->
                         dualScreenVM.isDualScreen = false
                         var noteSelected = savedNote != null && savedINode != null
