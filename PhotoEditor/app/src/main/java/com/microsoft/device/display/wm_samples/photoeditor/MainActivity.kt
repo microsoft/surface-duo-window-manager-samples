@@ -92,7 +92,7 @@ class MainActivity : AppCompatActivity() {
                 // Safely collect from windowInfoTracker when the lifecycle is STARTED
                 // and stops collection when the lifecycle is STOPPED
                 WindowInfoTracker.getOrCreate(this@MainActivity)
-                .windowLayoutInfo(this@MainActivity)
+                    .windowLayoutInfo(this@MainActivity)
                     .collect { newLayoutInfo ->
                         viewModel.isDualScreen = false
 

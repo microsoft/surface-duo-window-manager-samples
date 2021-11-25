@@ -71,7 +71,7 @@ class MainActivity : AppCompatActivity() {
             // is at least STARTED and is cancelled when the lifecycle is STOPPED.
             // It automatically restarts the block when the lifecycle is STARTED again.
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Safely collect from windowInfoRepo when the lifecycle is STARTED
+                // Safely collect from WindowInfoTracker when the lifecycle is STARTED
                 // and stops collection when the lifecycle is STOPPED
                 WindowInfoTracker.getOrCreate(this@MainActivity)
                     .windowLayoutInfo(this@MainActivity)
