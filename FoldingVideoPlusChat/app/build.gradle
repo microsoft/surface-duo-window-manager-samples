@@ -11,8 +11,8 @@ android {
         applicationId "com.example.video_chat_sample"
         minSdkVersion 29
         targetSdkVersion 31
-        versionCode 3
-        versionName "3.0"
+        versionCode 4
+        versionName "4.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,10 +41,10 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.2.0'
     implementation 'com.google.android.material:material:1.3.0'
     implementation 'com.google.android.exoplayer:exoplayer:2.14.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.0-beta02'
-    implementation 'androidx.window:window:1.0.0-beta04'
+    implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
+    implementation 'androidx.window:window:1.0.0-rc01'
     implementation "androidx.fragment:fragment-ktx:1.3.4"
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha02'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
     testImplementation 'junit:junit:4.13.2'
