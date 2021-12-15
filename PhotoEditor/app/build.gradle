@@ -15,8 +15,8 @@ android {
         applicationId "com.microsoft.device.display.wm_samples.photoeditor"
         minSdkVersion 29
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 3
-        versionName "3.0"
+        versionCode 4
+        versionName "4.0"
 
         testInstrumentationRunner config.testInstrumentationRunner
     }
@@ -41,7 +41,7 @@ dependencies {
     implementation androidxDependencies.ktxFragment
     implementation androidxDependencies.windowManager
 
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha02'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
 
     testImplementation testDependencies.junit
     androidTestImplementation instrumentationTestDependencies.junit
