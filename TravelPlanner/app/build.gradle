@@ -57,8 +57,8 @@ dependencies {
     kapt "androidx.room:room-compiler:$room_version"
     implementation "androidx.room:room-ktx:$room_version"
 
-    def lifecycle_version = "2.3.1"
-    def arch_version = "2.1.0"
+    def lifecycle_version = "2.4.0"
+    //def arch_version = "2.1.0"
     // ViewModel
     implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
     // LiveData
