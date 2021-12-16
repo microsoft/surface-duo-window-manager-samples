@@ -17,17 +17,13 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
-import androidx.window.layout.WindowInfoRepository
-import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
+import androidx.window.layout.WindowInfoTracker
 import com.microsoft.device.wm_samples.twodo.databinding.ActivityMainBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-
-    // Jetpack Window Manager
-    private lateinit var windowInfoRep: WindowInfoRepository
 
     private lateinit var binding: ActivityMainBinding
 
@@ -40,8 +36,6 @@ class MainActivity : AppCompatActivity() {
             goToTwoDoActivity()
         }
 
-        windowInfoRep = windowInfoRepository()
-
         // Create a new coroutine since repeatOnLifecycle is a suspend function
         lifecycleScope.launch(Dispatchers.Main) {
             // The block passed to repeatOnLifecycle is executed when the lifecycle
@@ -50,7 +44,8 @@ class MainActivity : AppCompatActivity() {
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
                 // Safely collect from windowInfoRepo when the lifecycle is STARTED
                 // and stops collection when the lifecycle is STOPPED
-                windowInfoRep.windowLayoutInfo
+                WindowInfoTracker.getOrCreate(this@MainActivity)
+                    .windowLayoutInfo(this@MainActivity)
                     .collect { newLayoutInfo ->
                         // reset fold values
                         ConstraintLayout.getSharedValues().fireNewValue(R.id.horiz_fold, 0)

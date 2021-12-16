@@ -5,7 +5,7 @@
 
 ext {
     gradlePluginVersion = "4.1.1"
-    kotlinVersion = "1.4.21"
+    kotlinVersion = "1.6.0"
     compileSdkVersion = 31
     buildToolsVersion = '30.0.3'
     targetSdkVersion = compileSdkVersion
@@ -23,13 +23,13 @@ ext {
 
     //AndroidX versions
     appCompatVersion = "1.2.0"
-    constraintLayoutVersion = "2.1.0-beta02"
+    constraintLayoutVersion = "2.1.2"
     recyclerViewVersion = "1.1.0"
     cardViewVersion = "1.0.0"
     ktxCoreVersion = "1.5.0"
     ktxFragmentVersion = "1.3.6"
     viewPager2Version = "1.0.0"
-    windowManagerVersion = "1.0.0-beta04"
+    windowManagerVersion = "1.0.0-rc01"
 
     androidxDependencies = [
             appCompat       : "androidx.appcompat:appcompat:$appCompatVersion",

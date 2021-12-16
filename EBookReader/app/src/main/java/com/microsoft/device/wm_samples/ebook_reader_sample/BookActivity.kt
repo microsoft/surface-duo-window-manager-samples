@@ -21,8 +21,7 @@ import androidx.lifecycle.repeatOnLifecycle
 import androidx.viewpager2.widget.ViewPager2
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
-import androidx.window.layout.WindowInfoRepository
-import androidx.window.layout.WindowInfoRepository.Companion.windowInfoRepository
+import androidx.window.layout.WindowInfoTracker
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
@@ -36,18 +35,14 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
     var foldRect = Rect()
 
     private lateinit var bookPagerView: ViewPager2
-    private lateinit var windowInfoRep: WindowInfoRepository
     private var pagePagerCallback = BookPagerCallback()
     private val handler = Handler(Looper.getMainLooper())
     private val mainThreadExecutor = Executor { r: Runnable -> handler.post(r) }
-    // private val layoutStateContainer = LayoutStateContainer()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         renderLoading()
-
-        windowInfoRep = windowInfoRepository()
 
         // Create a new coroutine since repeatOnLifecycle is a suspend function
         lifecycleScope.launch(Dispatchers.Main) {
@@ -55,9 +50,10 @@ class BookActivity : AppCompatActivity(), ViewTreeObserver.OnGlobalLayoutListene
             // is at least STARTED and is cancelled when the lifecycle is STOPPED.
             // It automatically restarts the block when the lifecycle is STARTED again.
             lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
-                // Safely collect from windowInfoRepo when the lifecycle is STARTED
+                // Safely collect from WindowInfoTracker when the lifecycle is STARTED
                 // and stops collection when the lifecycle is STOPPED
-                windowInfoRep.windowLayoutInfo
+                WindowInfoTracker.getOrCreate(this@BookActivity)
+                    .windowLayoutInfo(this@BookActivity)
                     .collect { newLayoutInfo ->
                         layoutMode = LayoutMode.NORMAL
                         foldRect = Rect()

@@ -11,8 +11,8 @@ android {
         applicationId "com.microsoft.device.wm_samples.ebook_reader_sample"
         minSdkVersion 21
         targetSdkVersion 31
-        versionCode 2
-        versionName "2.0"
+        versionCode 3
+        versionName "3.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -33,15 +33,15 @@ android {
 }
 
 dependencies {
-    implementation "androidx.slidingpanelayout:slidingpanelayout:1.2.0-beta01"
+    implementation "androidx.slidingpanelayout:slidingpanelayout:1.2.0-rc01"
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation 'androidx.core:core-ktx:1.5.0'
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0-alpha02'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
     implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'com.google.android.material:material:1.4.0'
     implementation "androidx.viewpager2:viewpager2:1.0.0"
-    implementation 'androidx.window:window:1.0.0-beta02'
+    implementation 'androidx.window:window:1.0.0-rc01'
     implementation 'com.microsoft.design:fluent-system-icons:1.1.135'
 
     testImplementation 'junit:junit:4.13.2'
