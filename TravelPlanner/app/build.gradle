@@ -15,8 +15,8 @@ android {
         applicationId "com.example.travelplanner"
         minSdkVersion 29 // was 24
         targetSdkVersion 31
-        versionCode 2
-        versionName "2.0"
+        versionCode 3
+        versionName "3.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -48,7 +48,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.3.0'
     implementation 'com.google.android.material:material:1.5.0-rc01'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.2'
-    implementation "androidx.slidingpanelayout:slidingpanelayout:1.2.0-rc01"
+    implementation "androidx.slidingpanelayout:slidingpanelayout:1.2.0"
     implementation "androidx.fragment:fragment-ktx:1.3.6"
     implementation 'com.microsoft.design:fluent-system-icons:1.1.134@aar'
 
