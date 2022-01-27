@@ -1,6 +1,15 @@
 # Jetpack Window Manager samples for dual-screen and foldable devices like Microsoft Surface Duo
 
-Android app samples that use [Jetpack Window Manager](https://docs.microsoft.com/dual-screen/android/platform/jetpack-window-manager) to support dual-screen and foldable devices.
+Android app samples that use [Jetpack Window Manager](https://docs.microsoft.com/dual-screen/android/jetpack/window-manager/) to support dual-screen and foldable devices. Projects are updated to the [1.0.0 release](https://developer.android.com/jetpack/androidx/releases/window) of Window Manager.
+
+- eBookReader
+- FoldingVideo
+- FoldingVideoWithChat
+- PhotoEditor
+- SourceEditor
+- TravelPlanner
+- TwoDo
+- TwoNote
 
 ## Related links
 

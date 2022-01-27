@@ -13,8 +13,8 @@ android {
         applicationId 'com.microsoft.device.wm_samples.twodo'
         minSdkVersion 24
         targetSdkVersion 31
-        versionCode 3
-        versionName "3.0"
+        versionCode 4
+        versionName "4.0"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,8 +41,8 @@ dependencies {
 //    def slidingpanelayout_version = '1.2.0-SNAPSHOT'
 //    implementation "androidx.slidingpanelayout:slidingpanelayout:$slidingpanelayout_version"
 
-    implementation "androidx.slidingpanelayout:slidingpanelayout:1.2.0-rc01"
-    implementation 'androidx.window:window:1.0.0-rc01'
+    implementation "androidx.slidingpanelayout:slidingpanelayout:1.2.0"
+    implementation 'androidx.window:window:1.0.0'
 
     implementation "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
     implementation "androidx.core:core-ktx:1.6.0"
