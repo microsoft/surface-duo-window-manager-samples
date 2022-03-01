@@ -6,12 +6,11 @@ import androidx.test.espresso.matcher.ViewMatchers
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.filters.MediumTest
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
+import androidx.test.uiautomator.UiDevice
 import com.microsoft.device.display.wm_samples.sourceeditor.utils.childOf
-import com.microsoft.device.display.wm_samples.sourceeditor.utils.setOrientationLeft
-import com.microsoft.device.display.wm_samples.sourceeditor.utils.setOrientationRight
-import com.microsoft.device.display.wm_samples.sourceeditor.utils.switchFromSingleToDualScreen
-import com.microsoft.device.display.wm_samples.sourceeditor.utils.unfreezeRotation
+import com.microsoft.device.dualscreen.testing.spanFromStart
 import org.hamcrest.Matchers
 import org.junit.After
 import org.junit.Rule
@@ -23,29 +22,30 @@ import org.junit.runner.RunWith
 class SourceEditorInDualScreenTest {
     @get:Rule
     val activityRule = ActivityTestRule(MainActivity::class.java)
+    private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     @After
     fun tearDown() {
-        unfreezeRotation()
+        device.unfreezeRotation()
     }
 
     @Test
     fun previewWithoutOrientation() {
-        switchFromSingleToDualScreen()
+        device.spanFromStart()
         testPreview()
     }
 
     @Test
     fun previewWithOrientationLeft() {
-        switchFromSingleToDualScreen()
-        setOrientationLeft()
+        device.spanFromStart()
+        device.setOrientationLeft()
         testPreview()
     }
 
     @Test
     fun previewWithOrientationRight() {
-        switchFromSingleToDualScreen()
-        setOrientationRight()
+        device.spanFromStart()
+        device.setOrientationRight()
         testPreview()
     }
 
