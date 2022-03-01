@@ -22,7 +22,6 @@ android {
     defaultConfig {
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionName rootProject.ext.inkSDKVersionName
 
         testInstrumentationRunner rootProject.ext.config.testInstrumentationRunner
         consumerProguardFiles "consumer-rules.pro"

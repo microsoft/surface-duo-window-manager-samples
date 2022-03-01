@@ -84,6 +84,7 @@ ext {
     testRulesVersion = "1.2.0"
     testRunnerVersion = "1.2.0"
     uiAutomatorVersion = "2.2.0"
+    kotlinTestingVersion = "1.0.0-alpha2"
 
     instrumentationTestDependencies = [
             junit       : "androidx.test.ext:junit:$junitInstrumentationVersion",
@@ -91,5 +92,6 @@ ext {
             testRunner  : "androidx.test:runner:$testRunnerVersion",
             testRules   : "androidx.test:rules:$testRulesVersion",
             uiAutomator : "androidx.test.uiautomator:uiautomator:$uiAutomatorVersion",
+            kotlinTesting: "com.microsoft.device.dualscreen.testing:testing-kotlin:$kotlinTestingVersion"
     ]
 }
