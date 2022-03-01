@@ -2,6 +2,7 @@ package com.microsoft.device.display.wm_samples.sourceeditor.utils
 
 import android.view.View
 import androidx.test.espresso.ViewAction
+import com.microsoft.device.dualscreen.testing.ForceClick
 import org.hamcrest.Matcher
 
 /**
