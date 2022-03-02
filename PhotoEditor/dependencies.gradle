@@ -4,8 +4,8 @@
  */
 
 ext {
-    gradlePluginVersion = "4.1.1"
-    kotlinVersion = "1.6.0"
+    gradlePluginVersion = "7.1.1"
+    kotlinVersion = "1.6.10"
     compileSdkVersion = 31
     buildToolsVersion = '30.0.3'
     targetSdkVersion = compileSdkVersion
@@ -62,12 +62,14 @@ ext {
     testRunnerVersion = "1.2.0"
     testRulesVersion = "1.2.0"
     uiautomatorVersion = "2.2.0"
+    kotlinTestingVersion = "1.0.0-alpha2"
 
     instrumentationTestDependencies = [
-            junit       : "androidx.test.ext:junit:$junitInstrumentationVersion",
-            espressoCore: "androidx.test.espresso:espresso-core:$espressoCoreVersion",
-            testRunner  : "androidx.test:runner:$testRunnerVersion",
-            testRules   : "androidx.test:rules:$testRulesVersion",
-            uiautomator : "androidx.test.uiautomator:uiautomator:$uiautomatorVersion"
+            junit           : "androidx.test.ext:junit:$junitInstrumentationVersion",
+            espressoCore    : "androidx.test.espresso:espresso-core:$espressoCoreVersion",
+            testRunner      : "androidx.test:runner:$testRunnerVersion",
+            testRules       : "androidx.test:rules:$testRulesVersion",
+            uiautomator     : "androidx.test.uiautomator:uiautomator:$uiautomatorVersion",
+            kotlinTesting   : "com.microsoft.device.dualscreen.testing:testing-kotlin:$kotlinTestingVersion"
     ]
 }

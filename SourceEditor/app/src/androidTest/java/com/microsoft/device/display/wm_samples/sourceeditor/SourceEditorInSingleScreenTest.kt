@@ -12,12 +12,11 @@ import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.filters.MediumTest
 import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
+import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
+import androidx.test.uiautomator.UiDevice
 import com.microsoft.device.display.wm_samples.sourceeditor.utils.SimpleFragmentBackStackListener
 import com.microsoft.device.display.wm_samples.sourceeditor.utils.forceClick
-import com.microsoft.device.display.wm_samples.sourceeditor.utils.setOrientationLeft
-import com.microsoft.device.display.wm_samples.sourceeditor.utils.setOrientationRight
-import com.microsoft.device.display.wm_samples.sourceeditor.utils.unfreezeRotation
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -30,6 +29,7 @@ class SourceEditorInSingleScreenTest {
     @get:Rule
     val activityRule = ActivityTestRule(MainActivity::class.java)
     private var backStackChangeListener = SimpleFragmentBackStackListener()
+    private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     @Before
     fun setup() {
@@ -38,7 +38,7 @@ class SourceEditorInSingleScreenTest {
 
     @After
     fun tearDown() {
-        unfreezeRotation()
+        device.unfreezeRotation()
     }
 
     @Test
@@ -55,13 +55,13 @@ class SourceEditorInSingleScreenTest {
 
     @Test
     fun previewWithOrientationLeft() {
-        setOrientationLeft()
+        device.setOrientationLeft()
         previewWithoutOrientation()
     }
 
     @Test
     fun previewWithOrientationRight() {
-        setOrientationRight()
+        device.setOrientationRight()
         previewWithoutOrientation()
     }
 }

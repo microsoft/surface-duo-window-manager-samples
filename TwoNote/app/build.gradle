@@ -63,4 +63,5 @@ dependencies {
     androidTestImplementation instrumentationTestDependencies.testRunner
     androidTestImplementation instrumentationTestDependencies.testRules
     androidTestImplementation instrumentationTestDependencies.uiAutomator
+    androidTestImplementation instrumentationTestDependencies.kotlinTesting
 }

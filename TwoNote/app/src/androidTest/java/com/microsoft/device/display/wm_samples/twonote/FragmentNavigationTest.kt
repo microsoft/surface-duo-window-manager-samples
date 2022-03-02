@@ -19,6 +19,7 @@ import androidx.test.internal.runner.junit4.AndroidJUnit4ClassRunner
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.rule.ActivityTestRule
 import androidx.test.uiautomator.UiDevice
+import com.microsoft.device.dualscreen.testing.spanFromStart
 import org.hamcrest.Matchers.allOf
 import org.hamcrest.Matchers.hasToString
 import org.junit.After
@@ -34,7 +35,7 @@ class FragmentNavigationTest {
     private val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
 
     @get:Rule
-    val activityRule = ActivityTestRule<MainActivity>(MainActivity::class.java)
+    val activityRule = ActivityTestRule(MainActivity::class.java)
 
     @After
     fun resetOrientation() {
@@ -107,7 +108,7 @@ class FragmentNavigationTest {
     }
 
     private fun spanApplication() {
-        device.swipe(675, 1780, 1350, 900, 400)
+        device.spanFromStart()
     }
 
     private fun rotateDevice() {

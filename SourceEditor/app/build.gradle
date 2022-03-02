@@ -5,7 +5,6 @@
 
 apply plugin: 'com.android.application'
 apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-android-extensions'
 
 android {
     compileSdkVersion rootProject.ext.compileSdkVersion
@@ -42,7 +41,7 @@ dependencies {
     implementation androidxDependencies.ktxFragment
     implementation androidxDependencies.windowManager
 
-    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.0'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.4.1'
 
 
     testImplementation testDependencies.junit
@@ -53,5 +52,6 @@ dependencies {
     androidTestImplementation instrumentationTestDependencies.testRunner
     androidTestImplementation instrumentationTestDependencies.testRules
     androidTestImplementation instrumentationTestDependencies.uiautomator
+    androidTestImplementation instrumentationTestDependencies.kotlinTesting
 }
 
