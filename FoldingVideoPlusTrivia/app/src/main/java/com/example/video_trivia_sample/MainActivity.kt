@@ -12,16 +12,23 @@ import android.os.Looper
 import android.view.View
 import android.view.WindowInsets
 import android.widget.ImageButton
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
+import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
+import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
+import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.ui.StyledPlayerControlView
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
@@ -65,6 +72,9 @@ class MainActivity : AppCompatActivity() {
         playerView.player = player
         playerControlView.player = player
 
+        // Initialize player messages that show trivia
+        setPlayerMessages(player)
+
         // Create a new coroutine since repeatOnLifecycle is a suspend function
         lifecycleScope.launch(Dispatchers.Main) {
             // The block passed to repeatOnLifecycle is executed when the lifecycle
@@ -83,10 +93,12 @@ class MainActivity : AppCompatActivity() {
                                 spanToggle = true
                                 spanOrientation = displayFeature.orientation
                                 if (spanOrientation == FoldingFeature.Orientation.HORIZONTAL) {
-                                    guidePosition = rootView.height - rootView.paddingBottom - displayFeature.bounds.top
+                                    guidePosition =
+                                        rootView.height - rootView.paddingBottom - displayFeature.bounds.top
                                     chatPadding = displayFeature.bounds.height()
                                 } else {
-                                    guidePosition = rootView.width - rootView.paddingEnd - displayFeature.bounds.left
+                                    guidePosition =
+                                        rootView.width - rootView.paddingEnd - displayFeature.bounds.left
                                     chatPadding = displayFeature.bounds.width()
                                 }
                             }
@@ -104,7 +116,8 @@ class MainActivity : AppCompatActivity() {
         rootView.setState(R.id.fullscreen_constraints, -1, -1)
 
         // Start exoplayer
-        val mediaItem = MediaItem.fromUri("https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4")
+        val mediaItem =
+            MediaItem.fromUri("https://storage.googleapis.com/exoplayer-test-media-0/BigBuckBunny_320x180.mp4")
         player.setMediaItem(mediaItem)
         player.prepare()
 
@@ -143,7 +156,10 @@ class MainActivity : AppCompatActivity() {
         chatToggle = savedInstanceState.getBoolean(STATE_CHAT)
         spanToggle = savedInstanceState.getBoolean(STATE_SPAN)
         player.playWhenReady = savedInstanceState.getBoolean(STATE_PLAY_WHEN_READY)
-        player.seekTo(savedInstanceState.getInt(STATE_CURRENT_WINDOW_INDEX), savedInstanceState.getLong(STATE_CURRENT_POSITION))
+        player.seekTo(
+            savedInstanceState.getInt(STATE_CURRENT_WINDOW_INDEX),
+            savedInstanceState.getLong(STATE_CURRENT_POSITION)
+        )
         player.prepare()
     }
 
@@ -172,7 +188,12 @@ class MainActivity : AppCompatActivity() {
     }
 
     // function to animate into "chat enabled" constraint set, modifying guide position at the same time
-    private fun setGuides(vertical_position: Int, vertical_padding: Int, horizontal_position: Int, horizontal_padding: Int) {
+    private fun setGuides(
+        vertical_position: Int,
+        vertical_padding: Int,
+        horizontal_position: Int,
+        horizontal_padding: Int
+    ) {
         bottomChatView.setPadding(0, vertical_padding, 0, 0)
         endChatView.setPadding(horizontal_padding, 0, 0, 0)
 
@@ -214,5 +235,40 @@ class MainActivity : AppCompatActivity() {
         } else {
             setFullscreen()
         }
+    }
+
+    private fun setPlayerMessages(player: ExoPlayer) {
+        val funFactMessage = player.createMessage { _, _ -> updateTriviaView(R.layout.fun_fact_layout) }
+        val castMessage = player.createMessage { _, _ -> updateTriviaView(R.layout.cast_layout) }
+        val soundtrackMessage = player.createMessage { _, _ -> updateTriviaView(R.layout.soundtrack_layout) }
+        val removeMessage = player.createMessage { _, _ -> updateTriviaView() }
+        val removeMessage2 = player.createMessage { _, _ -> updateTriviaView() }
+
+        // Times for quick testing
+        funFactMessage.setPosition(1000).send()
+        removeMessage.setPosition(3000).send()
+        soundtrackMessage.setPosition(4000).send()
+        removeMessage2.setPosition(6000).send()
+        castMessage.setPosition(70000).send()
+
+        // Times that correspond with video events
+//        funFactMessage.setPosition(1000).send()
+//        removeMessage.setPosition(34000).send()
+//        soundtrackMessage.setPosition(35000).send()
+//        removeMessage2.setPosition(119000).send()
+//        castMessage.setPosition(120000).send()
+    }
+
+    private fun updateTriviaView(newViewId: Int? = null) {
+        val triviaView = findViewById<LinearLayout>(R.id.trivia_layout)
+
+        runOnUiThread {
+            if (newViewId == null)
+                triviaView.removeViewAt(0)
+            else
+                triviaView.addView(layoutInflater.inflate(newViewId, null))
+        }
+//        triviaV
+//        layoutInflater.inflate(newViewId, triviaView)
     }
 }
