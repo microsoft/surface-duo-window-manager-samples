@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">video_trivia_sample</string>
+    <string name="trivia_header">Trivia</string>
+    <string name="fun_fact">Fun fact:</string>
+    <string name="cast_members">Cast members:</string>
+    <string name="soundtrack">Soundtrack:</string>
+</resources>
