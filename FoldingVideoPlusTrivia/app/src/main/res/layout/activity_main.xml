@@ -67,7 +67,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/bottom_chat_view"
-        android:name="com.example.video_trivia_sample.ChatFragment"
+        android:name="com.example.video_trivia_sample.TriviaFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/black"
@@ -78,7 +78,7 @@
 
     <androidx.fragment.app.FragmentContainerView
         android:id="@+id/end_chat_view"
-        android:name="com.example.video_trivia_sample.ChatFragment"
+        android:name="com.example.video_trivia_sample.TriviaFragment"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:background="@color/black"
