@@ -1,7 +1,10 @@
 <resources>
-    <string name="app_name">video_trivia_sample</string>
-    <string name="trivia_header">Trivia</string>
+    <string name="app_name">FoldingVideoPlusTrivia</string>
+    <string name="trivia_header">TRIVIA</string>
     <string name="fun_fact">Fun fact:</string>
     <string name="cast_members">Cast members:</string>
     <string name="soundtrack">Soundtrack:</string>
+    <string name="imdb_fact">This movie is well known for being an open-source film under the Creative Commons Attribution 3.0 license, which gave the right to people to use and share the Big Buck Bunny short film to anyone and anywhere.</string>
+    <string name="imdb_sound_designer">Jan Morgenstern</string>
+    <string name="imdb_sound_mixer">Danny van Spreuwel</string>
 </resources>
