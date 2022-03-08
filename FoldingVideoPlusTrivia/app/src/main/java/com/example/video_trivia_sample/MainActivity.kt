@@ -13,22 +13,19 @@ import android.view.View
 import android.view.WindowInsets
 import android.widget.ImageButton
 import android.widget.LinearLayout
-import android.widget.Toast
-import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
+import androidx.recyclerview.widget.RecyclerView
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
+import com.example.video_trivia_sample.model.DataProvider
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
-import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.SimpleExoPlayer
-import com.google.android.exoplayer2.Timeline
 import com.google.android.exoplayer2.ui.StyledPlayerControlView
 import com.google.android.exoplayer2.ui.StyledPlayerView
 import com.google.android.exoplayer2.util.Util
@@ -53,6 +50,7 @@ class MainActivity : AppCompatActivity() {
     private var spanOrientation: FoldingFeature.Orientation = FoldingFeature.Orientation.VERTICAL
     private var guidePosition: Int = 0
     private var chatPadding: Int = 0
+    private var triviaLayout: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -148,6 +146,7 @@ class MainActivity : AppCompatActivity() {
         const val STATE_PLAY_WHEN_READY = "playerPlayWhenReady"
         const val STATE_CURRENT_POSITION = "playerPlaybackPosition"
         const val STATE_CURRENT_WINDOW_INDEX = "playerCurrentWindowIndex"
+        const val CURRENT_TRIVIA_LAYOUT = "triviaLayout"
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
@@ -161,6 +160,9 @@ class MainActivity : AppCompatActivity() {
             savedInstanceState.getLong(STATE_CURRENT_POSITION)
         )
         player.prepare()
+        triviaLayout = savedInstanceState.getInt(CURRENT_TRIVIA_LAYOUT)
+        if (triviaLayout != 0)
+            updateTriviaView(triviaLayout)
     }
 
     override fun onStop() {
@@ -175,6 +177,7 @@ class MainActivity : AppCompatActivity() {
             putBoolean(STATE_PLAY_WHEN_READY, player.playWhenReady)
             putLong(STATE_CURRENT_POSITION, player.currentPosition)
             putInt(STATE_CURRENT_WINDOW_INDEX, player.currentWindowIndex)
+            putInt(CURRENT_TRIVIA_LAYOUT, triviaLayout)
         }
 
         super.onSaveInstanceState(outState)
@@ -245,11 +248,11 @@ class MainActivity : AppCompatActivity() {
         val removeMessage2 = player.createMessage { _, _ -> updateTriviaView() }
 
         // Times for quick testing
-        funFactMessage.setPosition(1000).send()
-        removeMessage.setPosition(3000).send()
-        soundtrackMessage.setPosition(4000).send()
-        removeMessage2.setPosition(6000).send()
-        castMessage.setPosition(70000).send()
+        funFactMessage.setPosition(1000).setDeleteAfterDelivery(false).send()
+        removeMessage.setPosition(3000).setDeleteAfterDelivery(false).send()
+        soundtrackMessage.setPosition(4000).setDeleteAfterDelivery(false).send()
+        removeMessage2.setPosition(6000).setDeleteAfterDelivery(false).send()
+        castMessage.setPosition(7000).setDeleteAfterDelivery(false).send()
 
         // Times that correspond with video events
 //        funFactMessage.setPosition(1000).send()
@@ -260,15 +263,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateTriviaView(newViewId: Int? = null) {
-        val triviaView = findViewById<LinearLayout>(R.id.trivia_layout)
+        val triviaViewBottom = bottomChatView.findViewById<LinearLayout>(R.id.trivia_layout)
+        val triviaViewEnd = endChatView.findViewById<LinearLayout>(R.id.trivia_layout)
 
         runOnUiThread {
-            if (newViewId == null)
-                triviaView.removeViewAt(0)
-            else
-                triviaView.addView(layoutInflater.inflate(newViewId, null))
+            for (view in listOf(triviaViewBottom, triviaViewEnd)) {
+                if (newViewId == null) {
+                    view.removeAllViews()
+                    triviaLayout = 0
+                } else {
+                    val newView = layoutInflater.inflate(newViewId, null)
+                    view.addView(newView)
+
+                    // If cast layout, initialize cast member RecyclerView adapter
+                    if (newViewId == R.layout.cast_layout) {
+                        val castAdapter = CastListAdapter(DataProvider.actors)
+                        newView.findViewById<RecyclerView>(R.id.cast_member_list).adapter = castAdapter
+                    }
+
+                    triviaLayout = newViewId
+                }
+            }
         }
-//        triviaV
-//        layoutInflater.inflate(newViewId, triviaView)
     }
 }

@@ -11,4 +11,14 @@
     <!-- Soundtrack info -->
     <string name="soundtrack_info">Jan Morgenstern (Germany) was responsible for the music and sound design of this short film. His credits include sound effects, foley design, audio mixing and post-production.</string>
     <string name="jan_content_des">Picture of Jan Morgenstern</string>
+
+    <!-- Cast member info -->
+    <string name="bunny_actor">Big Bunny Buck</string>
+    <string name="bunny_actor_pt2">details</string>
+    <string name="rodent1_actor">Rascal Rodent #1</string>
+    <string name="rodent1_actor_pt2">details</string>
+    <string name="rodent2_actor">Rascal Rodent #2</string>
+    <string name="rodent2_actor_pt2">details</string>
+    <string name="rodent3_actor">Rascal Rodent #3</string>
+    <string name="rodent3_actor_pt2">details</string>
 </resources>
