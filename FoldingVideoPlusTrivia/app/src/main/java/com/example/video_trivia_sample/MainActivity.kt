@@ -7,10 +7,7 @@ package com.example.video_trivia_sample
 
 import android.content.res.Configuration
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.View
-import android.view.WindowInsets
 import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
@@ -28,28 +25,25 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.SimpleExoPlayer
 import com.google.android.exoplayer2.ui.StyledPlayerControlView
 import com.google.android.exoplayer2.ui.StyledPlayerView
-import com.google.android.exoplayer2.util.Util
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
     private lateinit var rootView: MotionLayout
-    private lateinit var endChatView: View
-    private lateinit var bottomChatView: View
-    private val handler = Handler(Looper.getMainLooper())
+    private lateinit var endTriviaView: View
+    private lateinit var bottomTriviaView: View
 
     private lateinit var playerControlView: StyledPlayerControlView
     private lateinit var playerView: StyledPlayerView
     private lateinit var player: SimpleExoPlayer
-    private lateinit var chatEnableButton: ImageButton
+    private lateinit var triviaEnableButton: ImageButton
 
-    private var keyboardToggle: Boolean = false
-    private var chatToggle: Boolean = true
+    private var triviaToggle: Boolean = true
     private var spanToggle: Boolean = false
     private var spanOrientation: FoldingFeature.Orientation = FoldingFeature.Orientation.VERTICAL
     private var guidePosition: Int = 0
-    private var chatPadding: Int = 0
+    private var padding: Int = 0
     private var triviaLayout: Int = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,9 +52,9 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         rootView = findViewById(R.id.root)
-        chatEnableButton = findViewById(R.id.chatEnableButton)
-        endChatView = findViewById(R.id.end_chat_view)
-        bottomChatView = findViewById(R.id.bottom_chat_view)
+        triviaEnableButton = findViewById(R.id.triviaEnableButton)
+        endTriviaView = findViewById(R.id.end_trivia_view)
+        bottomTriviaView = findViewById(R.id.bottom_trivia_view)
 
         playerControlView = findViewById(R.id.player_control_view)
         playerView = findViewById(R.id.player_view)
@@ -69,8 +63,6 @@ class MainActivity : AppCompatActivity() {
         player = SimpleExoPlayer.Builder(this).build()
         playerView.player = player
         playerControlView.player = player
-
-        // Initialize player messages that show trivia
         setPlayerMessages(player)
 
         // Create a new coroutine since repeatOnLifecycle is a suspend function
@@ -93,11 +85,11 @@ class MainActivity : AppCompatActivity() {
                                 if (spanOrientation == FoldingFeature.Orientation.HORIZONTAL) {
                                     guidePosition =
                                         rootView.height - rootView.paddingBottom - displayFeature.bounds.top
-                                    chatPadding = displayFeature.bounds.height()
+                                    padding = displayFeature.bounds.height()
                                 } else {
                                     guidePosition =
                                         rootView.width - rootView.paddingEnd - displayFeature.bounds.left
-                                    chatPadding = displayFeature.bounds.width()
+                                    padding = displayFeature.bounds.width()
                                 }
                             }
                         }
@@ -119,40 +111,26 @@ class MainActivity : AppCompatActivity() {
         player.setMediaItem(mediaItem)
         player.prepare()
 
-        // Callback for chat toggle button
-        chatEnableButton.setOnClickListener {
-            chatToggle = !chatToggle
+        // Callback for trivia toggle button
+        triviaEnableButton.setOnClickListener {
+            triviaToggle = !triviaToggle
             changeLayout()
-        }
-
-        // Callback for keyboard opening
-        rootView.viewTreeObserver.addOnGlobalLayoutListener {
-            val tempKeyboardToggle = if (Util.SDK_INT >= 30) {
-                rootView.rootWindowInsets.isVisible(WindowInsets.Type.ime())
-            } else {
-                rootView.rootWindowInsets.systemWindowInsetBottom > 200
-            }
-
-            if (tempKeyboardToggle != keyboardToggle) {
-                keyboardToggle = tempKeyboardToggle
-                changeLayout()
-            }
         }
     }
 
     companion object {
-        const val STATE_CHAT = "chatToggle"
+        const val STATE_TRIVIA = "triviaToggle"
         const val STATE_SPAN = "spanToggle"
         const val STATE_PLAY_WHEN_READY = "playerPlayWhenReady"
         const val STATE_CURRENT_POSITION = "playerPlaybackPosition"
         const val STATE_CURRENT_WINDOW_INDEX = "playerCurrentWindowIndex"
-        const val CURRENT_TRIVIA_LAYOUT = "triviaLayout"
+        const val STATE_TRIVIA_LAYOUT = "triviaLayout"
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
 
-        chatToggle = savedInstanceState.getBoolean(STATE_CHAT)
+        triviaToggle = savedInstanceState.getBoolean(STATE_TRIVIA)
         spanToggle = savedInstanceState.getBoolean(STATE_SPAN)
         player.playWhenReady = savedInstanceState.getBoolean(STATE_PLAY_WHEN_READY)
         player.seekTo(
@@ -160,7 +138,7 @@ class MainActivity : AppCompatActivity() {
             savedInstanceState.getLong(STATE_CURRENT_POSITION)
         )
         player.prepare()
-        triviaLayout = savedInstanceState.getInt(CURRENT_TRIVIA_LAYOUT)
+        triviaLayout = savedInstanceState.getInt(STATE_TRIVIA_LAYOUT)
         if (triviaLayout != 0)
             updateTriviaView(triviaLayout)
     }
@@ -172,12 +150,12 @@ class MainActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         outState.run {
-            putBoolean(STATE_CHAT, chatToggle)
+            putBoolean(STATE_TRIVIA, triviaToggle)
             putBoolean(STATE_SPAN, spanToggle)
             putBoolean(STATE_PLAY_WHEN_READY, player.playWhenReady)
             putLong(STATE_CURRENT_POSITION, player.currentPosition)
             putInt(STATE_CURRENT_WINDOW_INDEX, player.currentWindowIndex)
-            putInt(CURRENT_TRIVIA_LAYOUT, triviaLayout)
+            putInt(STATE_TRIVIA_LAYOUT, triviaLayout)
         }
 
         super.onSaveInstanceState(outState)
@@ -185,20 +163,20 @@ class MainActivity : AppCompatActivity() {
 
     // function to animate into "fullscreen" constraint set
     private fun setFullscreen() {
-        bottomChatView.setPadding(0, 0, 0, 0)
-        endChatView.setPadding(0, 0, 0, 0)
+        bottomTriviaView.setPadding(0, 0, 0, 0)
+        endTriviaView.setPadding(0, 0, 0, 0)
         rootView.transitionToState(R.id.fullscreen_constraints, 500)
     }
 
-    // function to animate into "chat enabled" constraint set, modifying guide position at the same time
+    // function to animate into "trivia enabled" constraint set, modifying guide position at the same time
     private fun setGuides(
         vertical_position: Int,
         vertical_padding: Int,
         horizontal_position: Int,
-        horizontal_padding: Int
+        horizontal_padding: Int,
     ) {
-        bottomChatView.setPadding(0, vertical_padding, 0, 0)
-        endChatView.setPadding(horizontal_padding, 0, 0, 0)
+        bottomTriviaView.setPadding(0, vertical_padding, 0, 0)
+        endTriviaView.setPadding(horizontal_padding, 0, 0, 0)
 
         val constraintSet = rootView.getConstraintSet(R.id.shrunk_constraints)
         constraintSet.setGuidelineEnd(R.id.vertical_guide, vertical_position)
@@ -215,25 +193,21 @@ class MainActivity : AppCompatActivity() {
     fun changeLayout() {
         if (spanToggle) { // if app is spanned across a fold
             if (spanOrientation == FoldingFeature.Orientation.HORIZONTAL) { // if fold is horizontal
-                if (keyboardToggle) { // if keyboard is enabled
-                    setGuides(0, 0, rootView.width / 3, 0)
-                } else if (chatToggle || this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) { // if chat is enabled or device is taller than wider
-                    setGuides(guidePosition, chatPadding, 0, 0)
+                if (triviaToggle || this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) { // if trivia is enabled or device is taller than wider
+                    setGuides(guidePosition, padding, 0, 0, true)
                 } else {
                     setFullscreen()
                 }
-            } else if (chatToggle) { // if chat is enabled
-                setGuides(0, 0, guidePosition, chatPadding)
+            } else if (triviaToggle) { // if trivia is enabled
+                setGuides(0, 0, guidePosition, padding)
             } else {
                 setFullscreen()
             }
-        } else if (chatToggle) { // if chat is enabled
+        } else if (triviaToggle) { // if trivia is enabled
             if (this.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) { // if the phone is landscape
                 setGuides(0, 0, rootView.width / 3, 0)
-            } else if (!keyboardToggle) {
+            } else {
                 setGuides(rootView.height / 2, 0, 0, 0)
-            } else { // if the keyboard is enabled
-                setFullscreen()
             }
         } else {
             setFullscreen()
@@ -263,8 +237,8 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateTriviaView(newViewId: Int? = null) {
-        val triviaViewBottom = bottomChatView.findViewById<LinearLayout>(R.id.trivia_layout)
-        val triviaViewEnd = endChatView.findViewById<LinearLayout>(R.id.trivia_layout)
+        val triviaViewBottom = bottomTriviaView.findViewById<LinearLayout>(R.id.trivia_layout)
+        val triviaViewEnd = endTriviaView.findViewById<LinearLayout>(R.id.trivia_layout)
 
         runOnUiThread {
             for (view in listOf(triviaViewBottom, triviaViewEnd)) {
