@@ -7,8 +7,10 @@
 
     <ImageView
         android:id="@+id/actor_pic"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:minHeight="50dp"
+        android:minWidth="50dp"
         android:contentDescription="@string/bunny_actor"
         android:src="@drawable/bunny_pic" />
 
@@ -36,7 +38,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/bunny_actor_pt2"
-            android:textColor="@color/white"
+            android:textColor="@color/gray"
             android:textSize="14sp" />
 
     </LinearLayout>

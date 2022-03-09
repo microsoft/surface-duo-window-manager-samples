@@ -47,7 +47,6 @@
         app:layout_constraintEnd_toEndOf="@id/player_view"
         app:layout_constraintStart_toEndOf="@+id/player_control_view" />
 
-
     <androidx.constraintlayout.widget.Guideline
         android:id="@+id/vertical_guide"
         android:layout_width="wrap_content"
@@ -85,5 +84,11 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/horizontal_guide"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/large_screen_support"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal" />
 
 </androidx.constraintlayout.motion.widget.MotionLayout>

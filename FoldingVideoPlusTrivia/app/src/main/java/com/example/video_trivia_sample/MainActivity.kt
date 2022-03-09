@@ -12,6 +12,7 @@ import android.widget.ImageButton
 import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.constraintlayout.motion.widget.MotionLayout
+import androidx.core.graphics.ColorUtils
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
@@ -19,6 +20,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.window.layout.DisplayFeature
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
+import androidx.window.layout.WindowMetricsCalculator
 import com.example.video_trivia_sample.model.DataProvider
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
@@ -28,6 +30,8 @@ import com.google.android.exoplayer2.ui.StyledPlayerView
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+
+enum class WindowSizeClass { COMPACT, MEDIUM, EXPANDED }
 
 class MainActivity : AppCompatActivity() {
     private lateinit var rootView: MotionLayout
@@ -41,6 +45,7 @@ class MainActivity : AppCompatActivity() {
 
     private var triviaToggle: Boolean = true
     private var spanToggle: Boolean = false
+    private var largeScreenToggle: Boolean = false
     private var spanOrientation: FoldingFeature.Orientation = FoldingFeature.Orientation.VERTICAL
     private var guidePosition: Int = 0
     private var padding: Int = 0
@@ -97,6 +102,18 @@ class MainActivity : AppCompatActivity() {
                     }
             }
         }
+
+        // Add large screen support
+        val container = findViewById<LinearLayout>(R.id.large_screen_support)
+        container.addView(object : View(this) {
+            override fun onConfigurationChanged(newConfig: Configuration?) {
+                super.onConfigurationChanged(newConfig)
+                computeWidthSizeClass()
+                changeLayout()
+            }
+        })
+
+        computeWidthSizeClass()
     }
 
     override fun onStart() {
@@ -174,13 +191,17 @@ class MainActivity : AppCompatActivity() {
         vertical_padding: Int,
         horizontal_position: Int,
         horizontal_padding: Int,
-        dual_land_controls: Boolean = false
+        dual_land_controls: Boolean = false,
+        large_screen_guides: Boolean = false
     ) {
         bottomTriviaView.setPadding(0, vertical_padding, 0, 0)
         endTriviaView.setPadding(horizontal_padding, 0, 0, 0)
 
-        val constraintSetId: Int =
-            if (dual_land_controls) R.id.shrunk_constraints_dual_land else R.id.shrunk_constraints
+        val constraintSetId: Int = when {
+            dual_land_controls -> R.id.shrunk_constraints_dual_land
+            large_screen_guides -> R.id.fullscreen_constraints_large_screen
+            else -> R.id.shrunk_constraints
+        }
 
         val constraintSet = rootView.getConstraintSet(constraintSetId)
         constraintSet.setGuidelineEnd(R.id.vertical_guide, vertical_position)
@@ -198,7 +219,7 @@ class MainActivity : AppCompatActivity() {
         if (spanToggle) { // if app is spanned across a fold
             if (spanOrientation == FoldingFeature.Orientation.HORIZONTAL) { // if fold is horizontal
                 if (triviaToggle || this.resources.configuration.orientation == Configuration.ORIENTATION_PORTRAIT) { // if trivia is enabled or device is taller than wider
-                    setGuides(guidePosition, padding, 0, 0, true)
+                    setGuides(guidePosition, padding, 0, 0, dual_land_controls = true)
                 } else {
                     setFullscreen()
                 }
@@ -208,7 +229,13 @@ class MainActivity : AppCompatActivity() {
                 setFullscreen()
             }
         } else if (triviaToggle) { // if trivia is enabled
-            if (this.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) { // if the phone is landscape
+            if (largeScreenToggle) {
+                setGuides(0, 0, rootView.width, 0, large_screen_guides = true)
+                val translucentBlack = ColorUtils.setAlphaComponent(getColor(R.color.black), 150)
+                val translucentGray = ColorUtils.setAlphaComponent(getColor(R.color.dark_gray), 150)
+                endTriviaView.setBackgroundColor(translucentBlack)
+                endTriviaView.findViewById<LinearLayout>(R.id.trivia_layout).setBackgroundColor(translucentGray)
+            } else if (this.resources.configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) { // if the phone is landscape
                 setGuides(0, 0, rootView.width / 3, 0)
             } else {
                 setGuides(rootView.height / 2, 0, 0, 0)
@@ -263,5 +290,20 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    private fun computeWidthSizeClass() {
+        val metrics = WindowMetricsCalculator.getOrCreate()
+            .computeCurrentWindowMetrics(this)
+
+        val widthDp = metrics.bounds.width() /
+            resources.displayMetrics.density
+        val widthSizeClass = when {
+            widthDp < 600f -> WindowSizeClass.COMPACT
+            widthDp < 840f -> WindowSizeClass.MEDIUM
+            else -> WindowSizeClass.EXPANDED
+        }
+
+        largeScreenToggle = widthSizeClass == WindowSizeClass.EXPANDED
     }
 }
