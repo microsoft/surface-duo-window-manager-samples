@@ -1,13 +1,51 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!--
+<?xml version="1.0" encoding="utf-8"?><!--
   ~ Copyright (c) Microsoft Corporation. All rights reserved.
   ~  Licensed under the MIT License.
   -->
-<MotionScene
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<MotionScene xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:motion="http://schemas.android.com/apk/res-auto">
 
-    <ConstraintSet android:id="@+id/shrunk_constraints"></ConstraintSet>
-    <ConstraintSet android:id="@+id/fullscreen_constraints"></ConstraintSet>
+    <ConstraintSet android:id="@+id/shrunk_constraints">
+        <!--        <Constraint-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            motion:layout_constraintBottom_toBottomOf="@id/player_view"-->
+        <!--            motion:layout_constraintEnd_toStartOf="@id/triviaEnableButton"-->
+        <!--            motion:layout_constraintStart_toStartOf="@id/player_view"-->
+        <!--            android:id="@id/player_control_view" />-->
+        <!--        <Constraint-->
+        <!--            android:layout_width="match_parent"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            motion:layout_constraintBottom_toBottomOf="@id/player_view"-->
+        <!--            motion:layout_constraintEnd_toEndOf="@id/player_view"-->
+        <!--            motion:layout_constraintStart_toEndOf="@id/player_control_view"-->
+        <!--            android:id="@id/triviaEnableButton" />-->
+    </ConstraintSet>
+    <ConstraintSet android:id="@+id/fullscreen_constraints" />
+
+    <ConstraintSet android:id="@+id/shrunk_constraints_dual_land">
+        <Constraint
+            android:id="@id/bottom_trivia_view"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            motion:layout_constraintBottom_toTopOf="@id/triviaEnableButton"
+            motion:layout_constraintEnd_toStartOf="@id/horizontal_guide"
+            motion:layout_constraintStart_toStartOf="parent"
+            motion:layout_constraintTop_toBottomOf="@id/vertical_guide" />
+        <Constraint
+            android:id="@id/player_control_view"
+            android:layout_width="0dp"
+            android:layout_height="100dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toStartOf="@id/triviaEnableButton"
+            motion:layout_constraintStart_toStartOf="parent" />
+        <Constraint
+            android:id="@id/triviaEnableButton"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            motion:layout_constraintBottom_toBottomOf="parent"
+            motion:layout_constraintEnd_toEndOf="parent"
+            motion:layout_constraintStart_toEndOf="@id/player_control_view" />
+    </ConstraintSet>
 
 </MotionScene>

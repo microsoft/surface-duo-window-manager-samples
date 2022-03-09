@@ -174,18 +174,22 @@ class MainActivity : AppCompatActivity() {
         vertical_padding: Int,
         horizontal_position: Int,
         horizontal_padding: Int,
+        dual_land_controls: Boolean = false
     ) {
         bottomTriviaView.setPadding(0, vertical_padding, 0, 0)
         endTriviaView.setPadding(horizontal_padding, 0, 0, 0)
 
-        val constraintSet = rootView.getConstraintSet(R.id.shrunk_constraints)
+        val constraintSetId: Int =
+            if (dual_land_controls) R.id.shrunk_constraints_dual_land else R.id.shrunk_constraints
+
+        val constraintSet = rootView.getConstraintSet(constraintSetId)
         constraintSet.setGuidelineEnd(R.id.vertical_guide, vertical_position)
         constraintSet.setGuidelineEnd(R.id.horizontal_guide, horizontal_position)
 
-        if (rootView.currentState == R.id.shrunk_constraints) {
-            rootView.updateStateAnimate(R.id.shrunk_constraints, constraintSet, 500)
+        if (rootView.currentState == constraintSetId) {
+            rootView.updateStateAnimate(constraintSetId, constraintSet, 500)
         } else {
-            rootView.transitionToState(R.id.shrunk_constraints, 500)
+            rootView.transitionToState(constraintSetId, 500)
         }
     }
 
