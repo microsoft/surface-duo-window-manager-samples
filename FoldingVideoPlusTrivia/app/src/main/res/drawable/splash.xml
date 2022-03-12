@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:opacity="opaque">
+    <item android:drawable="?android:colorBackground" />
+    <item
+        android:width="200dp"
+        android:height="200dp"
+        android:gravity="center"
+        android:drawable="@mipmap/ic_launcher"
+        />
+    <item android:bottom="84.0dip"
+        android:gravity="bottom|center"
+        android:drawable="@drawable/splash_logo" />
+    />
+</layer-list>

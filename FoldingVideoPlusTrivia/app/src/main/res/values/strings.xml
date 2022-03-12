@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">FoldingVideoPlusTrivia</string>
+    <string name="trivia_header">TRIVIA</string>
+    <string name="fun_fact">Fun fact</string>
+    <string name="cast_members">Cast members</string>
+    <string name="soundtrack">Soundtrack</string>
+    <string name="open_trivia">Open video trivia view</string>
+
+    <!-- Fun fact info -->
+    <string name="imdb_fact">This movie is well known for being an open-source film under the Creative Commons Attribution 3.0 license, which gave the right to people to use and share the Big Buck Bunny short film to anyone and anywhere.</string>
+
+    <!-- Soundtrack info -->
+    <string name="soundtrack_info">Jan Morgenstern (Germany) was responsible for the music and sound design of this short film. His credits include sound effects, foley design, audio mixing and post-production.</string>
+    <string name="jan_content_des">Picture of Jan Morgenstern</string>
+
+    <!-- Cast member info -->
+    <string name="bunny_actor">Big Buck Bunny</string>
+    <string name="bunny_actor_pt2">Butterfly-loving protagonist</string>
+    <string name="rodent1_actor">Rascal Rodent #1</string>
+    <string name="rodent1_actor_pt2">Mischievous leader rodent</string>
+    <string name="rodent2_actor">Rascal Rodent #2</string>
+    <string name="rodent2_actor_pt2">Nut-carrying rodent</string>
+    <string name="rodent3_actor">Rascal Rodent #3</string>
+    <string name="rodent3_actor_pt2">Projectile-launching rodent</string>
+</resources>
