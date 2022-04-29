@@ -24,6 +24,7 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import com.microsoft.device.dualscreen.testing.closeEnd
+import com.microsoft.device.dualscreen.testing.getDeviceModel
 import com.microsoft.device.dualscreen.testing.spanFromStart
 import org.hamcrest.CoreMatchers.not
 import org.junit.Rule
@@ -99,11 +100,11 @@ class PhotoEditorUITest {
             }
 
         // Open Files app
-        val context = InstrumentationRegistry.getInstrumentation().context
-        val intent = context.packageManager.getLaunchIntentForPackage(filesPackage)?.apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val intent = targetContext.packageManager.getLaunchIntentForPackage(filesPackage)?.apply {
+            addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT)
         }
-        context.startActivity(intent)
+        targetContext.startActivity(intent)
         device.wait(Until.hasObject(By.pkg(filesPackage).depth(0)), 3000) // timeout at 3 seconds
 
         // Before import, drawable is equal to prev
@@ -127,7 +128,6 @@ class PhotoEditorUITest {
 
         // Close Files app
         device.closeEnd()
-
         // Unlock rotation
         device.unfreezeRotation()
     }
