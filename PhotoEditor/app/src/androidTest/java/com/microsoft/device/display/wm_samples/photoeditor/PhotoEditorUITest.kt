@@ -78,6 +78,8 @@ class PhotoEditorUITest {
      *
      * @precondition device in portrait mode, no other applications are open
      * (so app by default opens on left screen)
+     * For Android 11 devices, the most recently downloaded file must also be an image for the test to pass,
+     * because the "Downloads" section opens by default instead of the "Recent" section
      */
     @Test
     fun testDragAndDrop() {
@@ -113,11 +115,17 @@ class PhotoEditorUITest {
             iz(activityRule.activity.findViewById<ImageFilterView>(R.id.image).drawable)
         )
 
-        // Hardcoded to select most recently saved file in Files app - must be an image file
-        device.swipe(1550, 1230, 1550, 1230, 100)
+        // Calculate start and end coordinates based on device model
+        val model = device.getDeviceModel()
+        val fileOffsetX = model.middleX + 200
+        val fileOffsetY = model.middleY - 200
+        val dropTargetX = model.paneWidth - 100
+
+        // Long press most recently saved/downloaded file in Files app - must be an image file
+        device.swipe(fileOffsetX, fileOffsetY, fileOffsetX, fileOffsetY, 100)
 
         // Slowly drag selected image file to other screen for import
-        device.swipe(1550, 1230, 1200, 1100, 600)
+        device.swipe(fileOffsetX, fileOffsetY, dropTargetX, fileOffsetY, 500)
 
         // After import, drawable has changed
         onIdle()
@@ -128,6 +136,7 @@ class PhotoEditorUITest {
 
         // Close Files app
         device.closeEnd()
+
         // Unlock rotation
         device.unfreezeRotation()
     }
