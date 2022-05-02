@@ -24,6 +24,7 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import com.microsoft.device.dualscreen.testing.closeEnd
+import com.microsoft.device.dualscreen.testing.getDeviceModel
 import com.microsoft.device.dualscreen.testing.spanFromStart
 import org.hamcrest.CoreMatchers.not
 import org.junit.Rule
@@ -77,6 +78,8 @@ class PhotoEditorUITest {
      *
      * @precondition device in portrait mode, no other applications are open
      * (so app by default opens on left screen)
+     * For Android 11 devices, the most recently downloaded file must also be an image for the test to pass,
+     * because the "Downloads" section opens by default instead of the "Recent" section
      */
     @Test
     fun testDragAndDrop() {
@@ -99,11 +102,11 @@ class PhotoEditorUITest {
             }
 
         // Open Files app
-        val context = InstrumentationRegistry.getInstrumentation().context
-        val intent = context.packageManager.getLaunchIntentForPackage(filesPackage)?.apply {
-            addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        val targetContext = InstrumentationRegistry.getInstrumentation().targetContext
+        val intent = targetContext.packageManager.getLaunchIntentForPackage(filesPackage)?.apply {
+            addFlags(Intent.FLAG_ACTIVITY_LAUNCH_ADJACENT)
         }
-        context.startActivity(intent)
+        targetContext.startActivity(intent)
         device.wait(Until.hasObject(By.pkg(filesPackage).depth(0)), 3000) // timeout at 3 seconds
 
         // Before import, drawable is equal to prev
@@ -112,11 +115,17 @@ class PhotoEditorUITest {
             iz(activityRule.activity.findViewById<ImageFilterView>(R.id.image).drawable)
         )
 
-        // Hardcoded to select most recently saved file in Files app - must be an image file
-        device.swipe(1550, 1230, 1550, 1230, 100)
+        // Calculate start and end coordinates based on device model
+        val model = device.getDeviceModel()
+        val fileOffsetX = model.middleX + 200
+        val fileOffsetY = model.middleY - 200
+        val dropTargetX = model.paneWidth - 100
+
+        // Long press most recently saved/downloaded file in Files app - must be an image file
+        device.swipe(fileOffsetX, fileOffsetY, fileOffsetX, fileOffsetY, 100)
 
         // Slowly drag selected image file to other screen for import
-        device.swipe(1550, 1230, 1200, 1100, 600)
+        device.swipe(fileOffsetX, fileOffsetY, dropTargetX, fileOffsetY, 500)
 
         // After import, drawable has changed
         onIdle()

@@ -29,6 +29,8 @@
             android:exported="true">
         </activity>
     </application>
-
+    <queries>
+        <package android:name="com.google.android.documentsui" />
+    </queries>
 
 </manifest>
