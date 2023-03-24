@@ -11,6 +11,7 @@ import android.content.Intent
 import android.graphics.Rect
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
@@ -25,21 +26,32 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.repeatOnLifecycle
 import androidx.window.layout.FoldingFeature
 import androidx.window.layout.WindowInfoTracker
+import com.google.gson.Gson
 import com.microsoft.device.display.wm_samples.sourceeditor.includes.FileHandler
 import com.microsoft.device.display.wm_samples.sourceeditor.viewmodel.DualScreenViewModel
 import com.microsoft.device.display.wm_samples.sourceeditor.viewmodel.WebViewModel
+import io.ktor.client.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var fileBtn: ImageView
     private lateinit var saveBtn: ImageView
+    private lateinit var lightbulbBtn: ImageView
 
     private lateinit var fileHandler: FileHandler
     private lateinit var webVM: WebViewModel
     private lateinit var dualScreenVM: DualScreenViewModel
+
+    val gson = Gson()
+    val httpClient = HttpClient()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,6 +79,15 @@ class MainActivity : AppCompatActivity() {
         saveBtn = findViewById(R.id.btn_save)
         saveBtn.setOnClickListener {
             fileHandler.createFile(Uri.EMPTY)
+        }
+
+        lightbulbBtn = findViewById(R.id.btn_lightbulb)
+        lightbulbBtn.setOnClickListener {
+            val html = webVM.getText().value.toString()
+            lifecycleScope.launch(Dispatchers.Main) {
+                val newHtml = createCompletion(Constants.SHORTEN +"\n\n"+ html, "")
+                webVM.setText(newHtml)
+            }
         }
 
         // Create a new coroutine since repeatOnLifecycle is a suspend function
@@ -205,5 +226,55 @@ class MainActivity : AppCompatActivity() {
         val surfaceDuoSpecificFeature = "com.microsoft.device.display.displaymask"
         val pm = this@MainActivity.packageManager
         return pm.hasSystemFeature(surfaceDuoSpecificFeature)
+    }
+
+
+    private suspend fun createCompletion(prompt: String, instruction: String): String {
+        Log.i("GPT", "1. Construct the prompt")
+        val openAIPrompt = mapOf(
+            "model" to Constants.OPENAI_MODEL_COMPLETIONS,
+            "prompt" to prompt,
+            //"input" to prompt,
+            //"instruction" to instruction,
+            "temperature" to 0.5,
+            "max_tokens" to 1500,
+            "top_p" to 1,
+            "frequency_penalty" to 0,
+            "presence_penalty" to 0
+        )
+
+        val content:String = gson.toJson(openAIPrompt).toString()
+        Log.i("GPT", "2. Jsonify \n" + content)
+        val response = httpClient.post(Constants.API_ENDPOINT_COMPLETIONS) {
+            headers {
+                append(HttpHeaders.Authorization, "Bearer " + Constants.OPENAI_KEY)
+            }
+            contentType(ContentType.Application.Json)
+            setBody (content)
+        }
+        if (response.status == HttpStatusCode.TooManyRequests)
+        {
+            Log.i("GPT", "3. Need to pay the bill")
+            return "Need to pay the bill\n\n" + response.bodyAsText()
+        }
+        if (response.status == HttpStatusCode.NotFound)
+        {
+            Log.i("GPT", "3. Not found")
+            return "Not found\n\n" + response.bodyAsText()
+        }
+        else if (response.status == HttpStatusCode.OK) {
+            val jsonContent = response.bodyAsText()
+            val choices = Json.parseToJsonElement(jsonContent).jsonObject["choices"]!!.toString()
+            val result = Json.parseToJsonElement(choices.removeSurrounding("[", "]"))
+
+            Log.i("GPT", "3. Parse the response \n" +result.toString())
+
+            var text = result.jsonObject["text"]!!.toString()
+            text = text.replace("\\n", "")
+            text = text.replace("\\\"", "\"")
+            return text
+        }
+        Log.i("GPT", "4. Other status: " + response.status)
+        return "status: " + response.status
     }
 }

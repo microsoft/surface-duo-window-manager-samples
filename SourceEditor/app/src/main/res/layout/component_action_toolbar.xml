@@ -43,4 +43,14 @@
         app:layout_constraintTop_toTopOf="@+id/list_toolbar"
         app:srcCompat="@drawable/ic_save_24px" />
 
+    <ImageView
+        android:id="@+id/btn_lightbulb"
+        android:layout_width="56dp"
+        android:layout_height="56dp"
+        android:paddingEnd="15dp"
+        app:layout_constraintBottom_toBottomOf="@+id/list_toolbar"
+        app:layout_constraintEnd_toStartOf="@+id/btn_save"
+        app:layout_constraintTop_toTopOf="@+id/list_toolbar"
+        app:srcCompat="@drawable/ic_lightbulb_24px" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

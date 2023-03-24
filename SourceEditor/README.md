@@ -1,7 +1,7 @@
 ---
 page_type: sample
-name: "Surface Duo - SourceEditor"
-description: "Uses the dual view layout pattern and external storage capabilities to create a source-editing app for the Surface Duo."
+name: "Android foldable SourceEditor"
+description: "Uses the dual view layout pattern and external storage capabilities to create a source-editing app for the foldable and large screen devices."
 languages:
 - kotlin
 products:
@@ -9,17 +9,23 @@ products:
 urlFragment: source-editor
 ---
 
-# SourceEditor
+# SourceEditor (with OpenAI 💡)
 
-This sample contains a Kotlin application designed for Surface Duo. The application is an HTML editor that enables real-time rendering of formatted source code. Making use of the [dual view](https://docs.microsoft.com/dual-screen/introduction#dual-view) app pattern, users are able to edit and preview any changes simultaneously without switching windows.
+This sample contains a Kotlin application designed for foldable Android devices. The application is an HTML editor that enables real-time rendering of formatted source code. Making use of the [dual view](https://docs.microsoft.com/dual-screen/introduction#dual-view) app pattern, users are able to edit and preview any changes simultaneously without switching windows.
 
-## Getting Started
+## Incorporating OpenAI
 
-To learn how to load apps on the Surface Duo emulator, see the [documentation](https://docs.microsoft.com/dual-screen/android), and follow [the blog](https://devblogs.microsoft.com/surface-duo).
+The idea to do text processing with OpenAI comes from Syncfusion's blog post
+on [integrating ChatGPT with Blazor editor in .NET](https://www.syncfusion.com/blogs/post/integrate-chatgpt-blazor-rich-text-editor.aspx)
+and [SyncfusionExamples GitHub repo](https://github.com/SyncfusionExamples/Integrating-OpenAI-with-Blazor-RichTextEditor).
+
+The first pass of porting the REST API code from C# to Kotlin was itself suggested by ChatGPT.
+
+> **NOTE:** in **Constants.kt** add your [OpenAI](https://platform.openai.com/docs/api-reference) key in the field `OPENAI_KEY`
 
 ## Features
 
-In contrast to the original SourceEditor [sample](https://github.com/microsoft/surface-duo-app-samples/tree/main/SourceEditor) which utilizes Microsoft's [SurfaceDuoLayout](https://docs.microsoft.com/dual-screen/android/api-reference/dualscreen-library/layouts/surfaceduo-layout) to handle dual screen devices, this project makes use of Jetpack [Window Manager](https://developer.android.com/jetpack/androidx/releases/window) API. This sample uses Window Manager to handle events that require consideration of a hinge or fold in the device's screen.
+This project makes use of Jetpack [Window Manager](https://developer.android.com/jetpack/androidx/releases/window) to handle events that require consideration of a hinge or fold in the device's screen.
 
 This project also uses [Fragments](https://developer.android.com/guide/components/fragments), one to display a code editing window and another to render and display formatted code through a [WebView](https://developer.android.com/reference/android/webkit/WebView). The app starts in single screen mode, but can be spanned to enable dual screen mode. See the Getting Started section above for more information about spanning.
 
@@ -39,20 +45,9 @@ To choose a new file to open, the folder icon in the top toolbar can be pressed.
 
 This project also supports drag and drop functionality. If a file gallery is open in one screen, text files can be dragged into the Source Editor application. Dropping a file onto the editor or preview screen will import the file's text into the application.
 
-## Single Screen Mode
+## Icons
 
-In single screen mode, users are able to view one of two screens at a time: editor or preview. A button appears in the editor window that allows users to view a preview of the source code. In order to go back to the editor from the preview screen, perform Android's "back" gesture or by pressing the back button on your device. In single screen mode, users can reference other sites such as developer forums while using the app.
-![Single screen code editor](screenshots/single_editor.PNG)
-
-## Dual Screen Mode
-
-In dual screen mode, both windows are visible, so no buttons are visible to enable transitions. In this layout, users can scroll on the code side, subsequently scrolling the preview screen, and vice versa. Changes to text in the editor will update the preview in real time using a [ViewModel](https://developer.android.com/topic/libraries/architecture/viewmodel).
-![Dual screen app view](screenshots/dual_view_horizontal.PNG)
-
-## Orientation
-
-This project supports various rotation configurations. In order to enable orientation changes within the application, ensure that rotation is enabled within the Duo emulator/device itself. This can be done by swiping down from the top of the screen and selecting the rotation icon. Examples of different orientation layouts are available in the screenshots folder.
-![Enabling rotation](screenshots/duo_enable_rotation.PNG)
+SVG for icons from [material-design-icons](https://github.com/google/material-design-icons/blob/master/android/action/lightbulb/materialicons/black/res/drawable/baseline_lightbulb_24.xml).
 
 ## Contributing
 
